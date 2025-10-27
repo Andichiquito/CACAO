@@ -68,3 +68,4 @@ const SimpleImageCarousel = () => {
 };
 
 export default SimpleImageCarousel;
+

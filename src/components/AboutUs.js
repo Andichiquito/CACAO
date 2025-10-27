@@ -55,7 +55,7 @@ const AboutUs = () => {
         {/* Logo */}
         <div className="logo-section">
           <div className="cacao-logo">
-            <img src="/Logo blanco .PNG" alt="CACAO Logo" className="logo-image" />
+            <img src="/logo-blanco.png" alt="CACAO Logo" className="logo-image" />
           </div>
         </div>
 

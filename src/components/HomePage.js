@@ -29,7 +29,7 @@ const HomePage = () => {
       <header className="header">
         <div className="header-content">
           <div className="logo-section">
-            <img src="/Logo blanco .PNG" alt="CACAO Logo" className="header-logo" />
+            <img src="/logo-blanco.png" alt="CACAO Logo" className="header-logo" />
           </div>
           
           <nav className="navigation">
@@ -70,7 +70,7 @@ const HomePage = () => {
       <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-menu-content">
           <div className="mobile-menu-header">
-            <img src="/Logo blanco .PNG" alt="CACAO Logo" className="mobile-menu-logo" />
+            <img src="/logo-blanco.png" alt="CACAO Logo" className="mobile-menu-logo" />
             <button 
               className="mobile-menu-close"
               onClick={closeMobileMenu}
