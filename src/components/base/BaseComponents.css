@@ -1,0 +1,354 @@
+/* BaseComponents.css */
+
+/* Button Styles */
+.btn {
+  border: none;
+  border-radius: 8px;
+  font-family: 'Readex Pro', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Button Variants */
+.btn-primary {
+  background: linear-gradient(135deg, #E07A5F, #F2CC8F);
+  color: #000;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #E07A5F;
+  border: 2px solid #E07A5F;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: #E07A5F;
+  color: #000;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: white;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Button Sizes */
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-medium {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+.btn-large {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+}
+
+/* Card Styles */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Section Styles */
+.section {
+  padding: 4rem 2rem;
+  position: relative;
+}
+
+.section-dark {
+  background: #000000;
+  color: white;
+}
+
+.section-light {
+  background: #f8f9fa;
+  color: #333;
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Title Styles */
+.title {
+  font-family: 'Readex Pro', sans-serif;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: inherit;
+}
+
+.title-1 {
+  font-size: 3rem;
+  line-height: 1.2;
+}
+
+.title-2 {
+  font-size: 2.5rem;
+  line-height: 1.3;
+}
+
+.title-3 {
+  font-size: 2rem;
+  line-height: 1.4;
+}
+
+.title-4 {
+  font-size: 1.5rem;
+  line-height: 1.5;
+}
+
+.title-underline {
+  position: relative;
+}
+
+.title-underline-line {
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, #E07A5F, #F2CC8F);
+  margin-top: 0.5rem;
+}
+
+/* Loading Styles */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #888;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(212, 175, 55, 0.3);
+  border-top: 3px solid #E07A5F;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.loading-small .loading-spinner {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.loading-large .loading-spinner {
+  width: 60px;
+  height: 60px;
+  border-width: 4px;
+}
+
+.loading-message {
+  font-size: 1.1rem;
+  margin: 0;
+  font-family: 'Readex Pro', sans-serif;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error Message Styles */
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.error-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.error-text {
+  color: #ff6b6b;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-family: 'Readex Pro', sans-serif;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .section {
+    padding: 2rem 1rem;
+  }
+  
+  .title-1 {
+    font-size: 2.5rem;
+  }
+  
+  .title-2 {
+    font-size: 2rem;
+  }
+  
+  .title-3 {
+    font-size: 1.75rem;
+  }
+  
+  .btn-large {
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem;
+  }
+  
+  .card {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-1 {
+    font-size: 2rem;
+  }
+  
+  .title-2 {
+    font-size: 1.75rem;
+  }
+  
+  .btn-medium {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .section {
+    padding: 1rem 0.5rem;
+  }
+  
+  .title-1 {
+    font-size: 1.8rem;
+  }
+  
+  .title-2 {
+    font-size: 1.6rem;
+  }
+  
+  .title-3 {
+    font-size: 1.4rem;
+  }
+  
+  .title-4 {
+    font-size: 1.2rem;
+  }
+  
+  .btn-medium {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .btn-small {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+  }
+  
+  .card {
+    padding: 0.5rem;
+  }
+  
+  .loading-spinner {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .loading-message {
+    font-size: 0.85rem;
+  }
+  
+  .error-message {
+    padding: 1rem;
+  }
+  
+  .error-icon {
+    font-size: 1.25rem;
+  }
+  
+  .error-text {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .title-1 {
+    font-size: 1.6rem;
+  }
+  
+  .title-2 {
+    font-size: 1.4rem;
+  }
+  
+  .title-3 {
+    font-size: 1.3rem;
+  }
+  
+  .title-4 {
+    font-size: 1.1rem;
+  }
+  
+  .btn-medium {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.8rem;
+  }
+  
+  .btn-small {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+  }
+}

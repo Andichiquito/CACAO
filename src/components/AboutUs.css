@@ -1,0 +1,262 @@
+/* AboutUs.css */
+.about-section {
+  background: #000000;
+  color: white;
+  padding: 4rem 2rem;
+  min-height: 100vh;
+  position: relative;
+  font-family: 'Readex Pro', sans-serif;
+}
+
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+  text-align: center;
+}
+
+/* Historia Section */
+.history-section {
+  width: 100%;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  color: white;
+  font-family: 'Readex Pro', sans-serif;
+  text-align: center;
+}
+
+.underline {
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, #E07A5F, #F2CC8F);
+  margin: 0 auto 2rem;
+}
+
+.history-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  text-align: center;
+}
+
+.history-paragraph {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #e0e0e0;
+  font-family: 'Readex Pro', sans-serif;
+}
+
+.history-paragraph strong {
+  color: #E07A5F;
+  font-weight: 600;
+}
+
+/* Misión y Visión Container */
+.mission-vision-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  width: 100%;
+}
+
+.mission-section,
+.vision-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.mission-text,
+.vision-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #e0e0e0;
+  font-family: 'Readex Pro', sans-serif;
+  text-align: center;
+}
+
+/* Logo Section */
+.logo-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 3rem;
+  padding: 2rem 0;
+}
+
+.cacao-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.cacao-logo:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.logo-image {
+  height: 120px;
+  width: auto;
+  max-width: 400px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s ease;
+}
+
+.logo-image:hover {
+  filter: drop-shadow(0 6px 12px rgba(212, 175, 55, 0.2));
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .about-section {
+    padding: 3rem 1.5rem;
+  }
+  
+  .mission-vision-container {
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-section {
+    padding: 2rem 1rem;
+  }
+  
+  .about-container {
+    gap: 2rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    font-weight: 500;
+  }
+  
+  .mission-vision-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .history-content {
+    gap: 1rem;
+  }
+  
+  .history-paragraph,
+  .mission-text,
+  .vision-text {
+    font-size: 1rem;
+  }
+  
+  .logo-image {
+    height: 100px;
+    max-width: 300px;
+  }
+  
+  .cacao-logo {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-section {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .about-container {
+    gap: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 500;
+  }
+  
+  .history-content {
+    gap: 0.75rem;
+  }
+  
+  .history-paragraph,
+  .mission-text,
+  .vision-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  
+  .logo-image {
+    height: 80px;
+    max-width: 250px;
+  }
+  
+  .cacao-logo {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .about-section {
+    padding: 1rem 0.5rem;
+  }
+  
+  .about-container {
+    gap: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1.6rem;
+  }
+  
+  .history-paragraph,
+  .mission-text,
+  .vision-text {
+    font-size: 0.9rem;
+  }
+  
+  .logo-image {
+    height: 70px;
+    max-width: 200px;
+  }
+  
+  .cacao-logo {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .section-title {
+    font-size: 1.4rem;
+  }
+  
+  .history-paragraph,
+  .mission-text,
+  .vision-text {
+    font-size: 0.85rem;
+  }
+  
+  .logo-image {
+    height: 60px;
+    max-width: 180px;
+  }
+  
+  .cacao-logo {
+    padding: 0.5rem;
+  }
+}
