@@ -342,17 +342,9 @@ html {
   margin: 0 auto;
 }
 
-/* Hero Carousel */
-.hero-carousel {
-  position: relative;
-  height: 60vh;
-  min-height: 400px;
-  max-height: 500px;
+/* Hero Section */
+.hero-section {
   margin-bottom: 4rem;
-  border-radius: 25px;
-  overflow: hidden;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-  cursor: pointer;
 }
 
 .carousel-container {
@@ -767,11 +759,6 @@ html {
     padding: 1.5rem 1.5rem 3rem;
   }
   
-  .hero-carousel {
-    height: 55vh;
-    min-height: 350px;
-    max-height: 400px;
-  }
   
   .carousel-title {
     font-size: 3rem;
@@ -839,11 +826,6 @@ html {
     padding: 1rem 1rem 3rem;
   }
   
-  .hero-carousel {
-    height: 50vh;
-    min-height: 300px;
-    max-height: 350px;
-  }
   
   .carousel-title {
     font-size: 2.8rem;
@@ -946,11 +928,6 @@ html {
     padding: 1rem 0.8rem 2rem;
   }
   
-  .hero-carousel {
-    height: 45vh;
-    min-height: 250px;
-    max-height: 300px;
-  }
   
   .carousel-title {
     font-size: 2.2rem;
@@ -1212,11 +1189,6 @@ html {
     padding: 0.8rem 0.5rem 1.5rem;
   }
   
-  .hero-carousel {
-    height: 40vh;
-    min-height: 220px;
-    max-height: 280px;
-  }
   
   .carousel-title {
     font-size: 1.8rem;

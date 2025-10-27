@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Carousel, 
-  CarouselSlides, 
-  CarouselSlide, 
-  CarouselContent, 
-  CarouselText, 
-  CarouselButtons,
-  CarouselArrows,
-  CarouselDots
-} from './carousel/Carousel';
-import { Button } from './base/BaseComponents';
+import SimpleImageCarousel from './carousel/SimpleImageCarousel';
 import AboutUs from './AboutUs';
 import './HomePage.css';
 
@@ -27,34 +17,6 @@ const HomePage = () => {
     setIsMobileMenuOpen(false);
   };
   
-  // Datos del carrusel
-  const coffeeImages = [
-    {
-      url: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-      title: "Café Premium",
-      description: "Granos seleccionados de las mejores regiones del mundo"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-      title: "Repostería Artesanal",
-      description: "Postres frescos preparados diariamente con ingredientes naturales"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-      title: "Latte Art",
-      description: "Arte y sabor en cada taza, preparado por nuestros baristas expertos"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-      title: "Ambiente Único",
-      description: "Un espacio diseñado para que disfrutes de la mejor experiencia"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-      title: "Desayunos Especiales",
-      description: "Comienza tu día con nuestros deliciosos desayunos y bebidas calientes"
-    }
-  ];
 
   return (
     <div className="homepage">
@@ -151,40 +113,10 @@ const HomePage = () => {
 
       {/* Main Content */}
       <main className="main-content">
-        {/* Carrusel Hero Section */}
-        <Carousel 
-          id="inicio"
-          items={coffeeImages}
-          autoPlayInterval={5000}
-          className="hero-carousel"
-        >
-          <CarouselSlides>
-            {coffeeImages.map((image, index) => (
-              <CarouselSlide key={index}>
-                <img 
-                  src={image.url} 
-                  alt={image.title} 
-                  className="carousel-image"
-                  loading={index === 0 ? "eager" : "lazy"}
-                />
-                <div className="carousel-overlay">
-                  <CarouselContent>
-                    <CarouselText>
-                      <h1 className="carousel-title">{image.title}</h1>
-                      <p className="carousel-description">{image.description}</p>
-                    </CarouselText>
-                    <CarouselButtons>
-                      <Button variant="primary">Ver Menú</Button>
-                    </CarouselButtons>
-                  </CarouselContent>
-                </div>
-              </CarouselSlide>
-            ))}
-          </CarouselSlides>
-          
-          <CarouselArrows />
-          <CarouselDots />
-        </Carousel>
+        {/* Carrusel Simple */}
+        <div id="inicio" className="hero-section">
+          <SimpleImageCarousel />
+        </div>
 
         {/* About Us Section */}
         <AboutUs />
