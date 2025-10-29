@@ -337,7 +337,7 @@ html {
 .main-content {
   position: relative;
   z-index: 5;
-  padding: 2rem 2rem 4rem;
+  padding: 2rem 2rem 2rem;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -975,8 +975,10 @@ html {
   background: #000000;
   color: white;
   padding: 3rem 0 2rem;
-  margin-top: 4rem;
+  margin-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  /* Asegurar que el footer tenga suficiente espacio en móviles */
+  padding-bottom: max(2rem, calc(2rem + env(safe-area-inset-bottom)));
 }
 
 .footer-content {
@@ -1090,6 +1092,11 @@ html {
 
 /* Responsive Footer */
 @media (max-width: 768px) {
+  .footer {
+    padding: 3rem 0 4rem;
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+  
   .footer-content {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -1111,7 +1118,8 @@ html {
 
 @media (max-width: 480px) {
   .footer {
-    padding: 2rem 0 1.5rem;
+    padding: 2rem 0 3rem;
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom));
   }
   
   .footer-content {
@@ -1211,7 +1219,8 @@ html {
   }
   
   .footer {
-    padding: 1.5rem 0 1rem;
+    padding: 1.5rem 0 2.5rem;
+    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
   }
   
   .footer-content {
@@ -1303,4 +1312,21 @@ html {
   .product-description {
     font-size: 0.9rem;
   }
+}
+
+/* Menu Button Styles */
+.menu-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.menu-button:hover {
+  color: #d4af37;
+  transform: translateY(-1px);
 }
