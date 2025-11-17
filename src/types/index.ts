@@ -76,6 +76,7 @@ export interface ThemeContextType {
 
 export interface NavigationProps {
   onNavigate: (page: 'home' | 'menu' | 'about') => void;
+  onOpenCart?: () => void;
 }
 
 export interface CarouselItem {

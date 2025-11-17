@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import SimpleImageCarousel from './carousel/SimpleImageCarousel';
 import AboutUs from './AboutUs';
+import { useCart } from '../hooks/useCart';
 import { HomePageProps } from '../types';
 import './HomePage.css';
 
-const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
+const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
   // Estado para el menú móvil
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const { getTotalItems } = useCart();
+  const totalItems = getTotalItems();
   
   // Función para toggle del menú móvil
   const toggleMobileMenu = (): void => {
@@ -16,6 +19,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   // Función para cerrar el menú móvil
   const closeMobileMenu = (): void => {
     setIsMobileMenuOpen(false);
+  };
+
+  // Función para abrir el carrito
+  const handleOpenCart = (): void => {
+    if (onOpenCart) {
+      onOpenCart();
+    }
   };
   
 
@@ -45,10 +55,29 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </nav>
           
           <div className="header-actions">
-            <div className="cart-icon">
+            <div className="cart-icon" onClick={handleOpenCart} style={{ cursor: 'pointer', position: 'relative' }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 8.99 21.1 8.99 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5H5.21L4.27 3H1V2ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 18.99 21.1 18.99 20 18.1 18 17 18Z" fill="white"/>
               </svg>
+              {totalItems > 0 && (
+                <span className="cart-badge" style={{
+                  position: 'absolute',
+                  top: '-8px',
+                  right: '-8px',
+                  background: '#8B4513',
+                  color: 'white',
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: 'bold'
+                }}>
+                  {totalItems}
+                </span>
+              )}
             </div>
             <div className="profile-picture">
               <div className="profile-avatar">
@@ -107,10 +136,29 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </nav>
           
           <div className="mobile-menu-actions">
-            <div className="mobile-cart-icon">
+            <div className="mobile-cart-icon" onClick={handleOpenCart} style={{ cursor: 'pointer', position: 'relative' }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 8.99 21.1 8.99 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5H5.21L4.27 3H1V2ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 18.99 21.1 18.99 20 18.1 18 17 18Z" fill="white"/>
               </svg>
+              {totalItems > 0 && (
+                <span className="cart-badge" style={{
+                  position: 'absolute',
+                  top: '-8px',
+                  right: '-8px',
+                  background: '#8B4513',
+                  color: 'white',
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: 'bold'
+                }}>
+                  {totalItems}
+                </span>
+              )}
               <span>Carrito</span>
             </div>
             <div className="mobile-profile-icon">

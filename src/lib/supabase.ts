@@ -5,3 +5,4 @@ const supabaseKey: string = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGci
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
+

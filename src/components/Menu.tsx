@@ -4,10 +4,11 @@ import { useCart } from '../hooks/useCart';
 import { MenuProps } from '../types';
 import './Menu.css';
 
-const Menu: React.FC<MenuProps> = ({ onNavigate }) => {
+const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const { categories, products, loading, error, getProductsByCategory } = useMenuData();
-  const { addToCart } = useCart();
+  const { addToCart, getTotalItems } = useCart();
+  const totalItems = getTotalItems();
 
   const toggleDropdown = (categoryId: number): void => {
     setActiveDropdown(activeDropdown === categoryId ? null : categoryId);
@@ -15,8 +16,10 @@ const Menu: React.FC<MenuProps> = ({ onNavigate }) => {
 
   const handleAddToCart = (product: any): void => {
     addToCart(product, 1);
-    // Aquí podrías agregar una notificación de éxito
-    console.log(`Agregado al carrito: ${product.name}`);
+    // Opcional: abrir el carrito después de agregar un producto
+    // if (onOpenCart) {
+    //   onOpenCart();
+    // }
   };
 
   if (loading) {
@@ -63,6 +66,12 @@ const Menu: React.FC<MenuProps> = ({ onNavigate }) => {
     );
   }
 
+  const handleOpenCart = (): void => {
+    if (onOpenCart) {
+      onOpenCart();
+    }
+  };
+
   return (
     <div className="menu-container">
       <div className="menu-header">
@@ -76,6 +85,34 @@ const Menu: React.FC<MenuProps> = ({ onNavigate }) => {
           </svg>
         </button>
         <h1 className="menu-title">CAFETERÍA</h1>
+        <div 
+          className="menu-cart-icon" 
+          onClick={handleOpenCart} 
+          style={{ cursor: 'pointer', position: 'relative', marginLeft: 'auto' }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 8.99 21.1 8.99 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5H5.21L4.27 3H1V2ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 18.99 21.1 18.99 20 18.1 18 17 18Z" fill="white"/>
+          </svg>
+          {totalItems > 0 && (
+            <span className="cart-badge" style={{
+              position: 'absolute',
+              top: '-8px',
+              right: '-8px',
+              background: '#8B4513',
+              color: 'white',
+              borderRadius: '50%',
+              width: '20px',
+              height: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              fontWeight: 'bold'
+            }}>
+              {totalItems}
+            </span>
+          )}
+        </div>
       </div>
       
       <div className="menu-content">

@@ -114,9 +114,9 @@
 }
 
 .logo-image {
-  height: 280px;
+  height: 300;
   width: auto;
-  max-width: 750px;
+  max-width: 800px;
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
   transition: all 0.3s ease;

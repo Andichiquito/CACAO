@@ -69,3 +69,4 @@ const SimpleImageCarousel: React.FC = () => {
 
 export default SimpleImageCarousel;
 
+
