@@ -23,8 +23,38 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
 
   // Función para abrir el carrito
   const handleOpenCart = (): void => {
-    if (onOpenCart) {
-      onOpenCart();
+    try {
+      if (onOpenCart && typeof onOpenCart === 'function') {
+        onOpenCart();
+      } else {
+        console.warn('HomePage: onOpenCart is not a valid function');
+      }
+    } catch (error) {
+      console.error('HomePage: Error opening cart', error);
+    }
+  };
+
+  // Validar props
+  if (!onNavigate || typeof onNavigate !== 'function') {
+    console.error('HomePage: onNavigate prop is required and must be a function');
+    return (
+      <div className="homepage">
+        <div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}>
+          <p>Error de configuración. Por favor, recarga la página.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const handleNavigate = (page: 'home' | 'menu' | 'about'): void => {
+    try {
+      if (!page || !['home', 'menu', 'about'].includes(page)) {
+        console.error('HomePage: Invalid page provided to handleNavigate', page);
+        return;
+      }
+      onNavigate(page);
+    } catch (error) {
+      console.error('HomePage: Error navigating', error);
     }
   };
   
@@ -48,7 +78,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
             <a href="#about" className="nav-link">NOSOTROS</a>
             <button 
               className="nav-link menu-button" 
-              onClick={() => onNavigate('menu')}
+              onClick={() => handleNavigate('menu')}
             >
               MENU
             </button>
@@ -59,7 +89,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 8.99 21.1 8.99 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5H5.21L4.27 3H1V2ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 18.99 21.1 18.99 20 18.1 18 17 18Z" fill="white"/>
               </svg>
-              {totalItems > 0 && (
+              {totalItems > 0 && typeof totalItems === 'number' && (
                 <span className="cart-badge" style={{
                   position: 'absolute',
                   top: '-8px',
@@ -75,7 +105,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
                   fontSize: '12px',
                   fontWeight: 'bold'
                 }}>
-                  {totalItems}
+                  {totalItems > 99 ? '99+' : totalItems}
                 </span>
               )}
             </div>
@@ -127,7 +157,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
             <button 
               className="mobile-nav-link menu-button" 
               onClick={() => {
-                onNavigate('menu');
+                handleNavigate('menu');
                 closeMobileMenu();
               }}
             >
@@ -140,7 +170,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 8.99 21.1 8.99 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5H5.21L4.27 3H1V2ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 18.99 21.1 18.99 20 18.1 18 17 18Z" fill="white"/>
               </svg>
-              {totalItems > 0 && (
+              {totalItems > 0 && typeof totalItems === 'number' && (
                 <span className="cart-badge" style={{
                   position: 'absolute',
                   top: '-8px',
@@ -156,7 +186,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
                   fontSize: '12px',
                   fontWeight: 'bold'
                 }}>
-                  {totalItems}
+                  {totalItems > 99 ? '99+' : totalItems}
                 </span>
               )}
               <span>Carrito</span>
