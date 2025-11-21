@@ -37,9 +37,15 @@
           window.onGoogleMapsReady();
         }
       };
+      
+      // Manejar errores de Google Maps
+      window.gm_authFailure = function() {
+        console.error('❌ Error de autenticación de Google Maps');
+        alert('Error: La API key de Google Maps no es válida o las APIs no están habilitadas.\n\nPor favor:\n1. Ve a https://console.cloud.google.com/\n2. Habilita "Maps JavaScript API"\n3. Habilita "Places API"');
+      };
     </script>
     <script 
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAUOKm2cjRtRgP7ZScsMnI8pKBw0D5snmQ&libraries=places&callback=initGoogleMap"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAUOKm2cjRtRgP7ZScsMnI8pKBw0D5snmQ&libraries=places&callback=initGoogleMap&loading=async"
       async 
       defer
     ></script>

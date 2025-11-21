@@ -78,7 +78,14 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
 
         // Inicializar mapa
         if (window.google && window.google.maps && window.google.maps.Map && mapRef.current) {
-          initializeMap(mapRef.current);
+          try {
+            initializeMap(mapRef.current);
+          } catch (error: any) {
+            console.error('Error al inicializar mapa:', error);
+            if (error?.message?.includes('ApiNotActivated')) {
+              alert('❌ ERROR: Maps JavaScript API no está habilitada\n\nVe a: https://console.cloud.google.com/apis/library\n\n1. Busca "Maps JavaScript API"\n2. Haz clic en "ENABLE"\n3. Busca "Places API"\n4. Haz clic en "ENABLE"\n5. Espera 2-3 minutos y recarga');
+            }
+          }
         }
 
         // Inicializar autocomplete

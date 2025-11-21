@@ -11,27 +11,41 @@ let markerInstance = null;
  */
 export const initializeMap = (mapContainer) => {
   if (!mapContainer) {
+    console.error('No hay contenedor para el mapa');
     return null;
   }
 
   if (!window.google || !window.google.maps || !window.google.maps.Map) {
+    console.error('Google Maps no está disponible');
     return null;
   }
 
   // Si ya existe una instancia, no crear otra
   if (mapInstance) {
+    console.log('Mapa ya existe, reutilizando');
     return mapInstance;
   }
 
   try {
+    console.log('Inicializando mapa...');
     mapInstance = new window.google.maps.Map(mapContainer, {
       center: { lat: -16.5000, lng: -68.1500 },
       zoom: 13
     });
     
+    console.log('✅ Mapa inicializado correctamente');
     return mapInstance;
   } catch (error) {
-    console.error('Error al inicializar mapa:', error);
+    console.error('❌ Error al inicializar mapa:', error);
+    console.error('Error completo:', error);
+    
+    // Mostrar mensaje de error específico
+    if (error && error.message) {
+      if (error.message.includes('ApiNotActivated') || error.message.includes('ApiNotActivatedMapError')) {
+        alert('⚠️ ERROR: La API "Maps JavaScript API" NO está habilitada.\n\nPor favor:\n1. Ve a https://console.cloud.google.com/apis/library\n2. Busca "Maps JavaScript API"\n3. Haz clic en "ENABLE"\n4. Busca "Places API"\n5. Haz clic en "ENABLE"\n6. Espera 2-3 minutos y recarga');
+      }
+    }
+    
     return null;
   }
 };
