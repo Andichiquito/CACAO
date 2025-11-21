@@ -1,14 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../hooks/useCart';
 import './Cart.css';
+import {
+  loadGoogleMapsScript,
+  initializeMap,
+  initializeAutocomplete,
+  updateMapLocation,
+  cleanup as cleanupGoogleMaps,
+  isGoogleMapsAvailable
+} from '../utils/googleMaps';
 
 interface CartProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+interface OrderData {
+  nombre: string;
+  telefono: string;
+  email: string;
+  direccion: string;
+  referencia: string;
+}
+
 const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   const { items, removeFromCart, updateQuantity, getTotalPrice, getTotalItems, clearCart } = useCart();
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [orderData, setOrderData] = useState<OrderData>({
+    nombre: '',
+    telefono: '',
+    email: '',
+    direccion: '',
+    referencia: ''
+  });
+  const [errors, setErrors] = useState<Partial<OrderData>>({});
+  const addressInputRef = useRef<HTMLInputElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
 
   const handleQuantityChange = (productId: number, newQuantity: number): void => {
     // Validar parámetros
@@ -33,7 +60,131 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleCheckout = (): void => {
+  // Cargar Google Maps - Versión para producción
+  useEffect(() => {
+    if (!showOrderModal) return;
+
+    const initMaps = () => {
+      // Esperar a que el contenedor tenga dimensiones
+      const tryInit = () => {
+        if (!mapRef.current || !addressInputRef.current) return false;
+
+        const hasDimensions = mapRef.current.offsetWidth > 0 && mapRef.current.offsetHeight > 0;
+        
+        if (!hasDimensions) {
+          setTimeout(tryInit, 100);
+          return false;
+        }
+
+        // Inicializar mapa
+        if (window.google && window.google.maps && window.google.maps.Map && mapRef.current) {
+          initializeMap(mapRef.current);
+        }
+
+        // Inicializar autocomplete
+        if (window.google && window.google.maps && window.google.maps.places && addressInputRef.current) {
+          initializeAutocomplete(addressInputRef.current, (place: any) => {
+            if (place && place.formatted_address && place.geometry && place.geometry.location) {
+              setOrderData(prev => ({ ...prev, direccion: place.formatted_address || '' }));
+              updateMapLocation(place.geometry.location, place.formatted_address);
+            }
+          });
+        }
+
+        return true;
+      };
+
+      setTimeout(tryInit, 300);
+    };
+
+    // Si Google Maps ya está cargado
+    if (window.google && window.google.maps && window.google.maps.Map) {
+      initMaps();
+    } else if ((window as any).googleMapsLoaded) {
+      // Si el callback ya se ejecutó
+      initMaps();
+    } else {
+      // Esperar al callback
+      (window as any).onGoogleMapsReady = () => {
+        initMaps();
+      };
+      
+      // Verificar periódicamente si ya está cargado
+      const checkInterval = setInterval(() => {
+        if (window.google && window.google.maps && window.google.maps.Map) {
+          clearInterval(checkInterval);
+          initMaps();
+        }
+      }, 200);
+      
+      setTimeout(() => clearInterval(checkInterval), 10000);
+    }
+
+    return () => {
+      cleanupGoogleMaps();
+    };
+  }, [showOrderModal]);
+
+  const handleViewOrder = (): void => {
+    const totalItems = getTotalItems();
+    if (totalItems <= 0) {
+      alert('El carrito está vacío. Agrega productos antes de ver el pedido.');
+      return;
+    }
+    setShowOrderModal(true);
+  };
+
+  const handleInputChange = (field: keyof OrderData, value: string): void => {
+    setOrderData(prev => ({ ...prev, [field]: value }));
+    // Limpiar error del campo cuando el usuario empiece a escribir
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const isFormValid = (): boolean => {
+    return (
+      orderData.nombre.trim() !== '' &&
+      orderData.telefono.trim() !== '' &&
+      /^[0-9+\-\s()]+$/.test(orderData.telefono) &&
+      orderData.email.trim() !== '' &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(orderData.email) &&
+      orderData.direccion.trim() !== ''
+    );
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<OrderData> = {};
+
+    if (!orderData.nombre.trim()) {
+      newErrors.nombre = 'El nombre es requerido';
+    }
+
+    if (!orderData.telefono.trim()) {
+      newErrors.telefono = 'El teléfono es requerido';
+    } else if (!/^[0-9+\-\s()]+$/.test(orderData.telefono)) {
+      newErrors.telefono = 'El teléfono no es válido';
+    }
+
+    if (!orderData.email.trim()) {
+      newErrors.email = 'El email es requerido';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(orderData.email)) {
+      newErrors.email = 'El email no es válido';
+    }
+
+    if (!orderData.direccion.trim()) {
+      newErrors.direccion = 'La dirección es requerida';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleConfirmOrder = (): void => {
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       const totalPrice = getTotalPrice();
       const totalItems = getTotalItems();
@@ -51,12 +202,30 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         return;
       }
 
-      // Aquí puedes agregar la lógica de checkout
-      alert(`Pedido confirmado!\n\nTotal: Bs. ${totalPrice.toFixed(2)}`);
+      // Aquí puedes agregar la lógica de checkout con los datos del pedido
+      console.log('Datos del pedido:', orderData);
+      alert(`Pedido confirmado!\n\nCliente: ${orderData.nombre}\nTeléfono: ${orderData.telefono}\nDirección: ${orderData.direccion}\nTotal: Bs. ${totalPrice.toFixed(2)}`);
+      
+      // Limpiar formulario y cerrar modales
+      setOrderData({
+        nombre: '',
+        telefono: '',
+        email: '',
+        direccion: '',
+        referencia: ''
+      });
+      setShowOrderModal(false);
+      clearCart();
+      onClose();
     } catch (error) {
       console.error('Cart: Error during checkout', error);
       alert('Error al procesar el pedido. Por favor, intenta nuevamente.');
     }
+  };
+
+  const handleCloseOrderModal = (): void => {
+    setShowOrderModal(false);
+    setErrors({});
   };
 
   if (!isOpen) return null;
@@ -196,9 +365,9 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   </button>
                   <button
                     className="cart-button cart-button-primary"
-                    onClick={handleCheckout}
+                    onClick={handleViewOrder}
                   >
-                    Confirmar Pedido
+                    Ver Pedido
                   </button>
                 </div>
               </div>
@@ -206,6 +375,140 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
           )}
         </div>
       </div>
+
+      {/* Modal de Datos del Pedido */}
+      {showOrderModal && (
+        <div className="order-modal-overlay" onClick={handleCloseOrderModal}>
+          <div className="order-modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="order-modal-header">
+              <h2 className="order-modal-title">Datos del Pedido</h2>
+              <button 
+                className="order-modal-close-button"
+                onClick={handleCloseOrderModal}
+                aria-label="Cerrar modal"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div className="order-modal-content">
+              <div className="order-form">
+                <div className="form-group">
+                  <label htmlFor="nombre" className="form-label">
+                    Nombre Completo <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="nombre"
+                    className={`form-input ${errors.nombre ? 'form-input-error' : ''}`}
+                    value={orderData.nombre}
+                    onChange={(e) => handleInputChange('nombre', e.target.value)}
+                    placeholder="Ingresa tu nombre completo"
+                  />
+                  {errors.nombre && <span className="error-message">{errors.nombre}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="telefono" className="form-label">
+                    Teléfono <span className="required">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    id="telefono"
+                    className={`form-input ${errors.telefono ? 'form-input-error' : ''}`}
+                    value={orderData.telefono}
+                    onChange={(e) => handleInputChange('telefono', e.target.value)}
+                    placeholder="Ej: 70012345"
+                  />
+                  {errors.telefono && <span className="error-message">{errors.telefono}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="email" className="form-label">
+                    Email <span className="required">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    className={`form-input ${errors.email ? 'form-input-error' : ''}`}
+                    value={orderData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    placeholder="tu@email.com"
+                  />
+                  {errors.email && <span className="error-message">{errors.email}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="direccion" className="form-label">
+                    Dirección de Entrega <span className="required">*</span>
+                  </label>
+                  <input
+                    ref={addressInputRef}
+                    type="text"
+                    id="direccion"
+                    className={`form-input ${errors.direccion ? 'form-input-error' : ''}`}
+                    value={orderData.direccion}
+                    onChange={(e) => handleInputChange('direccion', e.target.value)}
+                    placeholder="Busca tu dirección en el mapa"
+                  />
+                  {errors.direccion && <span className="error-message">{errors.direccion}</span>}
+                  <p className="form-hint">Escribe tu dirección y selecciona una opción del mapa</p>
+                  
+                  {/* Mapa de Google Maps */}
+                  <div 
+                    ref={mapRef}
+                    className="google-map-container"
+                    style={{ height: '300px', width: '100%', marginTop: '1rem', borderRadius: '8px', overflow: 'hidden', minHeight: '300px' }}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="referencia" className="form-label">
+                    Referencia (Opcional)
+                  </label>
+                  <textarea
+                    id="referencia"
+                    className="form-input form-textarea"
+                    value={orderData.referencia}
+                    onChange={(e) => handleInputChange('referencia', e.target.value)}
+                    placeholder="Ej: Casa de color azul, portón negro, etc."
+                    rows={3}
+                  />
+                </div>
+
+                <div className="order-summary">
+                  <div className="order-summary-row">
+                    <span className="summary-label">Total de items:</span>
+                    <span className="summary-value">{getTotalItems()}</span>
+                  </div>
+                  <div className="order-summary-row order-summary-total">
+                    <span className="summary-label">Total a pagar:</span>
+                    <span className="summary-value">Bs. {getTotalPrice().toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="order-modal-footer">
+              <button
+                className="cart-button cart-button-secondary"
+                onClick={handleCloseOrderModal}
+              >
+                Cancelar
+              </button>
+              <button
+                className="cart-button cart-button-primary"
+                onClick={handleConfirmOrder}
+                disabled={!isFormValid()}
+              >
+                Confirmar Pedido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
