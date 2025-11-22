@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../hooks/useCart';
 import './Cart.css';
 import {
-  loadGoogleMapsScript,
   initializeMap,
-  initializeAutocomplete,
   updateMapLocation,
-  cleanup as cleanupGoogleMaps,
-  isGoogleMapsAvailable
-} from '../utils/googleMaps';
+  cleanup as cleanupMap,
+  isMapAvailable,
+  geocodeAddress
+} from '../utils/leafletMap';
+import 'leaflet/dist/leaflet.css';
 
 interface CartProps {
   isOpen: boolean;
@@ -18,9 +18,9 @@ interface CartProps {
 interface OrderData {
   nombre: string;
   telefono: string;
-  email: string;
   direccion: string;
   referencia: string;
+  notas: string;
 }
 
 const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
@@ -29,13 +29,16 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   const [orderData, setOrderData] = useState<OrderData>({
     nombre: '',
     telefono: '',
-    email: '',
     direccion: '',
-    referencia: ''
+    referencia: '',
+    notas: ''
   });
   const [errors, setErrors] = useState<Partial<OrderData>>({});
+  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
   const addressInputRef = useRef<HTMLInputElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleQuantityChange = (productId: number, newQuantity: number): void => {
     // Validar parámetros
@@ -60,14 +63,14 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // Cargar Google Maps - Versión para producción
+  // Inicializar mapa de Leaflet (OpenStreetMap - Gratis)
   useEffect(() => {
     if (!showOrderModal) return;
 
-    const initMaps = () => {
+    const initMap = async () => {
       // Esperar a que el contenedor tenga dimensiones
       const tryInit = () => {
-        if (!mapRef.current || !addressInputRef.current) return false;
+        if (!mapRef.current) return false;
 
         const hasDimensions = mapRef.current.offsetWidth > 0 && mapRef.current.offsetHeight > 0;
         
@@ -76,25 +79,16 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
           return false;
         }
 
-        // Inicializar mapa
-        if (window.google && window.google.maps && window.google.maps.Map && mapRef.current) {
-          try {
-            initializeMap(mapRef.current);
-          } catch (error: any) {
+        // Inicializar mapa con geolocalización y callback para actualizar dirección
+        if (mapRef.current) {
+          initializeMap(mapRef.current, (address: string, lat: number, lng: number) => {
+            setOrderData(prev => ({ ...prev, direccion: address }));
+            setSelectedLocation({ lat, lng });
+            if (errors.direccion) {
+              setErrors(prev => ({ ...prev, direccion: undefined }));
+            }
+          }).catch((error: any) => {
             console.error('Error al inicializar mapa:', error);
-            if (error?.message?.includes('ApiNotActivated')) {
-              alert('❌ ERROR: Maps JavaScript API no está habilitada\n\nVe a: https://console.cloud.google.com/apis/library\n\n1. Busca "Maps JavaScript API"\n2. Haz clic en "ENABLE"\n3. Busca "Places API"\n4. Haz clic en "ENABLE"\n5. Espera 2-3 minutos y recarga');
-            }
-          }
-        }
-
-        // Inicializar autocomplete
-        if (window.google && window.google.maps && window.google.maps.places && addressInputRef.current) {
-          initializeAutocomplete(addressInputRef.current, (place: any) => {
-            if (place && place.formatted_address && place.geometry && place.geometry.location) {
-              setOrderData(prev => ({ ...prev, direccion: place.formatted_address || '' }));
-              updateMapLocation(place.geometry.location, place.formatted_address);
-            }
           });
         }
 
@@ -104,31 +98,13 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       setTimeout(tryInit, 300);
     };
 
-    // Si Google Maps ya está cargado
-    if (window.google && window.google.maps && window.google.maps.Map) {
-      initMaps();
-    } else if ((window as any).googleMapsLoaded) {
-      // Si el callback ya se ejecutó
-      initMaps();
-    } else {
-      // Esperar al callback
-      (window as any).onGoogleMapsReady = () => {
-        initMaps();
-      };
-      
-      // Verificar periódicamente si ya está cargado
-      const checkInterval = setInterval(() => {
-        if (window.google && window.google.maps && window.google.maps.Map) {
-          clearInterval(checkInterval);
-          initMaps();
-        }
-      }, 200);
-      
-      setTimeout(() => clearInterval(checkInterval), 10000);
-    }
+    initMap();
 
     return () => {
-      cleanupGoogleMaps();
+      cleanupMap();
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
     };
   }, [showOrderModal]);
 
@@ -147,6 +123,47 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
+
+    // Si es el campo de dirección, buscar SOLO cuando dejen de escribir por 2.5 segundos
+    // NO buscar mientras están escribiendo (solo cuando dejen de escribir)
+    if (field === 'direccion' && value.trim().length > 2) {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      
+      // Solo buscar cuando dejen de escribir por 2.5 segundos
+      searchTimeoutRef.current = setTimeout(async () => {
+        setIsSearching(true);
+        await updateMapLocation(value);
+        setIsSearching(false);
+      }, 2500); // Esperar 2.5 segundos después de que el usuario deje de escribir
+    } else if (field === 'direccion' && value.trim().length === 0) {
+      // Limpiar timeout si borran todo
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    }
+  };
+
+  const handleAddressKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>): Promise<void> => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      
+      // Cancelar cualquier búsqueda pendiente
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+        searchTimeoutRef.current = null;
+      }
+      
+      const address = orderData.direccion.trim();
+      
+      if (address.length > 0) {
+        setIsSearching(true);
+        await updateMapLocation(address);
+        setIsSearching(false);
+        // No mostrar mensajes de error, solo intentar buscar
+      }
+    }
   };
 
   const isFormValid = (): boolean => {
@@ -154,8 +171,6 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       orderData.nombre.trim() !== '' &&
       orderData.telefono.trim() !== '' &&
       /^[0-9+\-\s()]+$/.test(orderData.telefono) &&
-      orderData.email.trim() !== '' &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(orderData.email) &&
       orderData.direccion.trim() !== ''
     );
   };
@@ -173,11 +188,6 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       newErrors.telefono = 'El teléfono no es válido';
     }
 
-    if (!orderData.email.trim()) {
-      newErrors.email = 'El email es requerido';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(orderData.email)) {
-      newErrors.email = 'El email no es válido';
-    }
 
     if (!orderData.direccion.trim()) {
       newErrors.direccion = 'La dirección es requerida';
@@ -209,18 +219,56 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         return;
       }
 
-      // Aquí puedes agregar la lógica de checkout con los datos del pedido
-      console.log('Datos del pedido:', orderData);
-      alert(`Pedido confirmado!\n\nCliente: ${orderData.nombre}\nTeléfono: ${orderData.telefono}\nDirección: ${orderData.direccion}\nTotal: Bs. ${totalPrice.toFixed(2)}`);
+      // Generar mensaje de WhatsApp con todos los datos del pedido
+      let whatsappMessage = `🍫 *NUEVO PEDIDO - CACAO*\n\n`;
+      whatsappMessage += `👤 *Cliente:* ${orderData.nombre}\n`;
+      whatsappMessage += `📱 *Teléfono:* ${orderData.telefono}\n\n`;
+      
+      // Agregar dirección con link de Google Maps
+      if (selectedLocation) {
+        const mapsLink = `https://www.google.com/maps?q=${selectedLocation.lat},${selectedLocation.lng}`;
+        whatsappMessage += `📍 *Dirección:* ${orderData.direccion}\n`;
+        whatsappMessage += `🗺️ ${mapsLink}\n\n`;
+      } else {
+        whatsappMessage += `📍 *Dirección:* ${orderData.direccion}\n\n`;
+      }
+      
+      // Agregar referencia si existe
+      if (orderData.referencia.trim()) {
+        whatsappMessage += `🏠 *Referencia:* ${orderData.referencia}\n\n`;
+      }
+      
+      // Agregar items del pedido
+      whatsappMessage += `🛒 *PEDIDO:*\n`;
+      items.forEach((item) => {
+        const subtotal = item.product.price * item.quantity;
+        whatsappMessage += `• ${item.product.name} x${item.quantity} = Bs. ${subtotal.toFixed(2)}\n`;
+      });
+      
+      whatsappMessage += `\n💰 *TOTAL: Bs. ${totalPrice.toFixed(2)}*\n`;
+      
+      // Agregar notas si existen
+      if (orderData.notas.trim()) {
+        whatsappMessage += `\n📝 *NOTAS:*\n${orderData.notas}\n`;
+      }
+      
+      // Codificar el mensaje para URL
+      const encodedMessage = encodeURIComponent(whatsappMessage);
+      const whatsappNumber = '59179797033'; // Número sin el +
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+      
+      // Abrir WhatsApp
+      window.open(whatsappUrl, '_blank');
       
       // Limpiar formulario y cerrar modales
       setOrderData({
         nombre: '',
         telefono: '',
-        email: '',
         direccion: '',
-        referencia: ''
+        referencia: '',
+        notas: ''
       });
+      setSelectedLocation(null);
       setShowOrderModal(false);
       clearCart();
       onClose();
@@ -432,20 +480,6 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   {errors.telefono && <span className="error-message">{errors.telefono}</span>}
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="email" className="form-label">
-                    Email <span className="required">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    className={`form-input ${errors.email ? 'form-input-error' : ''}`}
-                    value={orderData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="tu@email.com"
-                  />
-                  {errors.email && <span className="error-message">{errors.email}</span>}
-                </div>
 
                 <div className="form-group">
                   <label htmlFor="direccion" className="form-label">
@@ -458,12 +492,36 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                     className={`form-input ${errors.direccion ? 'form-input-error' : ''}`}
                     value={orderData.direccion}
                     onChange={(e) => handleInputChange('direccion', e.target.value)}
-                    placeholder="Busca tu dirección en el mapa"
+                    onKeyDown={handleAddressKeyDown}
+                    placeholder="Ej: J J Carras 1617, Cochabamba (presiona Enter para buscar)"
+                    disabled={isSearching}
                   />
                   {errors.direccion && <span className="error-message">{errors.direccion}</span>}
-                  <p className="form-hint">Escribe tu dirección y selecciona una opción del mapa</p>
+                  <p className="form-hint">
+                    {isSearching ? 'Buscando dirección en Cochabamba...' : 'Escribe tu dirección en Cochabamba, haz clic en el mapa o arrastra el pin para seleccionar la ubicación'}
+                  </p>
                   
-                  {/* Mapa de Google Maps */}
+                  {/* Link a OpenStreetMap cuando hay una ubicación seleccionada */}
+                  {selectedLocation && (
+                    <a
+                      href={`https://www.openstreetmap.org/?mlat=${selectedLocation.lat}&mlon=${selectedLocation.lng}&zoom=16`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="map-link"
+                      style={{
+                        display: 'inline-block',
+                        marginTop: '0.5rem',
+                        color: '#4285F4',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        fontWeight: 500
+                      }}
+                    >
+                      📍 Ver en mapa
+                    </a>
+                  )}
+                  
+                  {/* Mapa de OpenStreetMap */}
                   <div 
                     ref={mapRef}
                     className="google-map-container"
@@ -473,7 +531,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
 
                 <div className="form-group">
                   <label htmlFor="referencia" className="form-label">
-                    Referencia (Opcional)
+                    Referencia de Dirección (Opcional)
                   </label>
                   <textarea
                     id="referencia"
@@ -481,6 +539,20 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                     value={orderData.referencia}
                     onChange={(e) => handleInputChange('referencia', e.target.value)}
                     placeholder="Ej: Casa de color azul, portón negro, etc."
+                    rows={2}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="notas" className="form-label">
+                    Notas del Pedido (Opcional)
+                  </label>
+                  <textarea
+                    id="notas"
+                    className="form-input form-textarea"
+                    value={orderData.notas}
+                    onChange={(e) => handleInputChange('notas', e.target.value)}
+                    placeholder="Ej: Sin cebolla, extra queso, entregar después de las 6pm..."
                     rows={3}
                   />
                 </div>

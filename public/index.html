@@ -29,26 +29,6 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>CACAO - Cafetería y Repostería Artesanal</title>
-    <!-- Google Maps API -->
-    <script>
-      window.initGoogleMap = function() {
-        window.googleMapsLoaded = true;
-        if (window.onGoogleMapsReady) {
-          window.onGoogleMapsReady();
-        }
-      };
-      
-      // Manejar errores de Google Maps
-      window.gm_authFailure = function() {
-        console.error('❌ Error de autenticación de Google Maps');
-        alert('Error: La API key de Google Maps no es válida o las APIs no están habilitadas.\n\nPor favor:\n1. Ve a https://console.cloud.google.com/\n2. Habilita "Maps JavaScript API"\n3. Habilita "Places API"');
-      };
-    </script>
-    <script 
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAUOKm2cjRtRgP7ZScsMnI8pKBw0D5snmQ&libraries=places&callback=initGoogleMap&loading=async"
-      async 
-      defer
-    ></script>
   </head>
   <body style="background-color: #000000; margin: 0; padding: 0;">
     <noscript>You need to enable JavaScript to run this app.</noscript>
