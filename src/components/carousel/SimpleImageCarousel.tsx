@@ -5,10 +5,10 @@ const SimpleImageCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   
   const images: string[] = [
-    "/tortas.png",
-    "/Salados.png", 
-    "/qrs.png",
-    "/Fria.png"
+    "/images/tortas.png",
+    "/images/Salados.png", 
+    "/images/qrs.png",
+    "/images/Fria.png"
   ];
 
   // Auto-play cada 4 segundos

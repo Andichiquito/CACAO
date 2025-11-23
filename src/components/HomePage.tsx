@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SimpleImageCarousel from './carousel/SimpleImageCarousel';
 import AboutUs from './AboutUs';
 import { useCart } from '../hooks/useCart';
@@ -10,6 +10,20 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const { getTotalItems } = useCart();
   const totalItems = getTotalItems();
+
+  // Restaurar posición de scroll si hay hash en la URL
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash === '#about') {
+      // Esperar a que el DOM se renderice completamente
+      setTimeout(() => {
+        const aboutSection = document.getElementById('about');
+        if (aboutSection) {
+          aboutSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, []);
   
   // Función para toggle del menú móvil
   const toggleMobileMenu = (): void => {
@@ -63,14 +77,14 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
     <div className="homepage">
       {/* Background watermark logo */}
       <div className="background-logo">
-        <img src="/Logo negro.PNG" alt="CACAO Background" />
+        <img src="/logos/Logo negro.PNG" alt="CACAO Background" />
       </div>
       
       {/* Header */}
       <header className="header">
         <div className="header-content">
           <div className="logo-section">
-            <img src="/logo-blanco.png" alt="CACAO Logo" className="header-logo" />
+            <img src="/logos/logo-blanco.png" alt="CACAO Logo" className="header-logo" />
           </div>
           
           <nav className="navigation">
@@ -109,13 +123,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
                 </span>
               )}
             </div>
-            <div className="profile-picture">
-              <div className="profile-avatar">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="white"/>
-                </svg>
-              </div>
-            </div>
             
             {/* Botón hamburguesa para móviles */}
             <button 
@@ -135,7 +142,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
       <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-menu-content">
           <div className="mobile-menu-header">
-            <img src="/logo-blanco.png" alt="CACAO Logo" className="mobile-menu-logo" />
+            <img src="/logos/logo-blanco.png" alt="CACAO Logo" className="mobile-menu-logo" />
             <button 
               className="mobile-menu-close"
               onClick={closeMobileMenu}
@@ -191,12 +198,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
               )}
               <span>Carrito</span>
             </div>
-            <div className="mobile-profile-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="white"/>
-              </svg>
-              <span>Perfil</span>
-            </div>
           </div>
         </div>
       </div>
@@ -206,6 +207,36 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
         {/* Carrusel Simple */}
         <div id="inicio" className="hero-section">
           <SimpleImageCarousel />
+        </div>
+
+        {/* Sección destacada del Menú */}
+        <div className="menu-highlight-section">
+          <div className="menu-highlight-content">
+            <h2 className="menu-highlight-title">Nuestro Menú</h2>
+            <p className="menu-highlight-subtitle">Descubre nuestras deliciosas opciones. Haz clic en la imagen para ver el menú completo</p>
+            <div 
+              className="menu-image-container"
+              onClick={() => handleNavigate('menu')}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleNavigate('menu');
+                }
+              }}
+              aria-label="Ver menú completo"
+            >
+              <img 
+                src="/images/Menu.png" 
+                alt="Menú CACAO" 
+                className="menu-highlight-image"
+              />
+              <div className="menu-image-overlay">
+                <span className="menu-click-text">Haz clic para ver el menú completo</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* About Us Section */}

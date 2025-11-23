@@ -67,7 +67,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
               <path d="M19 12H5M12 19L5 12L12 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-          <h1 className="menu-title">CAFETERÍA</h1>
+          <h1 className="menu-title">MENÚ</h1>
         </div>
         <div className="loading-message">
           <p>Cargando menú...</p>
@@ -89,7 +89,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
               <path d="M19 12H5M12 19L5 12L12 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-          <h1 className="menu-title">CAFETERÍA</h1>
+          <h1 className="menu-title">MENÚ</h1>
         </div>
         <div className="error-message">
           <p>Error al cargar el menú: {error}</p>
@@ -116,7 +116,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
             <path d="M19 12H5M12 19L5 12L12 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
-        <h1 className="menu-title">CAFETERÍA</h1>
+        <h1 className="menu-title">MENÚ</h1>
         <div 
           className="menu-cart-icon" 
           onClick={handleOpenCart} 

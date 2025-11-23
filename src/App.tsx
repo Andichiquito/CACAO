@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HomePage from './components/HomePage';
 import Menu from './components/Menu';
 import Cart from './components/Cart';
@@ -8,9 +8,33 @@ import './App.css';
 
 type ViewType = 'home' | 'menu' | 'about';
 
+const STORAGE_KEY = 'cacao_current_view';
+
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<ViewType>('home');
+  // Restaurar la vista guardada o usar 'home' por defecto
+  const getInitialView = (): ViewType => {
+    try {
+      const savedView = localStorage.getItem(STORAGE_KEY);
+      if (savedView && ['home', 'menu', 'about'].includes(savedView)) {
+        return savedView as ViewType;
+      }
+    } catch (error) {
+      console.error('App: Error reading from localStorage', error);
+    }
+    return 'home';
+  };
+
+  const [currentView, setCurrentView] = useState<ViewType>(getInitialView);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+
+  // Guardar la vista actual en localStorage cada vez que cambia
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, currentView);
+    } catch (error) {
+      console.error('App: Error saving to localStorage', error);
+    }
+  }, [currentView]);
 
   const openCart = (): void => {
     setIsCartOpen(true);

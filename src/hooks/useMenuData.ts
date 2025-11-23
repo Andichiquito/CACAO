@@ -23,11 +23,12 @@ export const useMenuData = (): MenuDataHook => {
       }
 
       // Obtener categorías con validación
+      // Orden personalizado: primero las categorías principales, luego las demás
       const { data: categoriesData, error: categoriesError } = await supabase
         .from('categories')
         .select('*')
         .eq('is_active', true)
-        .order('id');
+        .order('name');
 
       if (categoriesError) {
         throw new Error(`Error al cargar categorías: ${categoriesError.message || 'Error desconocido'}`);
@@ -55,7 +56,7 @@ export const useMenuData = (): MenuDataHook => {
           )
         `)
         .eq('is_available', true)
-        .order('id');
+        .order('name');
 
       if (productsError) {
         throw new Error(`Error al cargar productos: ${productsError.message || 'Error desconocido'}`);

@@ -281,7 +281,22 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   const handleCloseOrderModal = (): void => {
     setShowOrderModal(false);
     setErrors({});
+    // Remover clase del body cuando se cierra el modal
+    document.body.classList.remove('modal-open');
   };
+
+  // Prevenir scroll del body cuando el modal está abierto
+  useEffect(() => {
+    if (showOrderModal) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [showOrderModal]);
 
   if (!isOpen) return null;
 

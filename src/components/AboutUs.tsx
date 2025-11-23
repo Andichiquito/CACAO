@@ -55,7 +55,7 @@ const AboutUs: React.FC = () => {
         {/* Logo */}
         <div className="logo-section">
           <div className="cacao-logo">
-            <img src="/logo-blanco.png" alt="CACAO Logo" className="logo-image" />
+            <img src="/logos/logo-blanco.png" alt="CACAO Logo" className="logo-image" />
           </div>
         </div>
 
