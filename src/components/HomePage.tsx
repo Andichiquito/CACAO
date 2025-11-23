@@ -288,20 +288,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
               >
               </blockquote>
             </div>
-            <div className="instagram-description">
-              <p>
-                Mantente al día con nuestras últimas creaciones, promociones especiales y momentos especiales 
-                en CACAO. Síguenos para no perderte ninguna novedad.
-              </p>
-              <a 
-                href="https://www.instagram.com/pasteleriacacao" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="instagram-link"
-              >
-                @pasteleriacacao
-              </a>
-            </div>
           </div>
         </div>
 

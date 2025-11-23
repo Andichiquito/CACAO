@@ -426,45 +426,6 @@ html {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
-.instagram-description {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
-}
-
-.instagram-description p {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1rem;
-  line-height: 1.6;
-  margin: 0 0 1rem 0;
-  font-family: 'Readex Pro', sans-serif;
-}
-
-.instagram-link {
-  display: inline-block;
-  color: #E07A5F;
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-decoration: none;
-  font-family: 'Readex Pro', sans-serif;
-  transition: all 0.3s ease;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  background: rgba(224, 122, 95, 0.1);
-  border: 1px solid rgba(224, 122, 95, 0.3);
-}
-
-.instagram-link:hover {
-  color: #F2CC8F;
-  background: rgba(224, 122, 95, 0.2);
-  border-color: rgba(224, 122, 95, 0.5);
-  transform: translateY(-2px);
-}
-
 /* Sección de Horarios */
 .horarios-section {
   margin: 4rem 0;
