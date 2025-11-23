@@ -45,6 +45,7 @@
   font-weight: bold;
   letter-spacing: 0.1em;
   margin: 0;
+  margin-left: 3rem;
   color: white;
 }
 
@@ -68,14 +69,25 @@
 }
 
 .blend-box {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
   color: white;
-  padding: 2rem;
+  padding: 0;
   border-radius: 12px;
   text-align: center;
   min-width: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.blend-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 12px;
+  object-fit: contain;
 }
 
 .blend-title {
@@ -176,9 +188,14 @@
   width: 100%;
 }
 
+.category-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
 
 .category-title {
-  flex: 1;
   font-size: 1.2rem;
   font-weight: bold;
   letter-spacing: 0.1em;
@@ -226,6 +243,120 @@
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   align-items: start;
+}
+
+/* Estilos para DESAYUNOS con subcategorías */
+.desayunos-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* Estilos para COOKIE BAR con subcategorías */
+.cookie-bar-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* Estilos para REPOSTERÍA con subcategorías */
+.reposteria-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+  grid-auto-rows: minmax(500px, auto);
+}
+
+/* Estilos para SALADOS con subcategorías */
+.salados-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* Estilos para BRUNCH ALL DAY con subcategorías */
+.brunch-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* Estilos para BEBIDAS FRÍAS con subcategorías */
+.bebidas-frias-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* Estilos para BEBIDAS CALIENTES con subcategorías */
+.bebidas-calientes-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* Estilos para CAFETERÍA FRÍA con subcategorías */
+.cafeteria-fria-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.subcategory-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  height: 100%;
+}
+
+.reposteria-layout .subcategory-box {
+  min-height: 500px;
+}
+
+.extras-box {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.zumos-box {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.subcategory-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  margin: 0 0 1rem 0;
+  color: white;
+  text-align: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.subcategory-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex: 1;
+}
+
+.subcategory-items .dropdown-item {
+  margin: 0;
+  width: 100%;
 }
 
 .dropdown-item {
@@ -300,6 +431,174 @@
   
   .dropdown-items {
     grid-template-columns: 1fr;
+  }
+
+  .desayunos-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .cookie-bar-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .reposteria-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .salados-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .brunch-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .bebidas-frias-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .bebidas-calientes-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .cafeteria-fria-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .extras-box {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .zumos-box {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .paquetes-box {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .sueltas-box {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .tortas-box {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .postres-box {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .sandwiches-box {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .paninis-box {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .cunapes-box {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .bagels-box {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .waffles-box {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .sobre-pan-box {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .entre-pan-box {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .infusiones-frias-box {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .licuados-box {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .refrescantes-box {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .frappes-box {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .smoothies-box {
+    grid-column: 1;
+    grid-row: 5;
+  }
+
+  .sodas-frias-box {
+    grid-column: 1;
+    grid-row: 6;
+  }
+
+  .cafes-box {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .infusiones-calientes-box {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .chocolates-box {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .con-leche-box {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .espresso-frio-box {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .subcategory-box {
+    padding: 1rem;
+  }
+
+  .subcategory-title {
+    font-size: 1.1rem;
   }
   
   .category-title {

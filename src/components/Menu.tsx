@@ -104,6 +104,43 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
     }
   };
 
+  const getCategoryIcon = (categoryName: string): React.ReactNode => {
+    const emojiStyle = { 
+      fontSize: '24px', 
+      marginRight: '0.5rem', 
+      lineHeight: '1',
+      filter: 'grayscale(100%) contrast(1.2) brightness(1.1)',
+      display: 'inline-block',
+      opacity: 0.9
+    };
+    
+    switch (categoryName?.toUpperCase()) {
+      case 'BEBIDAS FRÍAS':
+      case 'BEBIDAS FRIAS':
+        return <span style={emojiStyle}>🧊</span>; // Cubo de hielo
+      case 'BEBIDAS CALIENTES':
+      case 'CAFETERÍA FRÍA':
+        return <span style={emojiStyle}>☕</span>; // Café
+      case 'REPOSTERÍA':
+      case 'REPOSTERIA':
+        return <span style={emojiStyle}>🧁</span>; // Cupcake
+      case 'SALADOS':
+        return <span style={emojiStyle}>🥖</span>; // Baguette
+      case 'BRUNCH ALL DAY':
+        return <span style={emojiStyle}>🍳</span>; // Sarten con huevo
+      case 'COOKIE BAR':
+        return <span style={emojiStyle}>🍪</span>; // Cookie
+      case 'DESAYUNOS':
+        return <span style={emojiStyle}>🥞</span>; // Panqueques
+      case 'INFUSIONES CALIENTES':
+        return <span style={emojiStyle}>🫖</span>; // Tetera
+      case 'CHOCOLATES':
+        return <span style={emojiStyle}>🍫</span>; // Chocolate
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="menu-container">
       <div className="menu-header">
@@ -151,32 +188,54 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
         {/* Sección especial del blend */}
         <div className="special-blend-section">
           <div className="blend-box">
-            <h2 className="blend-title">BLEND ESPECIAL CACAO</h2>
-            <p className="blend-subtitle">La esencia de nuestra pasión</p>
-            <div className="blend-details">
-              <p><strong>Origen:</strong> Caranavi, Bolivia</p>
-              <p><strong>Altura:</strong> 1.600 - 1.800 msnm</p>
-              <p><strong>Variedad:</strong> Typica, Caturra</p>
-              <p><strong>Notas:</strong> Chocolate, Caramelo, Frutos Rojos</p>
-            </div>
-            <p className="blend-description">
-              Nuestro blend exclusivo, cuidadosamente seleccionado y tostado para ofrecer una experiencia única en cada taza.
-              Un equilibrio perfecto entre dulzura y acidez, con un cuerpo sedoso y un final persistente.
-            </p>
+            <img 
+              src="/images/blend-cacao.png" 
+              alt="BLEND ESPECIAL CACAO" 
+              className="blend-image"
+            />
           </div>
         </div>
 
         {/* Menús desplegables */}
         <div className="dropdown-menus">
           {Array.isArray(categories) && categories.length > 0 ? (
-            categories.map((category) => {
+            categories
+              .filter(category => {
+                // Ocultar INFUSIONES CALIENTES y CHOCOLATES de la lista principal
+                // ya que se muestran como subcategorías dentro de BEBIDAS CALIENTES
+                return category.name !== 'INFUSIONES CALIENTES' && category.name !== 'CHOCOLATES';
+              })
+              .map((category) => {
               // Validar categoría
               if (!category || typeof category.id !== 'number' || !category.name) {
                 console.warn('Menu: Invalid category found', category);
                 return null;
               }
 
-              const categoryProducts = getProductsByCategory(category.id);
+              // Para BEBIDAS CALIENTES, también incluir productos de INFUSIONES CALIENTES y CHOCOLATES
+              let categoryProducts = getProductsByCategory(category.id);
+              
+              if (category.name === 'BEBIDAS CALIENTES') {
+                // Buscar categorías relacionadas
+                const infusionesCategory = categories.find(cat => 
+                  cat.name === 'INFUSIONES CALIENTES' || cat.name === 'INFUSIONES CALIENTES'
+                );
+                const chocolatesCategory = categories.find(cat => 
+                  cat.name === 'CHOCOLATES'
+                );
+                
+                // Agregar productos de INFUSIONES CALIENTES
+                if (infusionesCategory) {
+                  const infusionesProducts = getProductsByCategory(infusionesCategory.id);
+                  categoryProducts = [...categoryProducts, ...infusionesProducts];
+                }
+                
+                // Agregar productos de CHOCOLATES
+                if (chocolatesCategory) {
+                  const chocolatesProducts = getProductsByCategory(chocolatesCategory.id);
+                  categoryProducts = [...categoryProducts, ...chocolatesProducts];
+                }
+              }
               
               return (
                 <div key={category.id} className="dropdown-category">
@@ -186,7 +245,10 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
                     aria-expanded={activeDropdown === category.id}
                   >
                     <div className="dropdown-header">
-                      <span className="category-title">{category.name || 'Categoría sin nombre'}</span>
+                      <div className="category-title-wrapper">
+                        {getCategoryIcon(category.name)}
+                        <span className="category-title">{category.name || 'Categoría sin nombre'}</span>
+                      </div>
                       <div className="three-dots">
                         <span className="dot"></span>
                         <span className="dot"></span>
@@ -198,38 +260,957 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
                   {activeDropdown === category.id && (
                     <div className="dropdown-content">
                       {Array.isArray(categoryProducts) && categoryProducts.length > 0 ? (
-                        <div className="dropdown-items">
-                          {categoryProducts.map((product) => {
-                            // Validar producto antes de renderizar
-                            if (!product || typeof product.id !== 'number' || !product.name) {
-                              console.warn('Menu: Invalid product found', product);
-                              return null;
-                            }
-
-                            return (
-                              <div key={product.id} className="dropdown-item">
-                                <div className="item-header">
-                                  <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
-                                  <span className="item-price">
-                                    Bs. {typeof product.price === 'number' && product.price >= 0 
-                                      ? product.price.toFixed(2) 
-                                      : '0.00'}
-                                  </span>
-                                </div>
-                                {product.description && (
-                                  <p className="item-description">{product.description}</p>
-                                )}
-                                <button 
-                                  className="add-to-cart-btn"
-                                  onClick={() => handleAddToCart(product)}
-                                  disabled={!product.is_available}
-                                >
-                                  {product.is_available ? 'Agregar al carrito' : 'No disponible'}
-                                </button>
+                        category.name === 'BEBIDAS FRÍAS' || category.name === 'BEBIDAS FRIAS' ? (
+                          // Vista especial para BEBIDAS FRÍAS con subsecciones
+                          <div className="bebidas-frias-layout">
+                            {/* Sección INFUSIONES FRÍAS */}
+                            <div className="subcategory-box infusiones-frias-box">
+                              <h3 className="subcategory-title">INFUSIONES FRÍAS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('ICED TEA') ||
+                                     product.name.toUpperCase().includes('ICED SULTANA') ||
+                                     product.name.toUpperCase().includes('JAMAICA'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
                               </div>
-                            );
-                          })}
-                        </div>
+                            </div>
+
+                            {/* Sección LICUADOS */}
+                            <div className="subcategory-box licuados-box">
+                              <h3 className="subcategory-title">LICUADOS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    product.name.toUpperCase().includes('LICUADO')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección REFRESCANTES */}
+                            <div className="subcategory-box refrescantes-box">
+                              <h3 className="subcategory-title">REFRESCANTES</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('AGUA') ||
+                                     product.name.toUpperCase().includes('COCA COLA') ||
+                                     product.name.toUpperCase().includes('COCA-COLA'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección FRAPPÉS */}
+                            <div className="subcategory-box frappes-box">
+                              <h3 className="subcategory-title">FRAPPÉS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('FRAPUCCINO') ||
+                                     product.name.toUpperCase().includes('FRAPPÉ') ||
+                                     product.name.toUpperCase().includes('FRAPPE'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección SMOOTHIES */}
+                            <div className="subcategory-box smoothies-box">
+                              <h3 className="subcategory-title">SMOOTHIES</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('FRUTOS DEL BOSQUE') ||
+                                     product.name.toUpperCase().includes('CITRUS') ||
+                                     product.name.toUpperCase().includes('SMOOTHIE'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección SODAS FRÍAS */}
+                            <div className="subcategory-box sodas-frias-box">
+                              <h3 className="subcategory-title">SODAS FRÍAS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    product.name.toUpperCase().includes('SODA')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : category.name === 'CAFETERÍA FRÍA' || category.name === 'CAFETERIA FRIA' ? (
+                          // Vista especial para CAFETERÍA FRÍA con subsecciones
+                          <div className="cafeteria-fria-layout">
+                            {/* Sección BEBIDAS CON LECHE */}
+                            <div className="subcategory-box con-leche-box">
+                              <h3 className="subcategory-title">CON LECHE</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('FRAPPUCCINO') ||
+                                     product.name.toUpperCase().includes('ICED LATTE') ||
+                                     product.name.toUpperCase().includes('AFFOGATO'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección ESPRESSO FRÍO */}
+                            <div className="subcategory-box espresso-frio-box">
+                              <h3 className="subcategory-title">ESPRESSO FRÍO</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('ICED AMERICANO') ||
+                                     product.name.toUpperCase().includes('ESPRESSO') ||
+                                     product.name.toUpperCase().includes('AEROCANO') ||
+                                     product.name.toUpperCase().includes('ORANGE COFFEE'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : category.name === 'BEBIDAS CALIENTES' ? (
+                          // Vista especial para BEBIDAS CALIENTES con subsecciones
+                          <div className="bebidas-calientes-layout">
+                            {/* Sección CAFÉS */}
+                            <div className="subcategory-box cafes-box">
+                              <h3 className="subcategory-title">CAFÉS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    !product.name.toUpperCase().includes('TÉ') &&
+                                    !product.name.toUpperCase().includes('SULTANA') &&
+                                    !product.name.toUpperCase().includes('COCA') &&
+                                    !product.name.toUpperCase().includes('MANZANILLA') &&
+                                    !product.name.toUpperCase().includes('ANIS') &&
+                                    !product.name.toUpperCase().includes('CHOCOLATE') &&
+                                    !product.name.toUpperCase().includes('SUBMARINO')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección INFUSIONES CALIENTES */}
+                            <div className="subcategory-box infusiones-calientes-box">
+                              <h3 className="subcategory-title">INFUSIONES CALIENTES</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('TÉ') ||
+                                     product.name.toUpperCase().includes('SULTANA') ||
+                                     product.name.toUpperCase().includes('COCA') ||
+                                     product.name.toUpperCase().includes('MANZANILLA') ||
+                                     product.name.toUpperCase().includes('ANIS'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección CHOCOLATES */}
+                            <div className="subcategory-box chocolates-box">
+                              <h3 className="subcategory-title">CHOCOLATES</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('CHOCOLATE') ||
+                                     product.name.toUpperCase().includes('SUBMARINO'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : category.name === 'BRUNCH ALL DAY' ? (
+                          // Vista especial para BRUNCH ALL DAY con subsecciones
+                          <div className="brunch-layout">
+                            {/* Sección WAFFLES */}
+                            <div className="subcategory-box waffles-box">
+                              <h3 className="subcategory-title">WAFFLES</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('WAFFLE') ||
+                                     (product.name.toUpperCase() === 'AMERICANO' && 
+                                      !product.name.toUpperCase().includes('SOBRE PAN') &&
+                                      !product.name.toUpperCase().includes('ENTRE PAN')) ||
+                                     (product.name.toUpperCase() === 'PALTOS' &&
+                                      !product.name.toUpperCase().includes('SOBRE PAN'))
+                                  ))
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección SOBRE PAN */}
+                            <div className="subcategory-box sobre-pan-box">
+                              <h3 className="subcategory-title">SOBRE PAN</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    product.name.toUpperCase().includes('SOBRE PAN')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección ENTRE PAN */}
+                            <div className="subcategory-box entre-pan-box">
+                              <h3 className="subcategory-title">ENTRE PAN</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('ENTRE PAN') ||
+                                     (product.name.toUpperCase() === 'STEAK' && 
+                                      !product.name.toUpperCase().includes('SOBRE PAN')) ||
+                                     (product.name.toUpperCase() === 'PERNIL' && 
+                                      !product.name.toUpperCase().includes('SOBRE PAN')) ||
+                                     product.name.toUpperCase() === 'HONEY MUSTARD CHICKEN' ||
+                                     product.name.toUpperCase() === 'EL PHILI')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : category.name === 'DESAYUNOS' ? (
+                          // Vista especial para DESAYUNOS con subsecciones
+                          <div className="desayunos-layout">
+                            {/* Sección DESAYUNO */}
+                            <div className="subcategory-box">
+                              <h3 className="subcategory-title">DESAYUNO</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    product.name.toUpperCase().startsWith('DESAYUNO')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección EXTRAS */}
+                            <div className="subcategory-box extras-box">
+                              <h3 className="subcategory-title">EXTRAS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().startsWith('PORCIÓN') ||
+                                     product.name.toUpperCase().startsWith('TOSTADAS') ||
+                                     product.name.toUpperCase().startsWith('CREMA BATIDA'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección ZUMOS */}
+                            <div className="subcategory-box zumos-box">
+                              <h3 className="subcategory-title">ZUMOS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    product.name.toUpperCase().includes('ZUMO')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : category.name === 'SALADOS' ? (
+                          // Vista especial para SALADOS con subsecciones
+                          <div className="salados-layout">
+                            {/* Sección SANDWICHES */}
+                            <div className="subcategory-box sandwiches-box">
+                              <h3 className="subcategory-title">SANDWICHES</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('POLLO AL PESTO') ||
+                                     product.name.toUpperCase().includes('NAPOLITANO') ||
+                                     product.name.toUpperCase().includes('CAPRESE') ||
+                                     product.name.toUpperCase().includes('MIXTO'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección PANINIS */}
+                            <div className="subcategory-box paninis-box">
+                              <h3 className="subcategory-title">PANINIS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    product.name.toUpperCase().includes('PANINI')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección CUÑAPES */}
+                            <div className="subcategory-box cunapes-box">
+                              <h3 className="subcategory-title">CUÑAPES</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    product.name.toUpperCase().includes('CUÑAPE')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección BAGELS */}
+                            <div className="subcategory-box bagels-box">
+                              <h3 className="subcategory-title">BAGELS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    product.name.toUpperCase().includes('BAGEL')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : category.name === 'COOKIE BAR' ? (
+                          // Vista especial para COOKIE BAR con subsecciones
+                          <div className="cookie-bar-layout">
+                            {/* Sección PAQUETES */}
+                            <div className="subcategory-box paquetes-box">
+                              <h3 className="subcategory-title">PAQUETES</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    product.name.toUpperCase().includes('PAQUETE')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección SUELTAS */}
+                            <div className="subcategory-box sueltas-box">
+                              <h3 className="subcategory-title">SUELTAS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    !product.name.toUpperCase().includes('PAQUETE')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : category.name === 'REPOSTERÍA' ? (
+                          // Vista especial para REPOSTERÍA con subsecciones
+                          <div className="reposteria-layout">
+                            {/* Sección TORTAS */}
+                            <div className="subcategory-box tortas-box">
+                              <h3 className="subcategory-title">TORTAS</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    (product.name.toUpperCase().includes('TORTA') ||
+                                     product.name.toUpperCase().includes('TRES LECHES'))
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+
+                            {/* Sección POSTRES */}
+                            <div className="subcategory-box postres-box">
+                              <h3 className="subcategory-title">POSTRES</h3>
+                              <div className="subcategory-items">
+                                {categoryProducts
+                                  .filter(product => 
+                                    product.name && 
+                                    !product.name.toUpperCase().includes('TORTA') &&
+                                    !product.name.toUpperCase().includes('TRES LECHES')
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} className="dropdown-item">
+                                      <div className="item-header">
+                                        <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                        <span className="item-price">
+                                          Bs. {typeof product.price === 'number' && product.price >= 0 
+                                            ? product.price.toFixed(2) 
+                                            : '0.00'}
+                                        </span>
+                                      </div>
+                                      {product.description && (
+                                        <p className="item-description">{product.description}</p>
+                                      )}
+                                      <button 
+                                        className="add-to-cart-btn"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={!product.is_available}
+                                      >
+                                        {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          // Vista normal para otras categorías
+                          <div className="dropdown-items">
+                            {categoryProducts.map((product) => {
+                              // Validar producto antes de renderizar
+                              if (!product || typeof product.id !== 'number' || !product.name) {
+                                console.warn('Menu: Invalid product found', product);
+                                return null;
+                              }
+
+                              return (
+                                <div key={product.id} className="dropdown-item">
+                                  <div className="item-header">
+                                    <h3 className="item-name">{product.name || 'Producto sin nombre'}</h3>
+                                    <span className="item-price">
+                                      Bs. {typeof product.price === 'number' && product.price >= 0 
+                                        ? product.price.toFixed(2) 
+                                        : '0.00'}
+                                    </span>
+                                  </div>
+                                  {product.description && (
+                                    <p className="item-description">{product.description}</p>
+                                  )}
+                                  <button 
+                                    className="add-to-cart-btn"
+                                    onClick={() => handleAddToCart(product)}
+                                    disabled={!product.is_available}
+                                  >
+                                    {product.is_available ? 'Agregar al carrito' : 'No disponible'}
+                                  </button>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )
                       ) : (
                         <div className="dropdown-items">
                           <p style={{ color: '#888', textAlign: 'center', padding: '1rem' }}>

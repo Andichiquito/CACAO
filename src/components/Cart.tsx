@@ -8,6 +8,7 @@ import {
   isMapAvailable,
   geocodeAddress
 } from '../utils/leafletMap';
+import { sanitizeInput, sanitizeName, sanitizeAddress, sanitizeForWhatsApp, validateCoordinates, sanitizePhone } from '../utils/security';
 import 'leaflet/dist/leaflet.css';
 
 interface CartProps {
@@ -82,7 +83,15 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         // Inicializar mapa con geolocalización y callback para actualizar dirección
         if (mapRef.current) {
           initializeMap(mapRef.current, (address: string, lat: number, lng: number) => {
-            setOrderData(prev => ({ ...prev, direccion: address }));
+            // Validar coordenadas antes de guardar
+            if (!validateCoordinates(lat, lng)) {
+              console.error('Invalid coordinates received from map:', lat, lng);
+              return;
+            }
+            
+            // Sanitizar dirección
+            const sanitizedAddress = sanitizeAddress(address, 200);
+            setOrderData(prev => ({ ...prev, direccion: sanitizedAddress }));
             setSelectedLocation({ lat, lng });
             if (errors.direccion) {
               setErrors(prev => ({ ...prev, direccion: undefined }));
@@ -117,8 +126,50 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     setShowOrderModal(true);
   };
 
+  const handleTelefonoChange = (value: string): void => {
+    // Sanitizar y validar teléfono
+    const sanitized = sanitizePhone(value);
+    
+    // Si está vacío, permitir
+    if (sanitized === '') {
+      setOrderData(prev => ({ ...prev, telefono: '' }));
+      if (errors.telefono) {
+        setErrors(prev => ({ ...prev, telefono: undefined }));
+      }
+      return;
+    }
+    
+    // Validar que el primer dígito sea 6 o 7
+    if (sanitized.length > 0 && !/^[67]/.test(sanitized)) {
+      // No permitir si no empieza con 6 o 7
+      return;
+    }
+    
+    setOrderData(prev => ({ ...prev, telefono: sanitized }));
+    // Limpiar error del campo cuando el usuario empiece a escribir
+    if (errors.telefono) {
+      setErrors(prev => ({ ...prev, telefono: undefined }));
+    }
+  };
+
   const handleInputChange = (field: keyof OrderData, value: string): void => {
-    setOrderData(prev => ({ ...prev, [field]: value }));
+    // Si es teléfono, usar el handler especial
+    if (field === 'telefono') {
+      handleTelefonoChange(value);
+      return;
+    }
+    
+    // Sanitizar inputs según el tipo de campo
+    let sanitizedValue = value;
+    if (field === 'nombre') {
+      sanitizedValue = sanitizeName(value, 100);
+    } else if (field === 'direccion') {
+      sanitizedValue = sanitizeAddress(value, 200);
+    } else if (field === 'referencia' || field === 'notas') {
+      sanitizedValue = sanitizeInput(value, 500);
+    }
+    
+    setOrderData(prev => ({ ...prev, [field]: sanitizedValue }));
     // Limpiar error del campo cuando el usuario empiece a escribir
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -167,10 +218,13 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   };
 
   const isFormValid = (): boolean => {
+    const cleanPhone = orderData.telefono.replace(/[\s\-()]/g, '');
+    const phoneValid = cleanPhone.length >= 7 && cleanPhone.length <= 8 && /^[67][0-9]{6,7}$/.test(cleanPhone);
+    
     return (
       orderData.nombre.trim() !== '' &&
       orderData.telefono.trim() !== '' &&
-      /^[0-9+\-\s()]+$/.test(orderData.telefono) &&
+      phoneValid &&
       orderData.direccion.trim() !== ''
     );
   };
@@ -184,13 +238,20 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
 
     if (!orderData.telefono.trim()) {
       newErrors.telefono = 'El teléfono es requerido';
-    } else if (!/^[0-9+\-\s()]+$/.test(orderData.telefono)) {
-      newErrors.telefono = 'El teléfono no es válido';
+    } else {
+      // Remover espacios y caracteres especiales para validar
+      const cleanPhone = orderData.telefono.replace(/[\s\-()]/g, '');
+      // Validar que empiece por 6 o 7 y tenga 7 a 8 números
+      if (!/^[67][0-9]{6,7}$/.test(cleanPhone)) {
+        newErrors.telefono = 'El teléfono debe empezar por 6 o 7 y tener 7 a 8 números';
+      }
     }
 
 
     if (!orderData.direccion.trim()) {
       newErrors.direccion = 'La dirección es requerida';
+    } else if (!selectedLocation) {
+      newErrors.direccion = 'Por favor, selecciona tu ubicación en el mapa arrastrando el pin';
     }
 
     setErrors(newErrors);
@@ -219,37 +280,54 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         return;
       }
 
-      // Generar mensaje de WhatsApp con todos los datos del pedido
+      // Validar coordenadas antes de generar mensaje
+      if (selectedLocation && !validateCoordinates(selectedLocation.lat, selectedLocation.lng)) {
+        alert('La ubicación seleccionada no es válida. Por favor, selecciona una ubicación válida en el mapa.');
+        return;
+      }
+
+      // Sanitizar todos los datos antes de incluirlos en el mensaje
+      const sanitizedName = sanitizeForWhatsApp(orderData.nombre.trim());
+      const sanitizedPhone = orderData.telefono.trim();
+      const sanitizedAddress = sanitizeForWhatsApp(orderData.direccion.trim());
+      const sanitizedReferencia = orderData.referencia.trim() ? sanitizeForWhatsApp(orderData.referencia.trim()) : '';
+      const sanitizedNotas = orderData.notas.trim() ? sanitizeForWhatsApp(orderData.notas.trim()) : '';
+
+      // Generar mensaje de WhatsApp con todos los datos del pedido (sanitizados)
       let whatsappMessage = `🍫 *NUEVO PEDIDO - CACAO*\n\n`;
-      whatsappMessage += `👤 *Cliente:* ${orderData.nombre}\n`;
-      whatsappMessage += `📱 *Teléfono:* ${orderData.telefono}\n\n`;
+      whatsappMessage += `👤 *Cliente:* ${sanitizedName}\n`;
+      whatsappMessage += `📱 *Teléfono:* ${sanitizedPhone}\n\n`;
       
-      // Agregar dirección con link de Google Maps
-      if (selectedLocation) {
+      // Agregar dirección con link de Google Maps (siempre incluir link si hay ubicación)
+      whatsappMessage += `📍 *Dirección:* ${sanitizedAddress}\n`;
+      if (selectedLocation && validateCoordinates(selectedLocation.lat, selectedLocation.lng)) {
         const mapsLink = `https://www.google.com/maps?q=${selectedLocation.lat},${selectedLocation.lng}`;
-        whatsappMessage += `📍 *Dirección:* ${orderData.direccion}\n`;
         whatsappMessage += `🗺️ ${mapsLink}\n\n`;
       } else {
-        whatsappMessage += `📍 *Dirección:* ${orderData.direccion}\n\n`;
+        whatsappMessage += `\n⚠️ *Nota:* Por favor, confirma que la dirección es correcta\n\n`;
       }
       
       // Agregar referencia si existe
-      if (orderData.referencia.trim()) {
-        whatsappMessage += `🏠 *Referencia:* ${orderData.referencia}\n\n`;
+      if (sanitizedReferencia) {
+        whatsappMessage += `🏠 *Referencia:* ${sanitizedReferencia}\n\n`;
       }
       
-      // Agregar items del pedido
+      // Agregar items del pedido (sanitizar nombres de productos)
       whatsappMessage += `🛒 *PEDIDO:*\n`;
       items.forEach((item) => {
-        const subtotal = item.product.price * item.quantity;
-        whatsappMessage += `• ${item.product.name} x${item.quantity} = Bs. ${subtotal.toFixed(2)}\n`;
+        if (!item || !item.product) return;
+        const productName = sanitizeForWhatsApp(item.product.name || 'Producto sin nombre');
+        const quantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
+        const price = typeof item.product.price === 'number' && item.product.price >= 0 ? item.product.price : 0;
+        const subtotal = price * quantity;
+        whatsappMessage += `• ${productName} x${quantity} = Bs. ${subtotal.toFixed(2)}\n`;
       });
       
       whatsappMessage += `\n💰 *TOTAL: Bs. ${totalPrice.toFixed(2)}*\n`;
       
       // Agregar notas si existen
-      if (orderData.notas.trim()) {
-        whatsappMessage += `\n📝 *NOTAS:*\n${orderData.notas}\n`;
+      if (sanitizedNotas) {
+        whatsappMessage += `\n📝 *NOTAS:*\n${sanitizedNotas}\n`;
       }
       
       // Codificar el mensaje para URL
@@ -490,7 +568,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                     className={`form-input ${errors.telefono ? 'form-input-error' : ''}`}
                     value={orderData.telefono}
                     onChange={(e) => handleInputChange('telefono', e.target.value)}
-                    placeholder="Ej: 70012345"
+                    placeholder="Ej: 70012345 o 6123456"
                   />
                   {errors.telefono && <span className="error-message">{errors.telefono}</span>}
                 </div>
@@ -513,28 +591,8 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   />
                   {errors.direccion && <span className="error-message">{errors.direccion}</span>}
                   <p className="form-hint">
-                    {isSearching ? 'Buscando dirección en Cochabamba...' : 'Escribe tu dirección en Cochabamba, haz clic en el mapa o arrastra el pin para seleccionar la ubicación'}
+                    {isSearching ? 'Buscando dirección en Cochabamba...' : 'Escribe tu dirección en Cochabamba o usa el mapa para seleccionar tu ubicación'}
                   </p>
-                  
-                  {/* Link a OpenStreetMap cuando hay una ubicación seleccionada */}
-                  {selectedLocation && (
-                    <a
-                      href={`https://www.openstreetmap.org/?mlat=${selectedLocation.lat}&mlon=${selectedLocation.lng}&zoom=16`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="map-link"
-                      style={{
-                        display: 'inline-block',
-                        marginTop: '0.5rem',
-                        color: '#4285F4',
-                        textDecoration: 'none',
-                        fontSize: '0.9rem',
-                        fontWeight: 500
-                      }}
-                    >
-                      📍 Ver en mapa
-                    </a>
-                  )}
                   
                   {/* Mapa de OpenStreetMap */}
                   <div 
@@ -542,6 +600,43 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                     className="google-map-container"
                     style={{ height: '300px', width: '100%', marginTop: '1rem', borderRadius: '8px', overflow: 'hidden', minHeight: '300px' }}
                   />
+                  
+                  {/* Mensaje sobre ajustar ubicación */}
+                  <p className="form-hint" style={{ 
+                    marginTop: '0.75rem', 
+                    padding: '0.75rem', 
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    fontSize: '0.9rem',
+                    color: '#d4af37'
+                  }}>
+                    ⚠️ <strong>Si la ubicación no es correcta, por favor arrastra el pin a tu ubicación exacta en el mapa</strong>
+                  </p>
+                  
+                  {/* Link a Google Maps cuando hay una ubicación seleccionada */}
+                  {selectedLocation && (
+                    <a
+                      href={`https://www.google.com/maps?q=${selectedLocation.lat},${selectedLocation.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="map-link"
+                      style={{
+                        display: 'inline-block',
+                        marginTop: '0.75rem',
+                        color: '#4285F4',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        fontWeight: 500,
+                        padding: '0.5rem 1rem',
+                        backgroundColor: 'rgba(66, 133, 244, 0.1)',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(66, 133, 244, 0.3)'
+                      }}
+                    >
+                      📍 Ver ubicación en Google Maps
+                    </a>
+                  )}
                 </div>
 
                 <div className="form-group">
