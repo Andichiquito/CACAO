@@ -381,13 +381,21 @@ html {
   z-index: 5;
 }
 
-.menu-highlight-content {
+/* Sección de Instagram */
+.instagram-section {
+  margin: 4rem 0;
+  padding: 2rem 2rem;
+  position: relative;
+  z-index: 5;
+}
+
+.instagram-content {
   max-width: 700px;
   margin: 0 auto;
   text-align: center;
 }
 
-.menu-highlight-title {
+.instagram-title {
   font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -396,8 +404,139 @@ html {
   text-shadow: 0 2px 8px rgba(224, 122, 95, 0.3);
 }
 
-.menu-highlight-subtitle {
+.instagram-subtitle {
   font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  font-family: 'Readex Pro', sans-serif;
+}
+
+.instagram-embed-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+.instagram-embed-container iframe {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.instagram-description {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.instagram-description p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+  font-family: 'Readex Pro', sans-serif;
+}
+
+.instagram-link {
+  display: inline-block;
+  color: #E07A5F;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: 'Readex Pro', sans-serif;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: rgba(224, 122, 95, 0.1);
+  border: 1px solid rgba(224, 122, 95, 0.3);
+}
+
+.instagram-link:hover {
+  color: #F2CC8F;
+  background: rgba(224, 122, 95, 0.2);
+  border-color: rgba(224, 122, 95, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Sección de Horarios */
+.horarios-section {
+  margin: 4rem 0;
+  padding: 2rem 2rem;
+  position: relative;
+  z-index: 5;
+}
+
+.horarios-content {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.horarios-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #E07A5F;
+  font-family: 'Readex Pro', sans-serif;
+  text-shadow: 0 2px 8px rgba(224, 122, 95, 0.3);
+}
+
+.horarios-subtitle {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  font-family: 'Readex Pro', sans-serif;
+}
+
+.horarios-image-container {
+  position: relative;
+  width: 100%;
+  max-width: 550px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 3px solid rgba(212, 175, 55, 0.2);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.horarios-image-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.4);
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+.horarios-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.menu-highlight-content {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.menu-highlight-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #E07A5F;
+  font-family: 'Readex Pro', sans-serif;
+  text-shadow: 0 2px 8px rgba(224, 122, 95, 0.3);
+}
+
+.menu-highlight-subtitle {
+  font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 2rem;
   font-family: 'Readex Pro', sans-serif;
@@ -953,6 +1092,24 @@ html {
     margin-bottom: 2rem;
   }
 
+  .horarios-section {
+    margin: 3rem 0;
+    padding: 2rem 1rem;
+  }
+
+  .horarios-title {
+    font-size: 2rem;
+  }
+
+  .horarios-subtitle {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .horarios-image-container {
+    max-width: 100%;
+  }
+
   .menu-click-text {
     font-size: 1rem;
   }
@@ -1184,19 +1341,26 @@ html {
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 2rem 2rem;
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: 3rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
   align-items: start;
 }
 
 .footer-section {
-  text-align: center;
+  text-align: left;
 }
 
-.footer-center {
+.footer-left {
+  text-align: left;
+}
+
+.footer-right {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .footer-title {
@@ -1214,7 +1378,20 @@ html {
 }
 
 .owner-info {
-  margin-bottom: 2rem;
+  margin-bottom: 0;
+}
+
+.copyright {
+  text-align: center;
+  padding-top: 2rem;
+  margin-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.copyright p {
+  margin: 0;
 }
 
 .owner-name {
@@ -1236,20 +1413,9 @@ html {
 .owner-description {
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.6;
-  max-width: 400px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   font-family: 'Readex Pro', sans-serif;
-}
-
-.copyright {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.copyright p {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
 }
 
 .social-links {
@@ -1299,12 +1465,18 @@ html {
   
   .footer-content {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 3rem;
     text-align: center;
   }
   
   .footer-section {
     text-align: center;
+  }
+  
+  .footer-left,
+  .footer-right {
+    text-align: center;
+    align-items: center;
   }
   
   .owner-description {

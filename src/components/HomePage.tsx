@@ -5,6 +5,17 @@ import { useCart } from '../hooks/useCart';
 import { HomePageProps } from '../types';
 import './HomePage.css';
 
+// Declarar tipos para Instagram embed
+declare global {
+  interface Window {
+    instgrm?: {
+      Embeds: {
+        process: () => void;
+      };
+    };
+  }
+}
+
 const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
   // Estado para el menú móvil
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
@@ -23,6 +34,30 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
         }
       }, 100);
     }
+  }, []);
+
+  // Cargar script de Instagram embed
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://www.instagram.com/embed.js';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    // Ejecutar instgrm.Embeds.process() después de cargar el script
+    script.onload = () => {
+      if (window.instgrm) {
+        window.instgrm.Embeds.process();
+      }
+    };
+
+    return () => {
+      // Limpiar script al desmontar
+      const existingScript = document.querySelector('script[src="https://www.instagram.com/embed.js"]');
+      if (existingScript && existingScript.parentNode) {
+        existingScript.parentNode.removeChild(existingScript);
+      }
+    };
   }, []);
   
   // Función para toggle del menú móvil
@@ -239,6 +274,52 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
           </div>
         </div>
 
+        {/* Sección de Instagram */}
+        <div className="instagram-section">
+          <div className="instagram-content">
+            <h2 className="instagram-title">Síguenos en Instagram</h2>
+            <p className="instagram-subtitle">Descubre nuestras últimas creaciones y novedades</p>
+            <div className="instagram-embed-container">
+              <blockquote 
+                className="instagram-media" 
+                data-instgrm-permalink="https://www.instagram.com/p/DRIsu6REVgD/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
+                data-instgrm-version="14"
+                data-instgrm-captioned
+              >
+              </blockquote>
+            </div>
+            <div className="instagram-description">
+              <p>
+                Mantente al día con nuestras últimas creaciones, promociones especiales y momentos especiales 
+                en CACAO. Síguenos para no perderte ninguna novedad.
+              </p>
+              <a 
+                href="https://www.instagram.com/pasteleriacacao" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="instagram-link"
+              >
+                @pasteleriacacao
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Sección de Horarios */}
+        <div className="horarios-section">
+          <div className="horarios-content">
+            <h2 className="horarios-title">Horarios de Atención</h2>
+            <p className="horarios-subtitle">Visítanos en nuestros horarios de atención</p>
+            <div className="horarios-image-container">
+              <img 
+                src="/images/horarios.jpeg" 
+                alt="Horarios de atención CACAO" 
+                className="horarios-image"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* About Us Section */}
         <AboutUs />
       </main>
@@ -246,15 +327,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
       {/* Footer */}
       <footer className="footer">
         <div className="footer-content">
-          <div className="footer-section">
-            <h3 className="footer-title">Horarios de Atención</h3>
-            <div className="footer-info">
-              <p>Lunes a Sábado: 12:00 a 15:00 | 18:30 a 22:30</p>
-              <p>Domingos: 12:00 a 16:00</p>
-            </div>
-          </div>
-          
-          <div className="footer-section footer-center">
+          <div className="footer-section footer-left">
             <div className="owner-info">
               <h3 className="owner-name">Andrés Rodríguez</h3>
               <p className="owner-title">Fundador y Propietario</p>
@@ -264,12 +337,9 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
                 únicas a través de sabores auténticos y un ambiente acogedor.
               </p>
             </div>
-            <div className="copyright">
-              <p>©2025 CACAO. Todos los derechos reservados.</p>
-            </div>
           </div>
           
-          <div className="footer-section">
+          <div className="footer-section footer-right">
             <h3 className="footer-title">Síguenos en redes sociales</h3>
             <div className="social-links">
               <a href="https://www.facebook.com/PasteleriaArtesanalCacao?locale=es_LA" className="social-link facebook" target="_self">
@@ -284,6 +354,9 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
               </a>
             </div>
           </div>
+        </div>
+        <div className="copyright">
+          <p>©2025 CACAO. Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>
