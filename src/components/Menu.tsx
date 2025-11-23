@@ -6,7 +6,7 @@ import './Menu.css';
 
 const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
-  const { categories, products, loading, error, getProductsByCategory } = useMenuData();
+  const { categories, loading, error, getProductsByCategory } = useMenuData();
   const { addToCart, getTotalItems } = useCart();
   const totalItems = getTotalItems();
 

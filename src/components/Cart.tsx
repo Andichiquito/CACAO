@@ -4,9 +4,7 @@ import './Cart.css';
 import {
   initializeMap,
   updateMapLocation,
-  cleanup as cleanupMap,
-  isMapAvailable,
-  geocodeAddress
+  cleanup as cleanupMap
 } from '../utils/leafletMap';
 import { sanitizeInput, sanitizeName, sanitizeAddress, sanitizeForWhatsApp, validateCoordinates, sanitizePhone } from '../utils/security';
 import 'leaflet/dist/leaflet.css';
@@ -93,9 +91,12 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
             const sanitizedAddress = sanitizeAddress(address, 200);
             setOrderData(prev => ({ ...prev, direccion: sanitizedAddress }));
             setSelectedLocation({ lat, lng });
-            if (errors.direccion) {
-              setErrors(prev => ({ ...prev, direccion: undefined }));
-            }
+            setErrors(prev => {
+              if (prev.direccion) {
+                return { ...prev, direccion: undefined };
+              }
+              return prev;
+            });
           }).catch((error: any) => {
             console.error('Error al inicializar mapa:', error);
           });
@@ -115,6 +116,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         clearTimeout(searchTimeoutRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showOrderModal]);
 
   const handleViewOrder = (): void => {
