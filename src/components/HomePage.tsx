@@ -49,6 +49,18 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
       if (window.instgrm) {
         window.instgrm.Embeds.process();
       }
+      
+      // Asegurar que todos los enlaces de Instagram se abran en nueva pestaña
+      setTimeout(() => {
+        const instagramLinks = document.querySelectorAll('.instagram-media a');
+        instagramLinks.forEach((link: Element) => {
+          const anchor = link as HTMLAnchorElement;
+          if (anchor) {
+            anchor.target = '_blank';
+            anchor.rel = 'noopener noreferrer';
+          }
+        });
+      }, 1000);
     };
 
     return () => {
@@ -278,13 +290,23 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
         <div className="instagram-section">
           <div className="instagram-content">
             <h2 className="instagram-title">Síguenos en Instagram</h2>
-            <p className="instagram-subtitle">Descubre nuestras últimas creaciones y novedades</p>
             <div className="instagram-embed-container">
               <blockquote 
                 className="instagram-media" 
                 data-instgrm-permalink="https://www.instagram.com/p/DRIsu6REVgD/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
                 data-instgrm-version="14"
                 data-instgrm-captioned
+                style={{
+                  background: '#FFF',
+                  border: '0',
+                  borderRadius: '3px',
+                  boxShadow: '0 0 1px 0 rgba(0,0,0,0.5), 0 1px 10px 0 rgba(0,0,0,0.15)',
+                  margin: '1px',
+                  maxWidth: '540px',
+                  minWidth: '326px',
+                  padding: '0',
+                  width: '99.375%'
+                }}
               >
               </blockquote>
             </div>

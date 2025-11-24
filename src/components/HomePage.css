@@ -418,12 +418,19 @@ html {
   width: 100%;
   margin: 0 auto;
   padding: 1rem 0;
+  position: relative;
 }
 
 .instagram-embed-container iframe {
   max-width: 100%;
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Asegurar que los enlaces de Instagram se abran correctamente */
+.instagram-embed-container a {
+  target: _blank;
+  rel: noopener noreferrer;
 }
 
 /* Sección de Horarios */
