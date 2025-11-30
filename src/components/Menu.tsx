@@ -119,21 +119,12 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
 
 
 
-  const renderProductItem = (
-    product: Product,
-    isGrouped: boolean = false,
-    groupKey?: string
-  ): React.ReactElement => {
-    const productKey = isGrouped && groupKey ? `group-${groupKey}-${product.id}` : product.id;
 
+  const getProductSelectors = (product: Product): Array<{ label: string; options: string[] }> => {
+    const name = product.name ? product.name.toUpperCase().trim() : '';
 
-    const hasMultipleSelectors = product.description && product.description.includes('|');
-
-    let selectors: Array<{ label: string; options: string[] }> = [];
-
-
-    if (product.name && product.name.toUpperCase().trim() === 'LICUADO') {
-      selectors = [
+    if (name === 'LICUADO') {
+      return [
         {
           label: 'Base',
           options: ['Con agua', 'Con leche']
@@ -152,15 +143,45 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
         }
       ];
     }
-    else if (hasMultipleSelectors) {
 
-      const parts = product.description!.split('|').map(p => p.trim());
-      selectors = parts.map(part => {
+    if (name === 'FRAPUCCINO SABORIZADO' || name === 'FRAPPUCCINO SABORIZADO') {
+      return [
+        {
+          label: 'Sabor',
+          options: [
+            'Brownie',
+            'Cookie',
+            'Dulce de leche',
+            'Frutilla',
+            'Chocolate',
+            'Oreo',
+            'Cookie red velvet',
+            'Chocomenta'
+          ]
+        }
+      ];
+    }
+
+    if (product.description && product.description.includes('|')) {
+      const parts = product.description.split('|').map(p => p.trim());
+      return parts.map(part => {
         const [label, optionsStr] = part.split(':').map(s => s.trim());
         const options = optionsStr ? optionsStr.split(',').map(o => o.trim()).filter(o => o.length > 0) : [];
         return { label: label || 'Opción', options };
       }).filter(s => s.options.length > 0);
     }
+
+    return [];
+  };
+
+  const renderProductItem = (
+    product: Product,
+    isGrouped: boolean = false,
+    groupKey?: string
+  ): React.ReactElement => {
+    const productKey = isGrouped && groupKey ? `group-${groupKey}-${product.id}` : product.id;
+
+    const selectors = getProductSelectors(product);
 
 
 
@@ -322,37 +343,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
 
 
         {(() => {
-          let subSelectors: Array<{ label: string; options: string[] }> = [];
-
-
-          if (selectedProduct.name && selectedProduct.name.toUpperCase().trim() === 'LICUADO') {
-            subSelectors = [
-              {
-                label: 'Base',
-                options: ['Con agua', 'Con leche']
-              },
-              {
-                label: 'Sabor',
-                options: [
-                  'Piña con papaya',
-                  'Frutos del bosque',
-                  'Copoazú con durazno',
-                  'Limonada de frutilla',
-                  'Piña hierba buena',
-                  'Frutilla hierba buena',
-                  'Mango maracuyá'
-                ]
-              }
-            ];
-          }
-          else if (selectedProduct.description && selectedProduct.description.includes('|')) {
-            const parts = selectedProduct.description.split('|').map(p => p.trim());
-            subSelectors = parts.map(part => {
-              const [label, optionsStr] = part.split(':').map(s => s.trim());
-              const options = optionsStr ? optionsStr.split(',').map(o => o.trim()).filter(o => o.length > 0) : [];
-              return { label: label || 'Opción', options };
-            }).filter(s => s.options.length > 0);
-          }
+          const subSelectors = getProductSelectors(selectedProduct);
 
           if (subSelectors.length > 0) {
             return (
