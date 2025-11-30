@@ -793,6 +793,30 @@
   margin: 0;
 }
 
+.loading-logo {
+  width: 80px;
+  height: auto;
+  opacity: 0.8;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.95);
+    opacity: 0.6;
+  }
+}
+
 .error-message p {
   color: #ff6b6b;
 }

@@ -489,7 +489,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
           <h1 className="menu-title">MENÚ</h1>
         </div>
         <div className="loading-message">
-          <p>Cargando menú...</p>
+          <img src="/logos/logo-blanco.png" alt="Cargando..." className="loading-logo" />
         </div>
       </div>
     );
