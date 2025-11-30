@@ -77,6 +77,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
 
     const baseKeywords = [
       'FRAPUCCINO SABORIZADO', 'FRAPPUCCINO SABORIZADO',
+      'TRES LECHES',
       'COOKIE', 'FRAPUCCINO', 'FRAPPÉ', 'FRAPPE', 'LICUADO',
       'SMOOTHIE', 'CAFÉ', 'CHOCOLATE', 'TORTA', 'POSTRE',
       'SANDWICH', 'PANINI', 'BAGEL', 'WAFFLE', 'SODA', 'AGUA'
@@ -157,6 +158,31 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
             'Oreo',
             'Cookie red velvet',
             'Chocomenta'
+          ]
+        }
+      ];
+    }
+
+    if (name === 'TRES LECHES CLÁSICOS' || name === 'TRES LECHES CLASICOS') {
+      return [
+        {
+          label: 'Sabor',
+          options: [
+            'Chocolate',
+            'Red velvet'
+          ]
+        }
+      ];
+    }
+
+    if (name === 'TRES LECHES PREMIUM') {
+      return [
+        {
+          label: 'Sabor',
+          options: [
+            'Chocomaracuya',
+            'Pie de limón',
+            'Café con dulce de leche'
           ]
         }
       ];

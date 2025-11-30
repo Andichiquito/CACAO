@@ -17,7 +17,7 @@ ON CONFLICT (name) DO NOTHING;
 INSERT INTO products (name, description, price, category_id, is_available, stock_quantity) 
 SELECT 
   'AMERICANO', 
-  'Waffle, fried egg, bacon, chives, and syrup', 
+  'Waffle, huevo frito, tocino, cebollín y jarabe', 
   25.00, 
   (SELECT id FROM categories WHERE name = 'BRUNCH ALL DAY'), 
   true, 
@@ -27,7 +27,7 @@ WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = 'AMERICANO' AND category_i
 INSERT INTO products (name, description, price, category_id, is_available, stock_quantity) 
 SELECT 
   'PALTOS', 
-  'Waffle, herb quenelle, avocado, fried egg, and sprouts', 
+  'Waffle, quenelle de hierbas, palta, huevo frito y brotes', 
   25.00, 
   (SELECT id FROM categories WHERE name = 'BRUNCH ALL DAY'), 
   true, 
@@ -37,7 +37,7 @@ WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = 'PALTOS' AND category_id =
 INSERT INTO products (name, description, price, category_id, is_available, stock_quantity) 
 SELECT 
   'WAFFLE DULCE', 
-  'Waffle, vanilla ice cream, seasonal fruit, whipped cream, and good herb sugar', 
+  'Waffle, helado de vainilla, fruta de temporada, crema batida y azúcar de hierba buena', 
   25.00, 
   (SELECT id FROM categories WHERE name = 'BRUNCH ALL DAY'), 
   true, 
@@ -48,7 +48,7 @@ WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = 'WAFFLE DULCE' AND categor
 INSERT INTO products (name, description, price, category_id, is_available, stock_quantity) 
 SELECT 
   'AMERICANO SOBRE PAN', 
-  'Country bread, scrambled egg, crunchy bacon, chives, and syrup', 
+  'Pan de campo, huevo revuelto, tocino crujiente, cebollín y jarabe', 
   25.00, 
   (SELECT id FROM categories WHERE name = 'BRUNCH ALL DAY'), 
   true, 
@@ -58,7 +58,7 @@ WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = 'AMERICANO SOBRE PAN' AND 
 INSERT INTO products (name, description, price, category_id, is_available, stock_quantity) 
 SELECT 
   'AVOCADO SOBRE PAN', 
-  'Country bread, special avocado cheese base, fried egg, confit tomato, and sprouts', 
+  'Pan de campo, base especial de queso y palta, huevo frito, tomate confitado y brotes', 
   25.00, 
   (SELECT id FROM categories WHERE name = 'BRUNCH ALL DAY'), 
   true, 
@@ -68,7 +68,7 @@ WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = 'AVOCADO SOBRE PAN' AND ca
 INSERT INTO products (name, description, price, category_id, is_available, stock_quantity) 
 SELECT 
   'CRIOLLO SOBRE PAN', 
-  'Country bread, mix of green leaves, jerky, confit tomato, pickled onion, pickled locoto, sprouts, and quirquiña oil', 
+  'Pan de campo, mix de hojas verdes, charque, tomate confitado, cebolla encurtida, locoto en escabeche, brotes y aceite de quirquiña', 
   25.00, 
   (SELECT id FROM categories WHERE name = 'BRUNCH ALL DAY'), 
   true, 
@@ -79,7 +79,7 @@ WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = 'CRIOLLO SOBRE PAN' AND ca
 INSERT INTO products (name, description, price, category_id, is_available, stock_quantity) 
 SELECT 
   'STEAK', 
-  'Country bread, mix of green leaves, sautéed sirloin, pickles, confit tomato, house mayonnaise, and sprouts', 
+  'Pan de campo, mix de hojas verdes, lomo salteado, pepinillos, tomate confitado, mayonesa de la casa y brotes', 
   33.00, 
   (SELECT id FROM categories WHERE name = 'BRUNCH ALL DAY'), 
   true, 
@@ -89,7 +89,7 @@ WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = 'STEAK' AND category_id = 
 INSERT INTO products (name, description, price, category_id, is_available, stock_quantity) 
 SELECT 
   'PERNIL', 
-  'Country bread, special cheese base, arugula, fresh tomato slices, pork leg, and pickled pickles', 
+  'Pan de campo, base de queso especial, rúcula, rodajas de tomate fresco, pernil de cerdo y pepinillos encurtidos', 
   25.00, 
   (SELECT id FROM categories WHERE name = 'BRUNCH ALL DAY'), 
   true, 
@@ -99,7 +99,7 @@ WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = 'PERNIL' AND category_id =
 INSERT INTO products (name, description, price, category_id, is_available, stock_quantity) 
 SELECT 
   'HONEY MUSTARD CHICKEN', 
-  'Country bread, mix of green leaves, fresh tomato slices, chicken marinated in honey and mustard, melted cheddar cheese, and pickled onion', 
+  'Pan de campo, mix de hojas verdes, rodajas de tomate fresco, pollo marinado en miel y mostaza, queso cheddar derretido y cebolla encurtida', 
   30.00, 
   (SELECT id FROM categories WHERE name = 'BRUNCH ALL DAY'), 
   true, 
@@ -109,7 +109,7 @@ WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = 'HONEY MUSTARD CHICKEN' AN
 INSERT INTO products (name, description, price, category_id, is_available, stock_quantity) 
 SELECT 
   'EL PHILI', 
-  'Country bread, mozzarella cheese, marinated meat sautéed with cream mushrooms, crunchy bacon, caramelized onion, and mozzarella cheese', 
+  'Pan de campo, queso mozzarella, carne marinada salteada con champiñones a la crema, tocino crujiente, cebolla caramelizada y queso mozzarella', 
   33.00, 
   (SELECT id FROM categories WHERE name = 'BRUNCH ALL DAY'), 
   true, 
