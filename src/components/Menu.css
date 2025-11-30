@@ -15,13 +15,55 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   position: relative;
+  min-height: 60px;
+}
+
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 2.5rem;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-family: 'Readex Pro', sans-serif;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 .back-button {
   position: absolute;
   left: 0;
+  top: 0;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
@@ -33,6 +75,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  z-index: 2;
 }
 
 .back-button:hover {
@@ -45,8 +88,18 @@
   font-weight: bold;
   letter-spacing: 0.1em;
   margin: 0;
-  margin-left: 3rem;
   color: white;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Force absolute positioning for cart icon to ensure centering of title */
+.menu-cart-icon {
+  position: absolute !important;
+  right: 0;
+  top: 0;
+  margin-left: 0 !important;
+  z-index: 2;
 }
 
 .menu-content {
@@ -234,6 +287,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -300,7 +354,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
-  align-items: stretch;
+  align-items: start;
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
@@ -339,6 +393,30 @@
   align-items: stretch;
 }
 
+.cafeteria-left-box {
+  grid-column: 1;
+}
+
+.cafeteria-right-box {
+  grid-column: 2;
+}
+
+.brunch-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  grid-column: 1;
+  align-self: start;
+}
+
+.brunch-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  grid-column: 2;
+  align-self: start;
+}
+
 .subcategory-box {
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.15);
@@ -352,17 +430,6 @@
   box-sizing: border-box;
   margin: 0;
   min-height: 100%;
-}
-
-
-.extras-box {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.zumos-box {
-  grid-column: 2;
-  grid-row: 2;
 }
 
 .subcategory-title {
@@ -401,7 +468,75 @@
 
 .dropdown-item:hover {
   background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-1px);
+}
+
+/* Estilos para productos agrupados con selector de variantes */
+.grouped-product {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.multi-selector-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0.75rem 0;
+}
+
+.variant-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  width: 100%;
+}
+
+.variant-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
+.variant-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  font-family: 'Readex Pro', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 3rem;
+}
+
+.variant-select:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.variant-select:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.variant-select option {
+  background: #1a1a1a;
+  color: white;
+  padding: 0.75rem;
+  font-family: 'Readex Pro', sans-serif;
 }
 
 .item-header {
@@ -437,193 +572,131 @@
   text-align: center;
 }
 
+
+.extras-box {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.zumos-box {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* Grid Placement for Bebidas Frías */
+.infusiones-frias-box {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.frappes-box {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.licuados-box {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.smoothies-box {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.refrescantes-box {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.sodas-box {
+  grid-column: 2;
+  grid-row: 3;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .menu-container {
-    padding: 1.5rem;
-    padding-bottom: 3rem;
+    padding: 1rem;
+    padding-bottom: 5rem;
   }
-  
+
   .menu-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
-  
+
+  .menu-header {
+    margin-bottom: 1.5rem;
+    min-height: 60px;
+  }
+
+  .back-button {
+    width: 40px;
+    height: 40px;
+  }
+
   .blend-box {
     min-width: auto;
     padding: 1.5rem;
   }
-  
+
   .blend-title {
     font-size: 2rem;
   }
-  
+
   .blend-details {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .dropdown-items {
     grid-template-columns: 1fr;
   }
 
-  .desayunos-layout {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .cookie-bar-layout {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .reposteria-layout {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .salados-layout {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .brunch-layout {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .bebidas-frias-layout {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .bebidas-calientes-layout {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
+  /* Reset grid columns for mobile */
+  .desayunos-layout,
+  .cookie-bar-layout,
+  .reposteria-layout,
+  .salados-layout,
+  .brunch-layout,
+  .bebidas-frias-layout,
+  .bebidas-calientes-layout,
   .cafeteria-fria-layout {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
 
-  .extras-box {
+  /* Reset grid placements for mobile */
+  .extras-box,
+  .zumos-box,
+  .paquetes-box,
+  .sueltas-box,
+  .tortas-box,
+  .postres-box,
+  .sandwiches-box,
+  .paninis-box,
+  .cunapes-box,
+  .bagels-box,
+  .waffles-box,
+  .sobre-pan-box,
+  .entre-pan-box,
+  .infusiones-frias-box,
+  .licuados-box,
+  .refrescantes-box,
+  .frappes-box,
+  .smoothies-box,
+  .sodas-box,
+  .cafes-box,
+  .infusiones-calientes-box,
+  .chocolates-box,
+  .con-leche-box,
+  .espresso-frio-box,
+  .cafeteria-left-box,
+  .cafeteria-right-box,
+  .brunch-left-column,
+  .brunch-right-column {
     grid-column: 1;
-    grid-row: 2;
-  }
-
-  .zumos-box {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .paquetes-box {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .sueltas-box {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .tortas-box {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .postres-box {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .sandwiches-box {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .paninis-box {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .cunapes-box {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .bagels-box {
-    grid-column: 1;
-    grid-row: 4;
-  }
-
-  .waffles-box {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .sobre-pan-box {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .entre-pan-box {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .infusiones-frias-box {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .licuados-box {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .refrescantes-box {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .frappes-box {
-    grid-column: 1;
-    grid-row: 4;
-  }
-
-  .smoothies-box {
-    grid-column: 1;
-    grid-row: 5;
-  }
-
-  .sodas-frias-box {
-    grid-column: 1;
-    grid-row: 6;
-  }
-
-  .cafes-box {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .infusiones-calientes-box {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .chocolates-box {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .con-leche-box {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .espresso-frio-box {
-    grid-column: 1;
-    grid-row: 2;
+    grid-row: auto;
   }
 
   .subcategory-box {
@@ -635,46 +708,48 @@
   .subcategory-title {
     font-size: 1.1rem;
   }
-  
+
   .subcategory-items {
     width: 100%;
   }
-  
+
   .subcategory-items .dropdown-item {
     width: 100%;
     box-sizing: border-box;
     padding: 0.875rem;
   }
-  
+
   .item-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .item-name {
     font-size: 1rem;
     width: 100%;
   }
-  
+
   .item-price {
     font-size: 0.95rem;
     align-self: flex-end;
   }
-  
+
   .item-description {
     font-size: 0.85rem;
     text-align: left;
   }
-  
+
   .category-title {
     font-size: 1.2rem;
   }
-  
+
   .dropdown-trigger {
     padding: 1rem;
   }
 }
+
+
 
 /* Add to Cart Button */
 .add-to-cart-btn {
@@ -720,4 +795,106 @@
 
 .error-message p {
   color: #ff6b6b;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+
+  /* Center all subcategory titles */
+  .subcategory-box h3,
+  .subcategory-box .subcategory-title {
+    text-align: center !important;
+  }
+
+  /* Center all product names */
+  .item-name,
+  .dropdown-item h3,
+  .dropdown-item .item-name {
+    text-align: center !important;
+  }
+
+  /* Center descriptions */
+  .item-description,
+  .dropdown-item .item-description {
+    text-align: center !important;
+  }
+
+  /* Center the entire item header and its contents */
+  .item-header,
+  .dropdown-item .item-header {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  /* Center prices */
+  .item-price,
+  .dropdown-item .item-price {
+    align-self: center !important;
+    text-align: center !important;
+  }
+
+  /* Center variant selectors */
+  .variant-selector {
+    text-align: center !important;
+  }
+
+  .variant-label {
+    text-align: center !important;
+    display: block !important;
+  }
+
+  /* Center grouped product titles */
+  .grouped-product .item-name,
+  .grouped-product h3 {
+    text-align: center !important;
+  }
+
+  .menu-title {
+    font-size: 2rem;
+  }
+
+  .back-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Force center alignment on all dropdown items */
+  .dropdown-item {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Ensure children of dropdown item are centered */
+  .dropdown-item>* {
+    width: 100%;
+    text-align: center !important;
+  }
+
+  /* Specific fix for item header */
+  .dropdown-item .item-header {
+    width: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Specific fix for variant selector container */
+  .variant-selector {
+    width: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  /* Fix for select element text alignment */
+  .variant-select {
+    text-align: center !important;
+    text-align-last: center !important;
+  }
 }

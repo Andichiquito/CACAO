@@ -17,6 +17,9 @@ interface CartProps {
 interface OrderData {
   nombre: string;
   telefono: string;
+  gmail: string;
+  nit_ci: string;
+  razon_social: string;
   direccion: string;
   referencia: string;
   notas: string;
@@ -28,6 +31,9 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   const [orderData, setOrderData] = useState<OrderData>({
     nombre: '',
     telefono: '',
+    gmail: '',
+    nit_ci: '',
+    razon_social: '',
     direccion: '',
     referencia: '',
     notas: ''
@@ -40,7 +46,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleQuantityChange = (productId: number, newQuantity: number): void => {
-    // Validar parámetros
+
     if (typeof productId !== 'number' || productId <= 0) {
       console.error('Cart: Invalid productId in handleQuantityChange', productId);
       return;
@@ -62,32 +68,32 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // Inicializar mapa de Leaflet (OpenStreetMap - Gratis)
+
   useEffect(() => {
     if (!showOrderModal) return;
 
     const initMap = async () => {
-      // Esperar a que el contenedor tenga dimensiones
+
       const tryInit = () => {
         if (!mapRef.current) return false;
 
         const hasDimensions = mapRef.current.offsetWidth > 0 && mapRef.current.offsetHeight > 0;
-        
+
         if (!hasDimensions) {
           setTimeout(tryInit, 100);
           return false;
         }
 
-        // Inicializar mapa con geolocalización y callback para actualizar dirección
+
         if (mapRef.current) {
           initializeMap(mapRef.current, (address: string, lat: number, lng: number) => {
-            // Validar coordenadas antes de guardar
+
             if (!validateCoordinates(lat, lng)) {
               console.error('Invalid coordinates received from map:', lat, lng);
               return;
             }
-            
-            // Sanitizar dirección
+
+
             const sanitizedAddress = sanitizeAddress(address, 200);
             setOrderData(prev => ({ ...prev, direccion: sanitizedAddress }));
             setSelectedLocation({ lat, lng });
@@ -129,10 +135,10 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   };
 
   const handleTelefonoChange = (value: string): void => {
-    // Sanitizar y validar teléfono
+
     const sanitized = sanitizePhone(value);
-    
-    // Si está vacío, permitir
+
+
     if (sanitized === '') {
       setOrderData(prev => ({ ...prev, telefono: '' }));
       if (errors.telefono) {
@@ -140,28 +146,28 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       }
       return;
     }
-    
-    // Validar que el primer dígito sea 6 o 7
+
+
     if (sanitized.length > 0 && !/^[67]/.test(sanitized)) {
-      // No permitir si no empieza con 6 o 7
+
       return;
     }
-    
+
     setOrderData(prev => ({ ...prev, telefono: sanitized }));
-    // Limpiar error del campo cuando el usuario empiece a escribir
+
     if (errors.telefono) {
       setErrors(prev => ({ ...prev, telefono: undefined }));
     }
   };
 
   const handleInputChange = (field: keyof OrderData, value: string): void => {
-    // Si es teléfono, usar el handler especial
+
     if (field === 'telefono') {
       handleTelefonoChange(value);
       return;
     }
-    
-    // Sanitizar inputs según el tipo de campo
+
+
     let sanitizedValue = value;
     if (field === 'nombre') {
       sanitizedValue = sanitizeName(value, 100);
@@ -170,28 +176,27 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     } else if (field === 'referencia' || field === 'notas') {
       sanitizedValue = sanitizeInput(value, 500);
     }
-    
+
     setOrderData(prev => ({ ...prev, [field]: sanitizedValue }));
-    // Limpiar error del campo cuando el usuario empiece a escribir
+
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
 
-    // Si es el campo de dirección, buscar SOLO cuando dejen de escribir por 2.5 segundos
-    // NO buscar mientras están escribiendo (solo cuando dejen de escribir)
+
     if (field === 'direccion' && value.trim().length > 2) {
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
-      
-      // Solo buscar cuando dejen de escribir por 2.5 segundos
+
+
       searchTimeoutRef.current = setTimeout(async () => {
         setIsSearching(true);
         await updateMapLocation(value);
         setIsSearching(false);
       }, 2500); // Esperar 2.5 segundos después de que el usuario deje de escribir
     } else if (field === 'direccion' && value.trim().length === 0) {
-      // Limpiar timeout si borran todo
+
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
@@ -201,20 +206,20 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   const handleAddressKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>): Promise<void> => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      
-      // Cancelar cualquier búsqueda pendiente
+
+
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
         searchTimeoutRef.current = null;
       }
-      
+
       const address = orderData.direccion.trim();
-      
+
       if (address.length > 0) {
         setIsSearching(true);
         await updateMapLocation(address);
         setIsSearching(false);
-        // No mostrar mensajes de error, solo intentar buscar
+
       }
     }
   };
@@ -222,7 +227,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   const isFormValid = (): boolean => {
     const cleanPhone = orderData.telefono.replace(/[\s\-()]/g, '');
     const phoneValid = cleanPhone.length >= 7 && cleanPhone.length <= 8 && /^[67][0-9]{6,7}$/.test(cleanPhone);
-    
+
     return (
       orderData.nombre.trim() !== '' &&
       orderData.telefono.trim() !== '' &&
@@ -241,9 +246,9 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     if (!orderData.telefono.trim()) {
       newErrors.telefono = 'El teléfono es requerido';
     } else {
-      // Remover espacios y caracteres especiales para validar
+
       const cleanPhone = orderData.telefono.replace(/[\s\-()]/g, '');
-      // Validar que empiece por 6 o 7 y tenga 7 a 8 números
+
       if (!/^[67][0-9]{6,7}$/.test(cleanPhone)) {
         newErrors.telefono = 'El teléfono debe empezar por 6 o 7 y tener 7 a 8 números';
       }
@@ -269,53 +274,71 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       const totalPrice = getTotalPrice();
       const totalItems = getTotalItems();
 
-      // Validar que haya items en el carrito
+
       if (totalItems <= 0) {
         alert('El carrito está vacío. Agrega productos antes de confirmar el pedido.');
         return;
       }
 
-      // Validar que el total sea válido
+
       if (!isFinite(totalPrice) || totalPrice < 0) {
         console.error('Cart: Invalid total price calculated', totalPrice);
         alert('Error al calcular el total. Por favor, intenta nuevamente.');
         return;
       }
 
-      // Validar coordenadas antes de generar mensaje
+
       if (selectedLocation && !validateCoordinates(selectedLocation.lat, selectedLocation.lng)) {
         alert('La ubicación seleccionada no es válida. Por favor, selecciona una ubicación válida en el mapa.');
         return;
       }
 
-      // Sanitizar todos los datos antes de incluirlos en el mensaje
+
       const sanitizedName = sanitizeForWhatsApp(orderData.nombre.trim());
       const sanitizedPhone = orderData.telefono.trim();
+      const sanitizedGmail = orderData.gmail.trim() ? sanitizeForWhatsApp(orderData.gmail.trim()) : '';
+      const sanitizedNitCi = orderData.nit_ci.trim() ? sanitizeForWhatsApp(orderData.nit_ci.trim()) : '';
+      const sanitizedRazonSocial = orderData.razon_social.trim() ? sanitizeForWhatsApp(orderData.razon_social.trim()) : '';
       const sanitizedAddress = sanitizeForWhatsApp(orderData.direccion.trim());
       const sanitizedReferencia = orderData.referencia.trim() ? sanitizeForWhatsApp(orderData.referencia.trim()) : '';
       const sanitizedNotas = orderData.notas.trim() ? sanitizeForWhatsApp(orderData.notas.trim()) : '';
 
-      // Generar mensaje de WhatsApp con todos los datos del pedido (sanitizados)
-      let whatsappMessage = `🍫 *NUEVO PEDIDO - CACAO*\n\n`;
-      whatsappMessage += `👤 *Cliente:* ${sanitizedName}\n`;
-      whatsappMessage += `📱 *Teléfono:* ${sanitizedPhone}\n\n`;
-      
-      // Agregar dirección con link de Google Maps (siempre incluir link si hay ubicación)
-      whatsappMessage += `📍 *Dirección:* ${sanitizedAddress}\n`;
+
+      let whatsappMessage = `*PEDIDO CACAO*\n\n`;
+      whatsappMessage += `*Cliente:* ${sanitizedName}\n`;
+      whatsappMessage += `*Teléfono:* ${sanitizedPhone}\n`;
+
+
+      if (sanitizedGmail || sanitizedNitCi || sanitizedRazonSocial) {
+        whatsappMessage += `\n*DATOS DE FACTURACIÓN:*\n`;
+        if (sanitizedGmail) {
+          whatsappMessage += `*Gmail:* ${sanitizedGmail}\n`;
+        }
+        if (sanitizedNitCi) {
+          whatsappMessage += `*NIT/CI:* ${sanitizedNitCi}\n`;
+        }
+        if (sanitizedRazonSocial) {
+          whatsappMessage += `*Razón Social:* ${sanitizedRazonSocial}\n`;
+        }
+      }
+      whatsappMessage += `\n`;
+
+
+      whatsappMessage += `*Dirección:* ${sanitizedAddress}\n`;
       if (selectedLocation && validateCoordinates(selectedLocation.lat, selectedLocation.lng)) {
         const mapsLink = `https://www.google.com/maps?q=${selectedLocation.lat},${selectedLocation.lng}`;
-        whatsappMessage += `🗺️ ${mapsLink}\n\n`;
+        whatsappMessage += `${mapsLink}\n\n`;
       } else {
-        whatsappMessage += `\n⚠️ *Nota:* Por favor, confirma que la dirección es correcta\n\n`;
+        whatsappMessage += `\n*Nota:* Por favor, confirma que la dirección es correcta\n\n`;
       }
-      
-      // Agregar referencia si existe
+
+
       if (sanitizedReferencia) {
-        whatsappMessage += `🏠 *Referencia:* ${sanitizedReferencia}\n\n`;
+        whatsappMessage += `*Referencia:* ${sanitizedReferencia}\n\n`;
       }
-      
-      // Agregar items del pedido (sanitizar nombres de productos)
-      whatsappMessage += `🛒 *PEDIDO:*\n`;
+
+
+      whatsappMessage += `*PEDIDO:*\n`;
       items.forEach((item) => {
         if (!item || !item.product) return;
         const productName = sanitizeForWhatsApp(item.product.name || 'Producto sin nombre');
@@ -324,26 +347,29 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         const subtotal = price * quantity;
         whatsappMessage += `• ${productName} x${quantity} = Bs. ${subtotal.toFixed(2)}\n`;
       });
-      
-      whatsappMessage += `\n💰 *TOTAL: Bs. ${totalPrice.toFixed(2)}*\n`;
-      
-      // Agregar notas si existen
+
+      whatsappMessage += `\n*TOTAL: Bs. ${totalPrice.toFixed(2)}*\n`;
+
+
       if (sanitizedNotas) {
-        whatsappMessage += `\n📝 *NOTAS:*\n${sanitizedNotas}\n`;
+        whatsappMessage += `\n*NOTAS:*\n${sanitizedNotas}\n`;
       }
-      
-      // Codificar el mensaje para URL
+
+
       const encodedMessage = encodeURIComponent(whatsappMessage);
       const whatsappNumber = '59179797033'; // Número sin el +
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-      
-      // Abrir WhatsApp
+
+
       window.open(whatsappUrl, '_blank');
-      
-      // Limpiar formulario y cerrar modales
+
+
       setOrderData({
         nombre: '',
         telefono: '',
+        gmail: '',
+        nit_ci: '',
+        razon_social: '',
         direccion: '',
         referencia: '',
         notas: ''
@@ -361,18 +387,18 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   const handleCloseOrderModal = (): void => {
     setShowOrderModal(false);
     setErrors({});
-    // Remover clase del body cuando se cierra el modal
+
     document.body.classList.remove('modal-open');
   };
 
-  // Prevenir scroll del body cuando el modal está abierto
+
   useEffect(() => {
     if (showOrderModal) {
       document.body.classList.add('modal-open');
     } else {
       document.body.classList.remove('modal-open');
     }
-    
+
     return () => {
       document.body.classList.remove('modal-open');
     };
@@ -385,13 +411,13 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       <div className="cart-container" onClick={(e) => e.stopPropagation()}>
         <div className="cart-header">
           <h2 className="cart-title">Carrito de Compras</h2>
-          <button 
+          <button
             className="cart-close-button"
             onClick={onClose}
             aria-label="Cerrar carrito"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         </div>
@@ -400,7 +426,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
           {items.length === 0 ? (
             <div className="cart-empty">
               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 8.99 21.1 8.99 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5H5.21L4.27 3H1V2ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 18.99 21.1 18.99 20 18.1 18 17 18Z" fill="currentColor" opacity="0.3"/>
+                <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 8.99 21.1 8.99 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5H5.21L4.27 3H1V2ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 18.99 21.1 18.99 20 18.1 18 17 18Z" fill="currentColor" opacity="0.3" />
               </svg>
               <p className="cart-empty-text">Tu carrito está vacío</p>
               <p className="cart-empty-subtext">Agrega productos del menú para comenzar</p>
@@ -430,7 +456,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                             Bs. {isValidSubtotal ? price.toFixed(2) : '0.00'}
                           </p>
                         </div>
-                        
+
                         <div className="cart-item-controls">
                           <div className="quantity-controls">
                             <button
@@ -440,7 +466,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                               disabled={quantity <= 1}
                             >
                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
                             </button>
                             <span className="quantity-value">{quantity}</span>
@@ -450,25 +476,25 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                               aria-label="Aumentar cantidad"
                             >
                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
                             </button>
                           </div>
-                          
+
                           <div className="cart-item-subtotal">
                             <span className="subtotal-label">Subtotal:</span>
                             <span className="subtotal-value">
                               Bs. {isValidSubtotal ? subtotal.toFixed(2) : '0.00'}
                             </span>
                           </div>
-                          
+
                           <button
                             className="cart-item-remove"
                             onClick={() => removeFromCart(product.id)}
                             aria-label="Eliminar producto"
                           >
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M3 6H5H21M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M3 6H5H21M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                           </button>
                         </div>
@@ -498,8 +524,8 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                     <span className="summary-value">
                       Bs. {(() => {
                         const total = getTotalPrice();
-                        return typeof total === 'number' && isFinite(total) && total >= 0 
-                          ? total.toFixed(2) 
+                        return typeof total === 'number' && isFinite(total) && total >= 0
+                          ? total.toFixed(2)
                           : '0.00';
                       })()}
                     </span>
@@ -532,13 +558,13 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
           <div className="order-modal-container" onClick={(e) => e.stopPropagation()}>
             <div className="order-modal-header">
               <h2 className="order-modal-title">Datos del Pedido</h2>
-              <button 
+              <button
                 className="order-modal-close-button"
                 onClick={handleCloseOrderModal}
                 aria-label="Cerrar modal"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
             </div>
@@ -575,6 +601,53 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   {errors.telefono && <span className="error-message">{errors.telefono}</span>}
                 </div>
 
+                {/* Sección de Datos de Facturación */}
+                <div style={{ marginTop: '1.5rem', marginBottom: '1rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem', color: '#d4af37' }}>Datos de Facturación (Opcional)</h3>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="gmail" className="form-label">
+                    Gmail (Opcional)
+                  </label>
+                  <input
+                    type="email"
+                    id="gmail"
+                    className="form-input"
+                    value={orderData.gmail}
+                    onChange={(e) => handleInputChange('gmail', e.target.value)}
+                    placeholder="tucorreo@gmail.com"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="nit_ci" className="form-label">
+                    NIT o CI (Opcional)
+                  </label>
+                  <input
+                    type="text"
+                    id="nit_ci"
+                    className="form-input"
+                    value={orderData.nit_ci}
+                    onChange={(e) => handleInputChange('nit_ci', e.target.value)}
+                    placeholder="Ej: 123456789 o 12345678"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="razon_social" className="form-label">
+                    Razón Social (Opcional)
+                  </label>
+                  <input
+                    type="text"
+                    id="razon_social"
+                    className="form-input"
+                    value={orderData.razon_social}
+                    onChange={(e) => handleInputChange('razon_social', e.target.value)}
+                    placeholder="Nombre o empresa para facturar"
+                  />
+                </div>
+
 
                 <div className="form-group">
                   <label htmlFor="direccion" className="form-label">
@@ -595,19 +668,19 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   <p className="form-hint">
                     {isSearching ? 'Buscando dirección en Cochabamba...' : 'Escribe tu dirección en Cochabamba o usa el mapa para seleccionar tu ubicación'}
                   </p>
-                  
+
                   {/* Mapa de OpenStreetMap */}
-                  <div 
+                  <div
                     ref={mapRef}
                     className="google-map-container"
                     style={{ height: '300px', width: '100%', marginTop: '1rem', borderRadius: '8px', overflow: 'hidden', minHeight: '300px' }}
                   />
-                  
+
                   {/* Mensaje sobre ajustar ubicación */}
-                  <p className="form-hint" style={{ 
-                    marginTop: '0.75rem', 
-                    padding: '0.75rem', 
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                  <p className="form-hint" style={{
+                    marginTop: '0.75rem',
+                    padding: '0.75rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
                     borderRadius: '8px',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
                     fontSize: '0.9rem',
@@ -615,7 +688,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   }}>
                     ⚠️ <strong>Si la ubicación no es correcta, por favor arrastra el pin a tu ubicación exacta en el mapa</strong>
                   </p>
-                  
+
                   {/* Link a Google Maps cuando hay una ubicación seleccionada */}
                   {selectedLocation && (
                     <a
