@@ -16,6 +16,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -38,6 +39,7 @@
   from {
     transform: translateX(100%);
   }
+
   to {
     transform: translateX(0);
   }
@@ -468,6 +470,7 @@ body.modal-open {
     transform: translateY(20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -637,21 +640,36 @@ body.modal-open {
 @media (max-width: 768px) {
   .cart-container {
     max-width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .cart-content {
+    padding: 1rem;
+    padding-bottom: 80px;
+    /* Espacio para el footer */
   }
 
   .cart-item-controls {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.5rem;
   }
 
   .cart-item-subtotal {
-    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     margin-left: 0;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .quantity-controls {
     width: 100%;
     justify-content: space-between;
+    padding: 0.5rem;
   }
 
   .delivery-section {
@@ -666,41 +684,86 @@ body.modal-open {
 
   .change-location-button {
     width: 100%;
+    text-align: center;
   }
 
+  /* Order Modal Mobile Improvements */
   .order-modal-overlay {
     padding: 0;
     align-items: flex-end;
-    /* Prevenir movimiento en móviles */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    /* Modal slide up from bottom */
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
   }
 
   .order-modal-container {
     max-width: 100%;
-    max-height: 100vh;
-    border-radius: 0;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
+    height: 90vh;
+    /* Ocupar casi toda la pantalla pero dejar ver un poco el fondo */
+    max-height: 90vh;
+    border-radius: 20px 20px 0 0;
+    /* Bordes redondeados solo arriba */
     margin: 0;
-    /* Asegurar que el contenedor no se mueva */
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  .order-modal-header,
-  .order-modal-content,
-  .order-modal-footer {
-    padding: 1rem;
-  }
-
-  .order-modal-footer {
+    display: flex;
     flex-direction: column;
+    position: relative;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .order-modal-header {
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    /* No encoger el header */
+    background-color: #1a1a1a;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .order-modal-title {
+    font-size: 1.25rem;
+  }
+
+  .order-modal-content {
+    padding: 1.25rem;
+    overflow-y: auto;
+    /* Scroll suave */
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+    /* Ocupar el espacio restante */
+    background-color: #1a1a1a;
+  }
+
+  .order-modal-footer {
+    padding: 1.25rem;
+    flex-direction: column-reverse;
+    /* Botón principal arriba en móviles */
+    gap: 0.75rem;
+    background-color: #1a1a1a;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    /* No encoger el footer */
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+    /* Respetar safe area en iPhone */
+  }
+
+  .order-modal-footer .cart-button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  /* Mejorar inputs en móvil */
+  .form-input {
+    padding: 0.875rem;
+    /* Áreas táctiles más grandes */
+    font-size: 16px;
+    /* Evitar zoom en iOS */
+  }
+
+  .google-map-container {
+    height: 250px;
+    /* Mapa un poco más pequeño en móvil */
+    min-height: 250px;
   }
 }
 
@@ -724,4 +787,3 @@ body.modal-open {
 .google-map-container img {
   max-width: none !important;
 }
-

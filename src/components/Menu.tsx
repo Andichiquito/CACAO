@@ -308,6 +308,19 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
       }));
     };
 
+    const subSelectors = getProductSelectors(selectedProduct);
+
+    const getSelectedOptions = () => {
+      if (subSelectors.length > 0) {
+        return subSelectors.map((selector, index) => {
+          const getSelectionKey = (idx: number) => `selector-${selectedProduct.id}-${idx}`;
+          const selectedIdx = selectedVariants[getSelectionKey(index)] || 0;
+          return selector.options[selectedIdx] || selector.options[0];
+        });
+      }
+      return [];
+    };
+
     return (
       <div key={groupId} className="dropdown-item grouped-product">
         <div className="item-header">
@@ -342,48 +355,40 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
         </div>
 
 
-        {(() => {
-          const subSelectors = getProductSelectors(selectedProduct);
+        {subSelectors.length > 0 && (
+          <div className="multi-selector-container">
+            {subSelectors.map((selector, selectorIndex) => {
+              const getSelectionKey = (idx: number) => `selector-${selectedProduct.id}-${idx}`;
+              const selectedIdx = selectedVariants[getSelectionKey(selectorIndex)] || 0;
 
-          if (subSelectors.length > 0) {
-            return (
-              <div className="multi-selector-container">
-                {subSelectors.map((selector, selectorIndex) => {
-                  const getSelectionKey = (idx: number) => `selector-${selectedProduct.id}-${idx}`;
-                  const selectedIdx = selectedVariants[getSelectionKey(selectorIndex)] || 0;
-
-                  return (
-                    <div key={selectorIndex} className="variant-selector">
-                      <label className="variant-label" htmlFor={`group-${groupId}-selector-${selectorIndex}`}>
-                        {selector.label}:
-                      </label>
-                      <select
-                        id={`group-${groupId}-selector-${selectorIndex}`}
-                        className="variant-select"
-                        value={selectedIdx}
-                        onChange={(e) => {
-                          const val = Number(e.target.value);
-                          setSelectedVariants(prev => ({
-                            ...prev,
-                            [getSelectionKey(selectorIndex)]: val
-                          }));
-                        }}
-                      >
-                        {selector.options.map((option, optionIndex) => (
-                          <option key={optionIndex} value={optionIndex}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          }
-          return null;
-        })()}
-
+              return (
+                <div key={selectorIndex} className="variant-selector">
+                  <label className="variant-label" htmlFor={`group-${groupId}-selector-${selectorIndex}`}>
+                    {selector.label}:
+                  </label>
+                  <select
+                    id={`group-${groupId}-selector-${selectorIndex}`}
+                    className="variant-select"
+                    value={selectedIdx}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      setSelectedVariants(prev => ({
+                        ...prev,
+                        [getSelectionKey(selectorIndex)]: val
+                      }));
+                    }}
+                  >
+                    {selector.options.map((option, optionIndex) => (
+                      <option key={optionIndex} value={optionIndex}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
 
         {selectedProduct.description && (
@@ -394,7 +399,20 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
 
         <button
           className="add-to-cart-btn"
-          onClick={() => handleAddToCart(selectedProduct)}
+          onClick={() => {
+            const selectedOptions = getSelectedOptions();
+            if (selectedOptions.length > 0) {
+              const optionsText = selectedOptions.join(' - ');
+              const productWithOptions = {
+                ...selectedProduct,
+                name: `${selectedProduct.name} - ${optionsText}`,
+                description: optionsText
+              };
+              handleAddToCart(productWithOptions);
+            } else {
+              handleAddToCart(selectedProduct);
+            }
+          }}
           disabled={!selectedProduct.is_available}
         >
           {selectedProduct.is_available ? 'Agregar al carrito' : 'No disponible'}
