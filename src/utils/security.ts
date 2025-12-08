@@ -19,14 +19,13 @@ export const sanitizeInput = (input: string, maxLength: number = 500): string =>
     .replace(/[<>]/g, '') // Eliminar < y >
     .replace(/javascript:/gi, '') // Eliminar javascript:
     .replace(/on\w+=/gi, '') // Eliminar event handlers (onclick=, onerror=, etc.)
-    .replace(/data:/gi, '') // Eliminar data: URLs
-    .trim();
+    .replace(/data:/gi, ''); // Eliminar data: URLs
 
   return sanitized;
 };
 
 /**
- * Sanitiza un nombre (solo letras, espacios, acentos y algunos caracteres especiales)
+ * Sanitiza un nombre (permitir letras, espacios, acentos y caracteres especiales durante la escritura)
  */
 export const sanitizeName = (name: string, maxLength: number = 100): string => {
   if (typeof name !== 'string') {
@@ -34,13 +33,11 @@ export const sanitizeName = (name: string, maxLength: number = 100): string => {
   }
 
   let sanitized = name.slice(0, maxLength);
-  
-  // Solo permitir letras, espacios, acentos y algunos caracteres especiales
+
+  // Eliminar solo caracteres realmente peligrosos o inválidos, pero permitir escritura fluida
+  // No hacemos trim() aquí para permitir escribir espacios
   sanitized = sanitized.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-'\.]/g, '');
-  
-  // Limitar espacios múltiples
-  sanitized = sanitized.replace(/\s+/g, ' ').trim();
-  
+
   return sanitized;
 };
 
@@ -53,15 +50,11 @@ export const sanitizeAddress = (address: string, maxLength: number = 200): strin
   }
 
   let sanitized = address.slice(0, maxLength);
-  
+
   // Permitir letras, números, espacios, acentos y caracteres comunes de direcciones
   sanitized = sanitized.replace(/[<>]/g, ''); // Eliminar < y >
-  sanitized = sanitized.replace(/javascript:/gi, '');
-  sanitized = sanitized.replace(/on\w+=/gi, '');
-  
-  // Limitar espacios múltiples
-  sanitized = sanitized.replace(/\s+/g, ' ').trim();
-  
+
+  // No hacemos trim() aquí para permitir escribir espacios
   return sanitized;
 };
 

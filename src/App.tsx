@@ -4,6 +4,7 @@ import Menu from './components/Menu';
 import Cart from './components/Cart';
 import { ThemeProvider, ThemeStyles } from './contexts/ThemeContext';
 import { CartProvider } from './contexts/CartContext';
+import { ToastProvider } from './contexts/ToastContext';
 import './App.css';
 
 type ViewType = 'home' | 'menu' | 'about';
@@ -78,13 +79,15 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider defaultTheme="dark">
-      <CartProvider>
-        <ThemeStyles />
-        <div className="App">
-          {renderCurrentView()}
-          <Cart isOpen={isCartOpen} onClose={closeCart} />
-        </div>
-      </CartProvider>
+      <ToastProvider>
+        <CartProvider>
+          <ThemeStyles />
+          <div className="App">
+            {renderCurrentView()}
+            <Cart isOpen={isCartOpen} onClose={closeCart} />
+          </div>
+        </CartProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 };

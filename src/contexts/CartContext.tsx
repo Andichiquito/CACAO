@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Product, CartItem, CartHook } from '../types';
+import { useToast } from './ToastContext';
 
-interface CartContextType extends CartHook {}
+interface CartContextType extends CartHook { }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -11,6 +12,7 @@ interface CartProviderProps {
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const { showToast } = useToast();
 
   // Función para validar un item del carrito
   const isValidCartItem = (item: any): item is CartItem => {
@@ -36,7 +38,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const savedCart = localStorage.getItem('cacao-cart');
       if (savedCart) {
         const parsedCart = JSON.parse(savedCart);
-        
+
         // Validar que sea un array
         if (!Array.isArray(parsedCart)) {
           console.warn('CartContext: Invalid cart data format, resetting cart');
@@ -47,7 +49,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
         // Validar y filtrar items válidos
         const validItems = parsedCart.filter(isValidCartItem);
-        
+
         if (validItems.length !== parsedCart.length) {
           console.warn('CartContext: Some cart items were invalid and removed');
         }
@@ -71,7 +73,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     try {
       // Validar items antes de guardar
       const validItems = items.filter(isValidCartItem);
-      
+
       if (validItems.length !== items.length) {
         console.warn('CartContext: Some items were invalid, fixing cart');
         setItems(validItems);
@@ -129,10 +131,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
           return [{ product, quantity }];
         }
 
-        const existingItem = prevItems.find(item => 
+        const existingItem = prevItems.find(item =>
           item && item.product && item.product.id === product.id
         );
-        
+
         if (existingItem) {
           const newQuantity = existingItem.quantity + quantity;
           // Validar que la nueva cantidad no exceda límites
@@ -159,6 +161,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
           return [...prevItems, { product, quantity }];
         }
       });
+
+      // Mostrar notificación de éxito
+      showToast('Producto agregado', `${product.name} se agregó al carrito`);
     } catch (error) {
       console.error('CartContext: Error adding to cart', error);
     }
@@ -175,7 +180,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         if (!Array.isArray(prevItems)) {
           return [];
         }
-        return prevItems.filter(item => 
+        return prevItems.filter(item =>
           item && item.product && item.product.id !== productId
         );
       });
@@ -248,13 +253,13 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         const price = typeof item.product.price === 'number' ? item.product.price : 0;
         const quantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 0;
         const itemTotal = price * quantity;
-        
+
         // Validar que el total no sea NaN o Infinity
         if (!isFinite(itemTotal)) {
           console.warn('CartContext: Invalid item total calculated', item);
           return total;
         }
-        
+
         return total + itemTotal;
       }, 0);
     } catch (error) {

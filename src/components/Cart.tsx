@@ -183,6 +183,15 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
 
+    // Limpiar gmail si se borran los datos de facturación
+    if ((field === 'nit_ci' || field === 'razon_social') && sanitizedValue.trim() === '') {
+      const otherField = field === 'nit_ci' ? 'razon_social' : 'nit_ci';
+      if (orderData[otherField].trim() === '') {
+        setOrderData(prev => ({ ...prev, gmail: '', [field]: sanitizedValue }));
+        return; // Retornamos aquí porque ya actualizamos el estado
+      }
+    }
+
 
     if (field === 'direccion' && value.trim().length > 2) {
       if (searchTimeoutRef.current) {
@@ -259,6 +268,12 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       newErrors.direccion = 'La dirección es requerida';
     } else if (!selectedLocation) {
       newErrors.direccion = 'Por favor, selecciona tu ubicación en el mapa arrastrando el pin';
+    }
+
+    // Validar facturación condicional
+    const hasBillingData = orderData.nit_ci.trim() !== '' || orderData.razon_social.trim() !== '';
+    if (hasBillingData && !orderData.gmail.trim()) {
+      newErrors.gmail = 'El correo es obligatorio para facturación';
     }
 
     setErrors(newErrors);
@@ -432,124 +447,124 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
               <p className="cart-empty-subtext">Agrega productos del menú para comenzar</p>
             </div>
           ) : (
-            <>
-              <div className="cart-items">
-                {Array.isArray(items) && items.length > 0 ? (
-                  items.map((item) => {
-                    // Validar item antes de renderizar
-                    if (!item || !item.product) {
-                      console.warn('Cart: Invalid item found, skipping', item);
-                      return null;
-                    }
+            <div className="cart-items">
+              {Array.isArray(items) && items.length > 0 ? (
+                items.map((item) => {
+                  // Validar item antes de renderizar
+                  if (!item || !item.product) {
+                    console.warn('Cart: Invalid item found, skipping', item);
+                    return null;
+                  }
 
-                    const product = item.product;
-                    const quantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
-                    const price = typeof product.price === 'number' && product.price >= 0 ? product.price : 0;
-                    const subtotal = price * quantity;
-                    const isValidSubtotal = isFinite(subtotal) && subtotal >= 0;
+                  const product = item.product;
+                  const quantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
+                  const price = typeof product.price === 'number' && product.price >= 0 ? product.price : 0;
+                  const subtotal = price * quantity;
+                  const isValidSubtotal = isFinite(subtotal) && subtotal >= 0;
 
-                    return (
-                      <div key={product.id} className="cart-item">
-                        <div className="cart-item-info">
-                          <h3 className="cart-item-name">{product.name || 'Producto sin nombre'}</h3>
-                          <p className="cart-item-price">
-                            Bs. {isValidSubtotal ? price.toFixed(2) : '0.00'}
-                          </p>
-                        </div>
+                  return (
+                    <div key={product.id} className="cart-item">
+                      <div className="cart-item-info">
+                        <h3 className="cart-item-name">{product.name || 'Producto sin nombre'}</h3>
+                        <p className="cart-item-price">
+                          Bs. {isValidSubtotal ? price.toFixed(2) : '0.00'}
+                        </p>
+                      </div>
 
-                        <div className="cart-item-controls">
-                          <div className="quantity-controls">
-                            <button
-                              className="quantity-button"
-                              onClick={() => handleQuantityChange(product.id, quantity - 1)}
-                              aria-label="Disminuir cantidad"
-                              disabled={quantity <= 1}
-                            >
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            </button>
-                            <span className="quantity-value">{quantity}</span>
-                            <button
-                              className="quantity-button"
-                              onClick={() => handleQuantityChange(product.id, quantity + 1)}
-                              aria-label="Aumentar cantidad"
-                            >
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            </button>
-                          </div>
-
-                          <div className="cart-item-subtotal">
-                            <span className="subtotal-label">Subtotal:</span>
-                            <span className="subtotal-value">
-                              Bs. {isValidSubtotal ? subtotal.toFixed(2) : '0.00'}
-                            </span>
-                          </div>
-
+                      <div className="cart-item-controls">
+                        <div className="quantity-controls">
                           <button
-                            className="cart-item-remove"
-                            onClick={() => removeFromCart(product.id)}
-                            aria-label="Eliminar producto"
+                            className="quantity-button"
+                            onClick={() => handleQuantityChange(product.id, quantity - 1)}
+                            aria-label="Disminuir cantidad"
+                            disabled={quantity <= 1}
                           >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M3 6H5H21M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </button>
+                          <span className="quantity-value">{quantity}</span>
+                          <button
+                            className="quantity-button"
+                            onClick={() => handleQuantityChange(product.id, quantity + 1)}
+                            aria-label="Aumentar cantidad"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                           </button>
                         </div>
+
+                        <div className="cart-item-subtotal">
+                          <span className="subtotal-label">Subtotal:</span>
+                          <span className="subtotal-value">
+                            Bs. {isValidSubtotal ? subtotal.toFixed(2) : '0.00'}
+                          </span>
+                        </div>
+
+                        <button
+                          className="cart-item-remove"
+                          onClick={() => removeFromCart(product.id)}
+                          aria-label="Eliminar producto"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 6H5H21M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
                       </div>
-                    );
-                  })
-                ) : (
-                  <div className="cart-empty">
-                    <p>Error al cargar los items del carrito</p>
-                  </div>
-                )}
-              </div>
-
-              <div className="cart-footer">
-                <div className="cart-summary">
-                  <div className="cart-summary-row">
-                    <span className="summary-label">Total de items:</span>
-                    <span className="summary-value">
-                      {(() => {
-                        const total = getTotalItems();
-                        return typeof total === 'number' && total >= 0 ? total : 0;
-                      })()}
-                    </span>
-                  </div>
-                  <div className="cart-summary-row cart-total">
-                    <span className="summary-label">Total a pagar:</span>
-                    <span className="summary-value">
-                      Bs. {(() => {
-                        const total = getTotalPrice();
-                        return typeof total === 'number' && isFinite(total) && total >= 0
-                          ? total.toFixed(2)
-                          : '0.00';
-                      })()}
-                    </span>
-                  </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="cart-empty">
+                  <p>Error al cargar los items del carrito</p>
                 </div>
-
-                <div className="cart-actions">
-                  <button
-                    className="cart-button cart-button-secondary"
-                    onClick={clearCart}
-                  >
-                    Vaciar Carrito
-                  </button>
-                  <button
-                    className="cart-button cart-button-primary"
-                    onClick={handleViewOrder}
-                  >
-                    Ver Pedido
-                  </button>
-                </div>
-              </div>
-            </>
+              )}
+            </div>
           )}
         </div>
+
+        {items.length > 0 && (
+          <div className="cart-footer">
+            <div className="cart-summary">
+              <div className="cart-summary-row">
+                <span className="summary-label">Total de items:</span>
+                <span className="summary-value">
+                  {(() => {
+                    const total = getTotalItems();
+                    return typeof total === 'number' && total >= 0 ? total : 0;
+                  })()}
+                </span>
+              </div>
+              <div className="cart-summary-row cart-total">
+                <span className="summary-label">Total a pagar:</span>
+                <span className="summary-value">
+                  Bs. {(() => {
+                    const total = getTotalPrice();
+                    return typeof total === 'number' && isFinite(total) && total >= 0
+                      ? total.toFixed(2)
+                      : '0.00';
+                  })()}
+                </span>
+              </div>
+            </div>
+
+            <div className="cart-actions">
+              <button
+                className="cart-button cart-button-secondary"
+                onClick={clearCart}
+              >
+                Vaciar Carrito
+              </button>
+              <button
+                className="cart-button cart-button-primary"
+                onClick={handleViewOrder}
+              >
+                Ver Pedido
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Modal de Datos del Pedido */}
@@ -607,22 +622,8 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="gmail" className="form-label">
-                    Gmail (Opcional)
-                  </label>
-                  <input
-                    type="email"
-                    id="gmail"
-                    className="form-input"
-                    value={orderData.gmail}
-                    onChange={(e) => handleInputChange('gmail', e.target.value)}
-                    placeholder="tucorreo@gmail.com"
-                  />
-                </div>
-
-                <div className="form-group">
                   <label htmlFor="nit_ci" className="form-label">
-                    NIT o CI (Opcional)
+                    NIT o CI
                   </label>
                   <input
                     type="text"
@@ -630,13 +631,13 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                     className="form-input"
                     value={orderData.nit_ci}
                     onChange={(e) => handleInputChange('nit_ci', e.target.value)}
-                    placeholder="Ej: 123456789 o 12345678"
+                    placeholder=""
                   />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="razon_social" className="form-label">
-                    Razón Social (Opcional)
+                    Razón Social
                   </label>
                   <input
                     type="text"
@@ -644,9 +645,26 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                     className="form-input"
                     value={orderData.razon_social}
                     onChange={(e) => handleInputChange('razon_social', e.target.value)}
-                    placeholder="Nombre o empresa para facturar"
+                    placeholder=""
                   />
                 </div>
+
+                {(orderData.nit_ci.trim() !== '' || orderData.razon_social.trim() !== '') && (
+                  <div className="form-group">
+                    <label htmlFor="gmail" className="form-label">
+                      Gmail <span className="required">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="gmail"
+                      className={`form-input ${errors.gmail ? 'form-input-error' : ''}`}
+                      value={orderData.gmail}
+                      onChange={(e) => handleInputChange('gmail', e.target.value)}
+                      placeholder="tucorreo@gmail.com"
+                    />
+                    {errors.gmail && <span className="error-message">{errors.gmail}</span>}
+                  </div>
+                )}
 
 
                 <div className="form-group">

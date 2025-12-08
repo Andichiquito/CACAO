@@ -238,11 +238,11 @@
 /* Cart Footer */
 .cart-footer {
   margin-top: auto;
-  padding-top: 1.5rem;
+  padding: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   background-color: #1a1a1a;
-  position: sticky;
-  bottom: 0;
+  flex-shrink: 0;
+  z-index: 10;
 }
 
 .cart-summary {
@@ -646,8 +646,8 @@ body.modal-open {
 
   .cart-content {
     padding: 1rem;
-    padding-bottom: 80px;
-    /* Espacio para el footer */
+    flex: 1;
+    overflow-y: auto;
   }
 
   .cart-item-controls {
