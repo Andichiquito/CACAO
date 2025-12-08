@@ -2,12 +2,12 @@
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
-    background-color: #E07A5F;
+    background: linear-gradient(135deg, #E07A5F 0%, #D4694A 100%);
     border: none;
-    box-shadow: 0 4px 15px rgba(224, 122, 95, 0.4);
+    box-shadow: 0 8px 24px rgba(224, 122, 95, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -18,9 +18,12 @@
 }
 
 .floating-cart-button:hover {
-    transform: scale(1.1);
-    background-color: #d4694a;
-    box-shadow: 0 6px 20px rgba(224, 122, 95, 0.6);
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 12px 28px rgba(224, 122, 95, 0.5);
+}
+
+.floating-cart-button:active {
+    transform: scale(0.95);
 }
 
 .floating-cart-icon {
