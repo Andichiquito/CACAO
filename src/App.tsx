@@ -5,6 +5,7 @@ import Cart from './components/Cart';
 import { ThemeProvider, ThemeStyles } from './contexts/ThemeContext';
 import { CartProvider } from './contexts/CartContext';
 import { ToastProvider } from './contexts/ToastContext';
+import FloatingCartButton from './components/FloatingCartButton';
 import './App.css';
 
 type ViewType = 'home' | 'menu' | 'about';
@@ -84,6 +85,7 @@ const App: React.FC = () => {
           <ThemeStyles />
           <div className="App">
             {renderCurrentView()}
+            <FloatingCartButton onClick={openCart} />
             <Cart isOpen={isCartOpen} onClose={closeCart} />
           </div>
         </CartProvider>

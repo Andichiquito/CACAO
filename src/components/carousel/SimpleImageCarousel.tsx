@@ -3,10 +3,10 @@ import './SimpleImageCarousel.css';
 
 const SimpleImageCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  
+
   const images: string[] = [
     "/images/tortas.png",
-    "/images/Salados.png", 
+    "/images/Salados.png",
     "/images/qrs.png",
     "/images/Fria.png"
   ];
@@ -14,7 +14,7 @@ const SimpleImageCarousel: React.FC = () => {
   // Auto-play cada 4 segundos
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
+      setCurrentIndex((prevIndex) =>
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
     }, 4000);
@@ -37,12 +37,16 @@ const SimpleImageCarousel: React.FC = () => {
   return (
     <div className="simple-image-carousel">
       {/* Imagen actual */}
+      {/* Imagen actual */}
       <div className="image-container">
-        <img 
-          src={images[currentIndex]} 
-          alt={`Slide ${currentIndex + 1}`}
-          className="carousel-image"
-        />
+        {images.map((image, index) => (
+          <img
+            key={index}
+            src={image}
+            alt={`Slide ${index + 1}`}
+            className={`carousel-image ${index === currentIndex ? 'active' : ''}`}
+          />
+        ))}
       </div>
 
       {/* Flechas */}
