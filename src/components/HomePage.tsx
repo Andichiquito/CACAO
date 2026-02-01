@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import SimpleImageCarousel from './carousel/SimpleImageCarousel';
 import AboutUs from './AboutUs';
+import UserMenu from './UserMenu';
 import { useCart } from '../hooks/useCart';
+import { useSupabase } from '../contexts/SupabaseContext';
 import { HomePageProps } from '../types';
 import './HomePage.css';
 
@@ -16,8 +18,9 @@ declare global {
   }
 }
 
-const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
+const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth }) => {
 
+  const { user } = useSupabase();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const { getTotalItems } = useCart();
   const totalItems = getTotalItems();
@@ -151,26 +154,21 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
                 <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 8.99 21.1 8.99 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5H5.21L4.27 3H1V2ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 18.99 21.1 18.99 20 18.1 18 17 18Z" fill="white" />
               </svg>
               {totalItems > 0 && typeof totalItems === 'number' && (
-                <span className="cart-badge" style={{
-                  position: 'absolute',
-                  top: '-8px',
-                  right: '-8px',
-                  background: '#8B4513',
-                  color: 'white',
-                  borderRadius: '50%',
-                  width: '20px',
-                  height: '20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '12px',
-                  fontWeight: 'bold'
-                }}>
-                  {totalItems > 99 ? '99+' : totalItems}
-                </span>
+                <span className="cart-badge">{totalItems > 99 ? '99+' : totalItems}</span>
               )}
             </div>
 
+            {/* 
+            <div className="user-auth-section">
+              {user ? (
+                <UserMenu onNavigate={onNavigate} />
+              ) : (
+                <button className="login-btn" onClick={onOpenAuth}>
+                  Acceder
+                </button>
+              )}
+            </div>
+            */}
 
             <button
               className="hamburger-menu"
@@ -259,7 +257,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
 
         <div className="menu-highlight-section">
           <div className="menu-highlight-content">
-            <h2 className="menu-highlight-title">Nuestro Menú</h2>
+            <h2 className="menu-highlight-title">NUESTRO MENÚ</h2>
             <p className="menu-highlight-subtitle">Descubre nuestras deliciosas opciones. Haz clic en la imagen para ver el menú completo</p>
             <div
               className="menu-image-container"
@@ -275,7 +273,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
               aria-label="Ver menú completo"
             >
               <img
-                src="/images/Menu.png"
+                src="/assets/images/homepage/Menu.PNG"
                 alt="Menú CACAO"
                 className="menu-highlight-image"
               />
@@ -287,32 +285,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
         </div>
 
 
-        <div className="instagram-section">
-          <div className="instagram-content">
-            <h2 className="instagram-title">Síguenos en Instagram</h2>
-            <div className="instagram-embed-container">
-              <blockquote
-                className="instagram-media"
-                data-instgrm-permalink="https://www.instagram.com/reel/DQiF0h-l0FD/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
-                data-instgrm-version="14"
-                data-instgrm-captioned
-                style={{
-                  background: '#FFF',
-                  border: '0',
-                  borderRadius: '3px',
-                  boxShadow: '0 0 1px 0 rgba(0,0,0,0.5), 0 1px 10px 0 rgba(0,0,0,0.15)',
-                  margin: '1px',
-                  maxWidth: '540px',
-                  minWidth: '326px',
-                  padding: '0',
-                  width: '99.375%'
-                }}
-              >
-              </blockquote>
-            </div>
-          </div>
-        </div>
-
         {/* Sección de Horarios */}
         <div className="horarios-section">
           <div className="horarios-content">
@@ -320,7 +292,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart }) => {
             <p className="horarios-subtitle">Visítanos en nuestros horarios de atención</p>
             <div className="horarios-image-container">
               <img
-                src="/images/horarios.jpeg"
+                src="/assets/images/homepage/Horarios.PNG"
                 alt="Horarios de atención CACAO"
                 className="horarios-image"
               />

@@ -7,6 +7,7 @@ import {
   cleanup as cleanupMap
 } from '../utils/leafletMap';
 import { sanitizeInput, sanitizeName, sanitizeAddress, sanitizeForWhatsApp, validateCoordinates, sanitizePhone } from '../utils/security';
+import { useSupabase } from '../contexts/SupabaseContext';
 import 'leaflet/dist/leaflet.css';
 
 interface CartProps {
@@ -26,6 +27,7 @@ interface OrderData {
 }
 
 const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
+  const { user, supabase } = useSupabase();
   const { items, removeFromCart, updateQuantity, getTotalPrice, getTotalItems, clearCart } = useCart();
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [orderData, setOrderData] = useState<OrderData>({
@@ -68,6 +70,38 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     }
   };
 
+
+  useEffect(() => {
+    if (showOrderModal && user) {
+      const fetchProfileData = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('full_name, phone')
+            .eq('id', user.id)
+            .single();
+
+          if (data && !error) {
+            setOrderData(prev => ({
+              ...prev,
+              nombre: prev.nombre || data.full_name || '',
+              telefono: prev.telefono || data.phone || '',
+              gmail: prev.gmail || user.email || ''
+            }));
+          } else {
+            // Si no hay perfil aún, al menos cargar el email
+            setOrderData(prev => ({
+              ...prev,
+              gmail: prev.gmail || user.email || ''
+            }));
+          }
+        } catch (err) {
+          console.error('Error pre-filling order data:', err);
+        }
+      };
+      fetchProfileData();
+    }
+  }, [showOrderModal, user, supabase]);
 
   useEffect(() => {
     if (!showOrderModal) return;

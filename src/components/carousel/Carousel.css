@@ -49,12 +49,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.7) 0%,
-    rgba(0, 0, 0, 0.4) 50%,
-    rgba(0, 0, 0, 0.7) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.4) 50%,
+      rgba(0, 0, 0, 0.7) 100%);
   z-index: 2;
   display: flex;
   align-items: center;
@@ -161,8 +159,8 @@
 }
 
 .carousel-dot.active {
-  background: #E07A5F;
-  border-color: #E07A5F;
+  background: #B0B0B0;
+  border-color: #B0B0B0;
   box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 }
 
@@ -173,11 +171,11 @@
     min-height: 250px;
     max-height: 350px;
   }
-  
+
   .carousel-title {
     font-size: 3rem;
   }
-  
+
   .carousel-description {
     font-size: 1.2rem;
   }
@@ -189,41 +187,41 @@
     min-height: 200px;
     max-height: 300px;
   }
-  
+
   .carousel-title {
     font-size: 2.8rem;
   }
-  
+
   .carousel-description {
     font-size: 1.1rem;
   }
-  
+
   .carousel-content {
     padding: 0 1rem;
   }
-  
+
   .carousel-buttons {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .carousel-arrows {
     padding: 0 1rem;
   }
-  
+
   .carousel-arrow {
     width: 40px;
     height: 40px;
   }
-  
+
   .carousel-arrow-left {
     left: 1rem;
   }
-  
+
   .carousel-arrow-right {
     right: 1rem;
   }
-  
+
   .carousel-dots {
     bottom: 1rem;
   }
@@ -235,43 +233,43 @@
     min-height: 180px;
     max-height: 250px;
   }
-  
+
   .carousel-title {
     font-size: 2.2rem;
     margin-bottom: 0.75rem;
   }
-  
+
   .carousel-description {
     font-size: 1rem;
     margin-bottom: 1.5rem;
   }
-  
+
   .carousel-content {
     padding: 0 0.75rem;
   }
-  
+
   .carousel-buttons {
     gap: 0.5rem;
   }
-  
+
   .carousel-arrow {
     width: 35px;
     height: 35px;
   }
-  
+
   .carousel-arrow-left {
     left: 0.75rem;
   }
-  
+
   .carousel-arrow-right {
     right: 0.75rem;
   }
-  
+
   .carousel-dots {
     bottom: 0.75rem;
     gap: 0.4rem;
   }
-  
+
   .carousel-dot {
     width: 10px;
     height: 10px;
@@ -284,36 +282,36 @@
     min-height: 150px;
     max-height: 200px;
   }
-  
+
   .carousel-title {
     font-size: 1.8rem;
   }
-  
+
   .carousel-description {
     font-size: 0.9rem;
   }
-  
+
   .carousel-content {
     padding: 0 0.5rem;
   }
-  
+
   .carousel-arrow {
     width: 30px;
     height: 30px;
   }
-  
+
   .carousel-arrow-left {
     left: 0.5rem;
   }
-  
+
   .carousel-arrow-right {
     right: 0.5rem;
   }
-  
+
   .carousel-dots {
     bottom: 0.5rem;
   }
-  
+
   .carousel-dot {
     width: 8px;
     height: 8px;
@@ -326,28 +324,28 @@
     min-height: 120px;
     max-height: 180px;
   }
-  
+
   .carousel-title {
     font-size: 1.6rem;
   }
-  
+
   .carousel-description {
     font-size: 0.85rem;
   }
-  
+
   .carousel-content {
     padding: 0 0.25rem;
   }
-  
+
   .carousel-arrow {
     width: 28px;
     height: 28px;
   }
-  
+
   .carousel-arrow-left {
     left: 0.25rem;
   }
-  
+
   .carousel-arrow-right {
     right: 0.25rem;
   }

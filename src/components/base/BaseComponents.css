@@ -23,7 +23,7 @@
 
 /* Button Variants */
 .btn-primary {
-  background: linear-gradient(135deg, #E07A5F, #F2CC8F);
+  background: linear-gradient(135deg, #B0B0B0, #F2CC8F);
   color: #000;
   box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
@@ -46,12 +46,12 @@
 
 .btn-outline {
   background: transparent;
-  color: #E07A5F;
-  border: 2px solid #E07A5F;
+  color: #B0B0B0;
+  border: 2px solid #B0B0B0;
 }
 
 .btn-outline:hover:not(:disabled) {
-  background: #E07A5F;
+  background: #B0B0B0;
   color: #000;
 }
 
@@ -195,8 +195,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Error Message Styles */
@@ -230,24 +235,24 @@
   .section {
     padding: 2rem 1rem;
   }
-  
+
   .title-1 {
     font-size: 2.5rem;
   }
-  
+
   .title-2 {
     font-size: 2rem;
   }
-  
+
   .title-3 {
     font-size: 1.75rem;
   }
-  
+
   .btn-large {
     padding: 0.875rem 1.75rem;
     font-size: 1rem;
   }
-  
+
   .card {
     padding: 1rem;
   }
@@ -257,11 +262,11 @@
   .title-1 {
     font-size: 2rem;
   }
-  
+
   .title-2 {
     font-size: 1.75rem;
   }
-  
+
   .btn-medium {
     padding: 0.625rem 1.25rem;
     font-size: 0.9rem;
@@ -272,54 +277,54 @@
   .section {
     padding: 1rem 0.5rem;
   }
-  
+
   .title-1 {
     font-size: 1.8rem;
   }
-  
+
   .title-2 {
     font-size: 1.6rem;
   }
-  
+
   .title-3 {
     font-size: 1.4rem;
   }
-  
+
   .title-4 {
     font-size: 1.2rem;
   }
-  
+
   .btn-medium {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
   }
-  
+
   .btn-small {
     padding: 0.35rem 0.7rem;
     font-size: 0.75rem;
   }
-  
+
   .card {
     padding: 0.5rem;
   }
-  
+
   .loading-spinner {
     width: 25px;
     height: 25px;
   }
-  
+
   .loading-message {
     font-size: 0.85rem;
   }
-  
+
   .error-message {
     padding: 1rem;
   }
-  
+
   .error-icon {
     font-size: 1.25rem;
   }
-  
+
   .error-text {
     font-size: 0.85rem;
   }
@@ -329,24 +334,24 @@
   .title-1 {
     font-size: 1.6rem;
   }
-  
+
   .title-2 {
     font-size: 1.4rem;
   }
-  
+
   .title-3 {
     font-size: 1.3rem;
   }
-  
+
   .title-4 {
     font-size: 1.1rem;
   }
-  
+
   .btn-medium {
     padding: 0.45rem 0.9rem;
     font-size: 0.8rem;
   }
-  
+
   .btn-small {
     padding: 0.3rem 0.6rem;
     font-size: 0.7rem;

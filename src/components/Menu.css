@@ -88,9 +88,11 @@
   font-weight: bold;
   letter-spacing: 0.1em;
   margin: 0;
-  color: white;
+  color: #d4af37;
+  /* Color Beige/Dorado */
   text-align: center;
   line-height: 1.2;
+  text-transform: uppercase;
 }
 
 /* Force absolute positioning for cart icon to ensure centering of title */
@@ -100,6 +102,23 @@
   top: 0;
   margin-left: 0 !important;
   z-index: 2;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.menu-cart-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
 .menu-content {
@@ -250,9 +269,13 @@
 
 .category-title {
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: 800;
+  /* Negrilla */
   letter-spacing: 0.1em;
-  color: white;
+  color: #d4af37;
+  /* Color Beige/Dorado */
+  text-transform: uppercase;
+  /* Mayúsculas */
 }
 
 .three-dots {
@@ -434,13 +457,17 @@
 
 .subcategory-title {
   font-size: 1.3rem;
-  font-weight: bold;
+  font-weight: 800;
+  /* Negrilla */
   letter-spacing: 0.1em;
   margin: 0 0 1rem 0;
-  color: white;
+  color: #d4af37;
+  /* Color Beige/Dorado */
   text-align: center;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  text-transform: uppercase;
+  /* Mayúsculas */
 }
 
 .subcategory-items {
@@ -551,10 +578,14 @@
 
 .item-name {
   font-size: 1.1rem;
-  font-weight: bold;
+  font-weight: 800;
+  /* Negrilla */
   letter-spacing: 0.05em;
   margin: 0;
-  color: white;
+  color: #d4af37;
+  /* Color Beige/Dorado */
+  text-transform: uppercase;
+  /* Mayúsculas */
 }
 
 .item-price {
@@ -567,8 +598,11 @@
   font-size: 0.9rem;
   line-height: 1.4;
   margin: 0;
-  opacity: 0.9;
-  color: white;
+  font-weight: 300;
+  /* Letra delgada */
+  color: #ffffff;
+  /* Blanco */
+  opacity: 1;
   text-align: center;
 }
 
@@ -612,6 +646,110 @@
 .sodas-box {
   grid-column: 2;
   grid-row: 3;
+}
+
+
+/* Auth Styles */
+.menu-header-actions {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.menu-auth-section {
+  display: flex;
+  align-items: center;
+}
+
+.menu-login-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-login-btn:hover {
+  background: white;
+  color: black;
+  border-color: white;
+  transform: translateY(-1px);
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #B0B0B0;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+}
+
+@media (max-width: 480px) {
+  .cart-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+    top: -4px;
+    right: -4px;
+  }
+}
+
+
+
+/* Override absolute positioning for cart icon in the new layout */
+.menu-header-actions .menu-cart-icon {
+  position: relative !important;
+  right: auto;
+  top: auto;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .menu-cart-icon {
+    width: 40px;
+    height: 40px;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-cart-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0.4rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .menu-cart-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0.25rem;
+  }
+
+  .menu-cart-icon svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 /* Responsive design */

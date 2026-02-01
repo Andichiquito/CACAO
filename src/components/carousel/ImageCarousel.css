@@ -33,9 +33,12 @@
 }
 
 @keyframes imageFloat {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1) translateY(0px);
   }
+
   50% {
     transform: scale(1.02) translateY(-2px);
   }
@@ -102,8 +105,8 @@
 }
 
 .indicator.active {
-  background: #E07A5F;
-  border-color: #E07A5F;
+  background: #B0B0B0;
+  border-color: #B0B0B0;
   box-shadow: 0 0 10px rgba(224, 122, 95, 0.5);
 }
 
@@ -112,25 +115,25 @@
   .image-carousel {
     max-width: 90%;
   }
-  
+
   .carousel-image-wrapper {
     height: 400px;
     padding: 15px;
   }
-  
+
   .nav-button {
     width: 35px;
     height: 35px;
   }
-  
+
   .nav-left {
     left: 10px;
   }
-  
+
   .nav-right {
     right: 10px;
   }
-  
+
   .indicators {
     bottom: 10px;
   }
@@ -141,20 +144,20 @@
     height: 300px;
     padding: 10px;
   }
-  
+
   .nav-button {
     width: 30px;
     height: 30px;
   }
-  
+
   .nav-left {
     left: 8px;
   }
-  
+
   .nav-right {
     right: 8px;
   }
-  
+
   .indicator {
     width: 8px;
     height: 8px;

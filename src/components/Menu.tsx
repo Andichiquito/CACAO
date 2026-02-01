@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useMenuData } from '../hooks/useMenuData';
 import { useCart } from '../hooks/useCart';
+import { useSupabase } from '../contexts/SupabaseContext';
+import UserMenu from './UserMenu';
 import { MenuProps, Product } from '../types';
 import './Menu.css';
 
-const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
+const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart, onOpenAuth }) => {
+  const { user } = useSupabase();
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, number>>({});
   const [searchTerm, setSearchTerm] = useState('');
@@ -145,7 +148,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
       ];
     }
 
-    if (name === 'FRAPUCCINO SABORIZADO' || name === 'FRAPPUCCINO SABORIZADO') {
+    if (name === 'FRAPPUCCINO SABORIZADO') {
       return [
         {
           label: 'Sabor',
@@ -555,6 +558,10 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
         return <span style={emojiStyle}>🫖</span>; // Tetera
       case 'CHOCOLATES':
         return <span style={emojiStyle}>🍫</span>; // Chocolate
+      case 'TORTAS ENTERAS':
+        return <span style={emojiStyle}>🎂</span>; // Torta entera
+      case 'BEBIDAS DE AUTOR':
+        return <span style={emojiStyle}>✨</span>; // Destellos
       default:
         return null;
     }
@@ -573,33 +580,31 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
           </svg>
         </button>
         <h1 className="menu-title">MENÚ</h1>
-        <div
-          className="menu-cart-icon"
-          onClick={handleOpenCart}
-          style={{ cursor: 'pointer', position: 'relative', marginLeft: 'auto' }}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 8.99 21.1 8.99 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5H5.21L4.27 3H1V2ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 18.99 21.1 18.99 20 18.1 18 17 18Z" fill="white" />
-          </svg>
-          {totalItems > 0 && typeof totalItems === 'number' && (
-            <span className="cart-badge" style={{
-              position: 'absolute',
-              top: '-8px',
-              right: '-8px',
-              background: '#8B4513',
-              color: 'white',
-              borderRadius: '50%',
-              width: '20px',
-              height: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '12px',
-              fontWeight: 'bold'
-            }}>
-              {totalItems > 99 ? '99+' : totalItems}
-            </span>
-          )}
+
+        <div className="menu-header-actions">
+          <div
+            className="menu-cart-icon"
+            onClick={handleOpenCart}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 18C5.9 18 5.01 18.9 5.01 20S5.9 22 7 22 8.99 21.1 8.99 20 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5H5.21L4.27 3H1V2ZM17 18C15.9 18 15.01 18.9 15.01 20S15.9 22 17 22 18.99 21.1 18.99 20 18.1 18 17 18Z" fill="white" />
+            </svg>
+            {totalItems > 0 && typeof totalItems === 'number' && (
+              <span className="cart-badge">{totalItems > 99 ? '99+' : totalItems}</span>
+            )}
+          </div>
+
+          {/* 
+          <div className="menu-auth-section">
+            {user ? (
+              <UserMenu onNavigate={onNavigate} />
+            ) : (
+              <button className="menu-login-btn" onClick={onOpenAuth}>
+                Acceder
+              </button>
+            )}
+          </div>
+          */}
         </div>
       </div>
 
@@ -635,10 +640,12 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
             categories
               .sort((a, b) => {
                 const order = [
+                  'BEBIDAS DE AUTOR',
                   'BEBIDAS CALIENTES',
                   'CAFETERÍA FRÍA', 'CAFETERIA FRIA',
                   'BEBIDAS FRÍAS', 'BEBIDAS FRIAS',
-                  'BRUNCH ALL DAY'
+                  'BRUNCH ALL DAY',
+                  'TORTAS ENTERAS'
                 ];
                 const indexA = order.indexOf(a.name.toUpperCase());
                 const indexB = order.indexOf(b.name.toUpperCase());
@@ -749,10 +756,9 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
                                   {renderProductsWithGrouping(
                                     categoryProducts.filter(product =>
                                       product.name &&
-                                      (product.name.toUpperCase().includes('FRAPUCCINO') ||
+                                      (product.name.toUpperCase().includes('FRAPPUCCINO') ||
                                         product.name.toUpperCase().includes('FRAPPÉ') ||
-                                        product.name.toUpperCase().includes('FRAPPE')) &&
-                                      !product.name.toUpperCase().includes('FRAPPUCCINO')
+                                        product.name.toUpperCase().includes('FRAPPE'))
                                     )
                                   )}
                                 </div>

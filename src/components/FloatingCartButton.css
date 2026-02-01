@@ -5,7 +5,7 @@
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #E07A5F 0%, #D4694A 100%);
+    background: linear-gradient(135deg, #B0B0B0 0%, #D4694A 100%);
     border: none;
     box-shadow: 0 8px 24px rgba(224, 122, 95, 0.4);
     display: flex;
@@ -37,7 +37,7 @@
     top: -5px;
     right: -5px;
     background-color: #ffffff;
-    color: #E07A5F;
+    color: #B0B0B0;
     border-radius: 50%;
     width: 24px;
     height: 24px;
@@ -47,7 +47,7 @@
     font-size: 0.85rem;
     font-weight: 700;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    border: 2px solid #E07A5F;
+    border: 2px solid #B0B0B0;
 }
 
 @keyframes popIn {

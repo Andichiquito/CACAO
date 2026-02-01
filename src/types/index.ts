@@ -63,10 +63,19 @@ export interface CartHook {
   getTotalItems: () => number;
 }
 
+export interface AuthResponse {
+  success: boolean;
+  message?: string;
+  error?: any;
+}
+
 export interface SupabaseContextType {
   supabase: any; // Tipo de Supabase client
   user: any; // Tipo de usuario de Supabase
   loading: boolean;
+  signIn: (email: string, password: string) => Promise<AuthResponse>;
+  signUp: (email: string, password: string, fullName: string, phone: string) => Promise<AuthResponse>;
+  signOut: () => Promise<AuthResponse>;
 }
 
 export interface ThemeContextType {
@@ -75,8 +84,9 @@ export interface ThemeContextType {
 }
 
 export interface NavigationProps {
-  onNavigate: (page: 'home' | 'menu' | 'about') => void;
+  onNavigate: (page: 'home' | 'menu' | 'about' | 'settings') => void;
   onOpenCart?: () => void;
+  onOpenAuth?: () => void;
 }
 
 export interface CarouselItem {
@@ -102,11 +112,17 @@ export interface SmoothScrollHook {
 }
 
 // Tipos para props de componentes
-export interface MenuProps extends NavigationProps {}
+export interface MenuProps extends NavigationProps {
+  onOpenAuth: () => void;
+}
 
-export interface HomePageProps extends NavigationProps {}
+export interface HomePageProps extends NavigationProps {
+  onOpenAuth: () => void;
+}
 
-export interface AboutUsProps extends NavigationProps {}
+export interface AboutUsProps extends NavigationProps {
+  onOpenAuth: () => void;
+}
 
 export interface CarouselProps {
   items: CarouselItem[];
