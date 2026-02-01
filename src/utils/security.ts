@@ -36,7 +36,7 @@ export const sanitizeName = (name: string, maxLength: number = 100): string => {
 
   // Eliminar solo caracteres realmente peligrosos o inválidos, pero permitir escritura fluida
   // No hacemos trim() aquí para permitir escribir espacios
-  sanitized = sanitized.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-'\.]/g, '');
+  sanitized = sanitized.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-'.]/g, '');
 
   return sanitized;
 };

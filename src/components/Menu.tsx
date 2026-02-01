@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useMenuData } from '../hooks/useMenuData';
 import { useCart } from '../hooks/useCart';
-import { useSupabase } from '../contexts/SupabaseContext';
-import UserMenu from './UserMenu';
 import { MenuProps, Product } from '../types';
 import './Menu.css';
 
 const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart, onOpenAuth }) => {
-  const { user } = useSupabase();
+  // const { user } = useSupabase();
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, number>>({});
   const [searchTerm, setSearchTerm] = useState('');
@@ -215,7 +213,6 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart, onOpenAuth }) => {
 
 
     const getSelectionKey = (index: number) => `selector-${product.id}-${index}`;
-    const flavorKey = `flavor-${product.id}`;
 
 
     const handleSelectorChange = (selectorIndex: number, optionIndex: number) => {
@@ -225,12 +222,6 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart, onOpenAuth }) => {
       }));
     };
 
-    const handleFlavorChange = (index: number) => {
-      setSelectedVariants(prev => ({
-        ...prev,
-        [flavorKey]: index
-      }));
-    };
 
 
     const getSelectedOptions = () => {

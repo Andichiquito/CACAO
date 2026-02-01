@@ -7,7 +7,7 @@ import AccountSettings from './components/AccountSettings';
 import { ThemeProvider, ThemeStyles } from './contexts/ThemeContext';
 import { CartProvider } from './contexts/CartContext';
 import { ToastProvider } from './contexts/ToastContext';
-import { SupabaseProvider, useSupabase } from './contexts/SupabaseContext';
+import { SupabaseProvider } from './contexts/SupabaseContext';
 import FloatingCartButton from './components/FloatingCartButton';
 import './App.css';
 

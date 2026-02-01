@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SimpleImageCarousel from './carousel/SimpleImageCarousel';
 import AboutUs from './AboutUs';
-import UserMenu from './UserMenu';
 import { useCart } from '../hooks/useCart';
-import { useSupabase } from '../contexts/SupabaseContext';
 import { HomePageProps } from '../types';
 import './HomePage.css';
 
@@ -20,7 +18,7 @@ declare global {
 
 const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth }) => {
 
-  const { user } = useSupabase();
+  // const { user } = useSupabase(); // 'user' is currently unused because the related JSX block is commented out.
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const { getTotalItems } = useCart();
   const totalItems = getTotalItems();
@@ -175,16 +173,16 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
               onClick={toggleMobileMenu}
               aria-label="Abrir menú"
             >
-              <span className={`hamburger-line ${isMobileMenuOpen ? 'active' : ''}`}></span>
-              <span className={`hamburger-line ${isMobileMenuOpen ? 'active' : ''}`}></span>
-              <span className={`hamburger-line ${isMobileMenuOpen ? 'active' : ''}`}></span>
+              <span className={`hamburger - line ${isMobileMenuOpen ? 'active' : ''} `}></span>
+              <span className={`hamburger - line ${isMobileMenuOpen ? 'active' : ''} `}></span>
+              <span className={`hamburger - line ${isMobileMenuOpen ? 'active' : ''} `}></span>
             </button>
           </div>
         </div>
       </header>
 
 
-      <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
+      <div className={`mobile - menu ${isMobileMenuOpen ? 'open' : ''} `}>
         <div className="mobile-menu-content">
           <div className="mobile-menu-header">
             <img src="/logos/logo-blanco.png" alt="CACAO Logo" className="mobile-menu-logo" />
