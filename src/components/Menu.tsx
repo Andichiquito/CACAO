@@ -604,8 +604,8 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart, onOpenAuth }) => {
         <div className="special-blend-section">
           <div className="blend-box">
             <img
-              src="/images/blend-cacao.png"
-              alt="BLEND ESPECIAL CACAO"
+              src="/assets/images/homepage/Tortas.PNG"
+              alt="TORTAS CACAO"
               className="blend-image"
             />
           </div>

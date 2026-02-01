@@ -173,16 +173,16 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
               onClick={toggleMobileMenu}
               aria-label="Abrir menú"
             >
-              <span className={`hamburger - line ${isMobileMenuOpen ? 'active' : ''} `}></span>
-              <span className={`hamburger - line ${isMobileMenuOpen ? 'active' : ''} `}></span>
-              <span className={`hamburger - line ${isMobileMenuOpen ? 'active' : ''} `}></span>
+              <span className={`hamburger-line ${isMobileMenuOpen ? 'active' : ''}`}></span>
+              <span className={`hamburger-line ${isMobileMenuOpen ? 'active' : ''}`}></span>
+              <span className={`hamburger-line ${isMobileMenuOpen ? 'active' : ''}`}></span>
             </button>
           </div>
         </div>
       </header>
 
 
-      <div className={`mobile - menu ${isMobileMenuOpen ? 'open' : ''} `}>
+      <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-menu-content">
           <div className="mobile-menu-header">
             <img src="/logos/logo-blanco.png" alt="CACAO Logo" className="mobile-menu-logo" />
