@@ -241,13 +241,14 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
       seen.add(name);
       return true;
     });
-    // Ordenar: Tortas Enteras primero
+    // Ordenar: Tortas Enteras primero, luego alfabéticamente
     return unique.sort((a, b) => {
       const aIsTortas = a.name.toUpperCase().includes('TORTAS ENTERAS');
       const bIsTortas = b.name.toUpperCase().includes('TORTAS ENTERAS');
       if (aIsTortas && !bIsTortas) return -1;
       if (!aIsTortas && bIsTortas) return 1;
-      return 0;
+      // Si ninguno es Tortas Enteras, ordenar alfabéticamente
+      return a.name.localeCompare(b.name, 'es');
     });
   };
 
