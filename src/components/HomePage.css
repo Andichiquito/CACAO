@@ -436,6 +436,101 @@ html {
 
 
 
+/* Sección de Catálogo de Tortas */
+.tortas-catalog-section {
+  margin: 4rem 0;
+  padding: 2rem 2rem;
+  position: relative;
+  z-index: 5;
+}
+
+.tortas-catalog-content {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.tortas-catalog-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: #d4af37;
+  font-family: 'Readex Pro', sans-serif;
+  text-shadow: 0 2px 12px rgba(212, 175, 55, 0.2);
+  text-transform: uppercase;
+}
+
+.tortas-catalog-subtitle {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2rem;
+  font-family: 'Readex Pro', sans-serif;
+}
+
+.tortas-image-container {
+  position: relative;
+  cursor: pointer;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 3px solid rgba(212, 175, 55, 0.2);
+  display: block;
+  text-decoration: none;
+}
+
+.tortas-image-container:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.4);
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+.tortas-image-container:active {
+  transform: translateY(-5px) scale(1.01);
+}
+
+.tortas-catalog-image {
+  width: 100%;
+  height: auto;
+  max-height: 800px;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.tortas-image-container:hover .tortas-catalog-image {
+  transform: scale(1.05);
+}
+
+.tortas-image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.7) 50%,
+      transparent 100%);
+  padding: 2rem 1.5rem 1.5rem;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.tortas-image-container:hover .tortas-image-overlay {
+  opacity: 1;
+}
+
+.tortas-click-text {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 500;
+  font-family: 'Readex Pro', sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  display: block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
 /* Sección de Horarios */
 .horarios-section {
   margin: 4rem 0;

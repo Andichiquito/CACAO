@@ -282,6 +282,29 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
           </div>
         </div>
 
+        {/* Sección de Catálogo de Tortas */}
+        <div className="tortas-catalog-section">
+          <div className="tortas-catalog-content">
+            <h2 className="tortas-catalog-title">CATÁLOGO DE TORTAS</h2>
+            <p className="tortas-catalog-subtitle">¡Haz click para dirigirte a nuestro Catalogo de tortas en whatsapp! STOCK DIARIO LIMITADO</p>
+            <a
+              href="https://wa.me/c/59170716460"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tortas-image-container"
+              aria-label="Ver catálogo de tortas en WhatsApp"
+            >
+              <img
+                src="/assets/images/homepage/Tortas.PNG"
+                alt="Catálogo de Tortas CACAO"
+                className="tortas-catalog-image"
+              />
+              <div className="tortas-image-overlay">
+                <span className="tortas-click-text">📱 Haz clic para ver el catálogo en WhatsApp</span>
+              </div>
+            </a>
+          </div>
+        </div>
 
         {/* Sección de Horarios */}
         <div className="horarios-section">

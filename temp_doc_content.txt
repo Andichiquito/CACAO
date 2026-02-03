@@ -1,0 +1,49 @@
+=== PARAGRAPHS ===
+CORRECCIONES MENU 2026
+
+CAMBIO DE PRECIOS
+FRAPUCCINOS Bs. 22 (en categoría cafetería fría y en bebidas frías frapuchinos saborizados)
+SANDWICHES: nivelar a Bs. 18 todo
+PANINIS: nivelar todo a Bs. 28
+BAGELS: (gringo/pernil/de campo y desmechado) subir a Bs. 26
+TOSTADAS FRANCESAS: subir a Bs 25
+WAFFLES (americano y paltos) subir a Bs. 27
+ENTRE PAN (steak/honey mustard/philli) subir a Bs. 36
+PORCIONES DE TORTA: todas subir a Bs. 25 y la del mes Bs. 27
+CINNAMON: Bs. 15
+BROWNIE SIMPLE: Bs. 15
+BROWNIE CON HELADO Bs. 20
+TRES LECHES CLASICOS: Bs. 14
+TERES LECHES PREMIUM: Bs. 16
+COOKIE BAR: todos los paquetes subir a Bs. 20
+DESAYUNOS: tostadas Bs. 6 y crema batida 6
+RETIRAR PRODUCTOS
+De brunch all day retirar “sobre pan criollo” y “entre pan de pernil”
+REDACCION
+En bagels “bagel curado” cambiar quedo por queso
+En brunch all day cambiar waffle dulce a dulce
+En fbebeidas frías aumentar una “p” a frappuccino saborizado
+AGRGAR NUEVOS PRODUCTOS 
+Agregar en entre pan “York” (pan de campo, base de queso crema especial, rucula, jamón york ahumado, pepinillo encurtido y pesto de albahaca.) Bs. 27
+Sabor de 3 leches clásico (“vainilla”)
+“waffle supreme” en wafles. (sándwich de waffle, por dentro cama de rucula, pollo frito, mayonesa de maracuyá, cebolla encurtida y tomate confitado) Bs. 32
+En cafetería fría “Honey latte” (miel de abeja, hielo, leche y espresso doble) Bs. 23
+
+NUEVO APARTADO “TORTAS ENTERAS” (solo incluir en pagina web) (stock limitado diario”) tamaño 12 poricones Bs. 170 (chocolate/red velvet/zanahoria/moca (Bs. 160) tamaño 20 porciones Bs. 210 (chocolate/zanahoria)
+
+
+
+Crear nuevo apartado “bebidas de autor” (solo incluir en pagina web)
+“cold brew”
+“cold brew” (cafe infusionado en frio por 24 horas)
+“passion cold brew” (almíbar de maracuyá, hielo, agua tónica y cold brew de la casa)
+“Berry lavander cold brew” (almíbar de frutos rojos y lavanda, hielo, agua tónica y cold brew de la casa)
+“Honey ginger cold brew” (almibar de gengibre, miel de abeja, hielo, agua tónica y cold brew de la casa)
+“Mocochinchi cold brew” (almibar de mocochinchi, toque de miel de caña, hielo, agua tónica y cold brew de la casa)
+“Matcha lovers”
+“Matcha latte (frio o caliente) Bs. 20
+“Iced Berry Matcha latte (syrup de frutos rojos, hielo, leche y matcha) Bs. 22
+
+
+
+=== TABLES ===

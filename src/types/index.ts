@@ -1,10 +1,10 @@
-// Tipos para la aplicación Cacao
-
 export interface Category {
   id: number;
   name: string;
   description?: string;
   is_active: boolean;
+  sort_order: number;
+  icon_emoji?: string;
   created_at: string;
 }
 
@@ -14,6 +14,8 @@ export interface Product {
   description?: string;
   price: number;
   category_id: number;
+  subcategory?: string;
+  sort_order: number;
   image_url?: string;
   is_available: boolean;
   stock_quantity: number;
@@ -70,8 +72,8 @@ export interface AuthResponse {
 }
 
 export interface SupabaseContextType {
-  supabase: any; // Tipo de Supabase client
-  user: any; // Tipo de usuario de Supabase
+  supabase: any;
+  user: any;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<AuthResponse>;
   signUp: (email: string, password: string, fullName: string, phone: string) => Promise<AuthResponse>;
@@ -111,7 +113,6 @@ export interface SmoothScrollHook {
   scrollToSection: (sectionId: string) => void;
 }
 
-// Tipos para props de componentes
 export interface MenuProps extends NavigationProps {
   onOpenAuth: () => void;
 }
@@ -148,7 +149,6 @@ export interface BaseComponentsProps {
   children: React.ReactNode;
 }
 
-// Tipos para eventos
 export interface ButtonClickEvent {
   onClick: () => void;
 }
@@ -157,7 +157,6 @@ export interface FormSubmitEvent {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-// Tipos para API responses
 export interface SupabaseResponse<T> {
   data: T | null;
   error: any;
@@ -168,4 +167,3 @@ export interface ApiError {
   code?: string;
   details?: any;
 }
-

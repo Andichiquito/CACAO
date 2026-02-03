@@ -1,8 +1,8 @@
 .menu-container {
   min-height: 100vh;
   background: #000000;
-  padding: 2rem;
-  padding-bottom: 4rem;
+  padding: 1.5rem;
+  padding-bottom: 5rem;
   font-family: 'Readex Pro', sans-serif;
   color: white;
   position: relative;
@@ -15,48 +15,61 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   position: relative;
   min-height: 60px;
+  width: 100%;
+}
+
+.menu-title {
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  margin: 0;
+  color: #d4af37;
+  text-align: center;
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
 }
 
 .search-container {
   position: relative;
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto 2rem auto;
+  max-width: 500px;
+  margin: 0 auto 2.5rem auto;
+  z-index: 5;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.8rem 1rem 0.8rem 2.5rem;
-  border-radius: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem 1.5rem;
+  padding-left: 3rem;
+  border-radius: 30px;
+  border: 1px solid rgba(150, 150, 150, 0.4);
+  background: rgba(255, 255, 255, 0.05);
   color: white;
   font-family: 'Readex Pro', sans-serif;
   font-size: 1rem;
   outline: none;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
+  backdrop-filter: blur(10px);
 }
 
 .search-input:focus {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-}
-
-.search-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(180, 180, 180, 0.6);
+  box-shadow: 0 0 20px rgba(150, 150, 150, 0.2);
 }
 
 .search-icon {
   position: absolute;
-  left: 12px;
+  left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  opacity: 0.7;
+  opacity: 0.6;
+  color: #d4af37;
   pointer-events: none;
 }
 
@@ -219,38 +232,84 @@
 
 
 /* Dropdown Menus */
-.dropdown-menus {
+.dropdown-menus,
+.categories-list {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
   align-items: center;
+}
+
+.category-dropdown {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+}
+
+.category-header {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(150, 150, 150, 0.4);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.category-header:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(180, 180, 180, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.category-header.active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+.category-name {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #d4af37;
+  text-transform: uppercase;
 }
 
 .dropdown-category {
   width: 100%;
-  max-width: 700px;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .dropdown-trigger {
   width: 100%;
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(150, 150, 150, 0.4);
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.25rem 1.5rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: left;
 }
 
 .dropdown-trigger:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(180, 180, 180, 0.6);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .dropdown-header {
@@ -263,52 +322,39 @@
 .category-title-wrapper {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   flex: 1;
 }
 
 .category-title {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 800;
-  /* Negrilla */
   letter-spacing: 0.1em;
   color: #d4af37;
-  /* Color Beige/Dorado */
   text-transform: uppercase;
-  /* Mayúsculas */
 }
 
-.three-dots {
-  display: flex;
-  gap: 0.25rem;
+.dropdown-arrow {
+  color: #d4af37;
+  font-size: 0.8rem;
+  opacity: 0.8;
+  transition: transform 0.3s ease;
 }
 
-.dot {
-  width: 6px;
-  height: 6px;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.7;
+.active .dropdown-arrow {
+  transform: rotate(180deg);
 }
 
 .dropdown-content {
   margin-top: 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
   width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  padding: 1.5rem;
-  animation: slideDown 0.3s ease-out;
-  text-align: center;
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-15px);
   }
 
   to {
@@ -317,597 +363,174 @@
   }
 }
 
-.dropdown-items {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  align-items: start;
-}
-
-/* Estilos para DESAYUNOS con subcategorías */
-.desayunos-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: stretch;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  justify-items: stretch;
-}
-
-/* Estilos para COOKIE BAR con subcategorías */
-.cookie-bar-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: stretch;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  justify-items: stretch;
-}
-
-/* Estilos para REPOSTERÍA con subcategorías */
-.reposteria-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: stretch;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  justify-items: stretch;
-}
-
-/* Estilos para SALADOS con subcategorías */
-.salados-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: stretch;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  justify-items: stretch;
-}
-
-/* Estilos para BRUNCH ALL DAY con subcategorías */
-.brunch-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: start;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  justify-items: stretch;
-}
-
-/* Estilos para BEBIDAS FRÍAS con subcategorías */
-.bebidas-frias-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: stretch;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  justify-items: stretch;
-}
-
-/* Estilos para BEBIDAS CALIENTES con subcategorías */
-.bebidas-calientes-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: stretch;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  justify-items: stretch;
-}
-
-/* Estilos para CAFETERÍA FRÍA con subcategorías */
-.cafeteria-fria-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: stretch;
-}
-
-.cafeteria-left-box {
-  grid-column: 1;
-}
-
-.cafeteria-right-box {
-  grid-column: 2;
-}
-
-.brunch-left-column {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  grid-column: 1;
-  align-self: start;
-}
-
-.brunch-right-column {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  grid-column: 2;
-  align-self: start;
-}
-
-.subcategory-box {
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 1.5rem;
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  margin: 0;
-  min-height: 100%;
-}
-
-.subcategory-title {
-  font-size: 1.3rem;
-  font-weight: 800;
-  /* Negrilla */
-  letter-spacing: 0.1em;
-  margin: 0 0 1rem 0;
-  color: #d4af37;
-  /* Color Beige/Dorado */
-  text-align: center;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
-  text-transform: uppercase;
-  /* Mayúsculas */
-}
-
+/* Generic Layout System */
 .subcategory-items {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .subcategory-items {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+/* Estilo exacto de tarjeta Cafetería Fría */
+.dropdown-item {
+  background: rgba(30, 30, 30, 0.6);
+  /* Fondo semi-transparente oscuro */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  /* Borde sutil gris/blanco */
+  border-radius: 16px;
+  /* Bordes redondeados pronunciados */
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  flex: 1;
-  width: 100%;
-}
-
-.subcategory-items .dropdown-item {
-  margin: 0;
-  width: 100%;
+  justify-content: space-between;
+  height: 100%;
   box-sizing: border-box;
-}
-
-.dropdown-item {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 1rem;
-  transition: all 0.3s ease;
   text-align: center;
+  /* Alineación central como en la imagen */
+  transition: all 0.3s ease;
 }
 
 .dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-/* Estilos para productos agrupados con selector de variantes */
-.grouped-product {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.multi-selector-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin: 0.75rem 0;
-}
-
-.variant-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin: 0.75rem 0;
-  width: 100%;
-}
-
-.variant-label {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
-  text-align: left;
-  font-weight: 500;
-  margin-left: 0.25rem;
-}
-
-.variant-select {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  color: white;
-  font-family: 'Readex Pro', sans-serif;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  outline: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 3rem;
-}
-
-.variant-select:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.variant-select:focus {
-  border-color: #d4af37;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
-}
-
-.variant-select option {
-  background: #1a1a1a;
-  color: white;
-  padding: 0.75rem;
-  font-family: 'Readex Pro', sans-serif;
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .item-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
   margin-bottom: 0.5rem;
-  text-align: left;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  /* Para asegurar que el precio baje si es necesario */
 }
 
 .item-name {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 800;
-  /* Negrilla */
-  letter-spacing: 0.05em;
-  margin: 0;
-  color: #d4af37;
-  /* Color Beige/Dorado */
+  color: #D4AF37;
+  /* Dorado intenso de la imagen */
   text-transform: uppercase;
-  /* Mayúsculas */
+  margin: 0;
+  letter-spacing: 0.05em;
+  text-align: left;
+  flex: 1;
 }
 
 .item-price {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #d4af37;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #D4AF37;
+  /* Mismo dorado para el precio */
+  margin-left: 0.5rem;
+  white-space: nowrap;
 }
 
+/* Descripción centrada y blanca */
 .item-description {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   line-height: 1.4;
-  margin: 0;
-  font-weight: 300;
-  /* Letra delgada */
   color: #ffffff;
-  /* Blanco */
-  opacity: 1;
+  margin: 0.5rem 0 1.5rem 0;
   text-align: center;
+  font-weight: 400;
 }
 
-
-.extras-box {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.zumos-box {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-/* Grid Placement for Bebidas Frías */
-.infusiones-frias-box {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.frappes-box {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.licuados-box {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-.smoothies-box {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.refrescantes-box {
-  grid-column: 1;
-  grid-row: 3;
-}
-
-.sodas-box {
-  grid-column: 2;
-  grid-row: 3;
-}
-
-
-/* Auth Styles */
-.menu-header-actions {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+/* Variant Selectors */
+.multi-selector-container {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
-  z-index: 10;
-}
-
-.menu-auth-section {
-  display: flex;
-  align-items: center;
-}
-
-.menu-login-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.menu-login-btn:hover {
-  background: white;
-  color: black;
-  border-color: white;
-  transform: translateY(-1px);
-}
-
-.cart-badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: #B0B0B0;
-  color: white;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  z-index: 5;
-}
-
-@media (max-width: 480px) {
-  .cart-badge {
-    width: 16px;
-    height: 16px;
-    font-size: 9px;
-    top: -4px;
-    right: -4px;
-  }
-}
-
-
-
-/* Override absolute positioning for cart icon in the new layout */
-.menu-header-actions .menu-cart-icon {
-  position: relative !important;
-  right: auto;
-  top: auto;
-  transform: none;
-}
-
-@media (max-width: 768px) {
-  .menu-cart-icon {
-    width: 40px;
-    height: 40px;
-    padding: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .menu-cart-icon {
-    width: 36px;
-    height: 36px;
-    padding: 0.4rem;
-  }
-}
-
-@media (max-width: 320px) {
-  .menu-cart-icon {
-    width: 32px;
-    height: 32px;
-    padding: 0.25rem;
-  }
-
-  .menu-cart-icon svg {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .menu-container {
-    padding: 1rem;
-    padding-bottom: 5rem;
-  }
-
-  .menu-title {
-    font-size: 2rem;
-  }
-
-  .menu-header {
-    margin-bottom: 1.5rem;
-    min-height: 60px;
-  }
-
-  .back-button {
-    width: 40px;
-    height: 40px;
-  }
-
-  .blend-box {
-    min-width: auto;
-    padding: 1.5rem;
-  }
-
-  .blend-title {
-    font-size: 2rem;
-  }
-
-  .blend-details {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .dropdown-items {
-    grid-template-columns: 1fr;
-  }
-
-  /* Reset grid columns for mobile */
-  .desayunos-layout,
-  .cookie-bar-layout,
-  .reposteria-layout,
-  .salados-layout,
-  .brunch-layout,
-  .bebidas-frias-layout,
-  .bebidas-calientes-layout,
-  .cafeteria-fria-layout {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  /* Reset grid placements for mobile */
-  .extras-box,
-  .zumos-box,
-  .paquetes-box,
-  .sueltas-box,
-  .tortas-box,
-  .postres-box,
-  .sandwiches-box,
-  .paninis-box,
-  .cunapes-box,
-  .bagels-box,
-  .waffles-box,
-  .sobre-pan-box,
-  .entre-pan-box,
-  .infusiones-frias-box,
-  .licuados-box,
-  .refrescantes-box,
-  .frappes-box,
-  .smoothies-box,
-  .sodas-box,
-  .cafes-box,
-  .infusiones-calientes-box,
-  .chocolates-box,
-  .con-leche-box,
-  .espresso-frio-box,
-  .cafeteria-left-box,
-  .cafeteria-right-box,
-  .brunch-left-column,
-  .brunch-right-column {
-    grid-column: 1;
-    grid-row: auto;
-  }
-
-  .subcategory-box {
-    padding: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .subcategory-title {
-    font-size: 1.1rem;
-  }
-
-  .subcategory-items {
-    width: 100%;
-  }
-
-  .subcategory-items .dropdown-item {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0.875rem;
-  }
-
-  .item-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .item-name {
-    font-size: 1rem;
-    width: 100%;
-  }
-
-  .item-price {
-    font-size: 0.95rem;
-    align-self: flex-end;
-  }
-
-  .item-description {
-    font-size: 0.85rem;
-    text-align: left;
-  }
-
-  .category-title {
-    font-size: 1.2rem;
-  }
-
-  .dropdown-trigger {
-    padding: 1rem;
-  }
-}
-
-
-
-/* Add to Cart Button */
-.add-to-cart-btn {
-  background: linear-gradient(135deg, #d4af37, #b8941f);
-  color: #000;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 0.5rem;
+  margin-bottom: 1.25rem;
   width: 100%;
 }
 
+.variant-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.variant-label {
+  font-size: 0.9rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  text-align: left;
+}
+
+.variant-select {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background-color: #333333;
+  /* Fondo gris oscuro sólido */
+  border: 1px solid #D4AF37;
+  /* Borde dorado */
+  border-radius: 12px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.25rem center;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.variant-select:hover {
+  background-color: #404040;
+  border-color: #E5C158;
+}
+
+.variant-select:focus {
+  outline: none;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.5);
+}
+
+.variant-select option {
+  background-color: #333333;
+  color: white;
+  padding: 1rem;
+  font-weight: 600;
+}
+
+/* Botón Agregar al carrito idéntico a la imagen */
+.add-to-cart-btn {
+  background-color: #C5A02F;
+  /* Dorado sólido, un poco más oscuro/mostaza */
+  color: #000000;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-weight: 800;
+  /* Texto bien negrita */
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-transform: none;
+  /* Asegurar que no fuerce mayúsculas si no lo tiene */
+  margin-top: auto;
+  /* Empujar al fondo si hay espacio */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
 .add-to-cart-btn:hover {
-  background: linear-gradient(135deg, #b8941f, #d4af37);
+  background-color: #d4af37;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(212, 175, 55, 0.3);
 }
 
 .add-to-cart-btn:active {
@@ -1058,5 +681,160 @@
   .variant-select {
     text-align: center !important;
     text-align-last: center !important;
+  }
+}
+
+/* Dynachiquito Layout */
+.dynamic-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  margin-top: 1rem;
+  align-items: start;
+}
+
+.dynamic-layout.single-subcategory .subcategory-section {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .dynamic-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.subcategory-section {
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.subcategory-section:hover {
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.05);
+}
+
+.subcategory-title {
+  color: #d4af37;
+  font-size: 1.2rem;
+  margin: 0 0 1.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 800;
+  text-align: center;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.subcategory-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: #d4af37;
+  border-radius: 2px;
+}
+
+/* Product Cards */
+.product-card {
+  padding: 0.5rem 0;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.product-card.is-grouped {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.grouped-product-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 1.2rem;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.main-variant-selector {
+  margin: 0.5rem 0 1rem 0;
+}
+
+.item-description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0.5rem 0;
+  color: rgba(255, 255, 255, 0.82);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  text-align: center;
+}
+
+/* Botón Agregar al carrito idéntico a la imagen */
+.add-to-cart-btn {
+  background-color: #C5A02F;
+  /* Dorado sólido, un poco más oscuro/mostaza */
+  color: #000000;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-weight: 800;
+  /* Texto bien negrita */
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-transform: none;
+  /* Asegurar que no fuerce mayúsculas si no lo tiene */
+  margin-top: auto;
+  /* Empujar al fondo si hay espacio */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+  background-color: #d4af37;
+  transform: translateY(-1px);
+}
+
+.add-to-cart-btn:disabled {
+  background: #444;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.loading-logo {
+  width: 100px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
   }
 }
