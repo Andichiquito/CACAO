@@ -282,7 +282,20 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
                 ))}
               </select>
             </div>
-            {renderProductItem(selectedProduct, true, `torta-${category.id}`)}
+            {selectedProduct.description && (
+              <p className="item-description">{selectedProduct.description}</p>
+            )}
+            <button
+              className="add-to-cart-btn"
+              onClick={() => {
+                // Nombre completo: "Torta Entera [Sabor del producto]"
+                const fullName = `Torta Entera ${selectedProduct.name.replace(/porci[oó]n de /i, '').replace(/torta /i, '').trim()}`;
+                handleAddToCart({ ...selectedProduct, name: fullName });
+              }}
+              disabled={!selectedProduct.is_available}
+            >
+              {selectedProduct.is_available ? 'Agregar al carrito' : 'No disponible'}
+            </button>
           </div>
         </div>
       );
