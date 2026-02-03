@@ -406,7 +406,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
 
 
       const encodedMessage = encodeURIComponent(whatsappMessage);
-      const whatsappNumber = '59179797033'; // Número sin el +
+      const whatsappNumber = '59170716460';
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
 
 
