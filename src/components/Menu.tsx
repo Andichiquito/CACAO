@@ -241,14 +241,41 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
       seen.add(name);
       return true;
     });
-    // Ordenar: Tortas Enteras primero, luego alfabéticamente
+    // Orden personalizado solicitado
+    const customOrder = [
+      "TORTAS ENTERAS",
+      "BEBIDAS DE AUTOR",
+      "CAFETERÍA",
+      "CAFETERÍA FRÍA",
+      "BEBIDAS CALIENTES",
+      "BEBIDAS FRÍAS",
+      "BRUNCH ALL DAY",
+      "SALADOS",
+      "REPOSTERÍA",
+      "COOKIE BAR",
+      "DESAYUNOS"
+    ];
+
     return unique.sort((a, b) => {
-      const aIsTortas = a.name.toUpperCase().includes('TORTAS ENTERAS');
-      const bIsTortas = b.name.toUpperCase().includes('TORTAS ENTERAS');
-      if (aIsTortas && !bIsTortas) return -1;
-      if (!aIsTortas && bIsTortas) return 1;
-      // Si ninguno es Tortas Enteras, ordenar alfabéticamente
-      return a.name.localeCompare(b.name, 'es');
+      const nameA = a.name.toUpperCase().trim();
+      const nameB = b.name.toUpperCase().trim();
+
+      const indexA = customOrder.findIndex(order => nameA.includes(order));
+      const indexB = customOrder.findIndex(order => nameB.includes(order));
+
+      // Si ambos están en la lista personalizada, ordenar por índice
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+
+      // Si solo A está en la lista, va antes
+      if (indexA !== -1) return -1;
+
+      // Si solo B está en la lista, va antes
+      if (indexB !== -1) return 1;
+
+      // Si ninguno está en la lista, ordenar alfabéticamente
+      return nameA.localeCompare(nameB, 'es');
     });
   };
 
