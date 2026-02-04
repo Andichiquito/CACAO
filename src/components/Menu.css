@@ -63,6 +63,30 @@
   box-shadow: 0 0 20px rgba(150, 150, 150, 0.2);
 }
 
+/* Torta del Mes Banner */
+.torta-del-mes-banner {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  justify-content: center;
+}
+
+.torta-del-mes-img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.torta-del-mes-img:hover {
+  transform: scale(1.02);
+}
+
 .search-icon {
   position: absolute;
   left: 1rem;

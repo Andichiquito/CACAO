@@ -241,7 +241,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
       seen.add(name);
       return true;
     });
-    // Orden personalizado solicitado
+
     const customOrder = [
       "TORTAS ENTERAS",
       "BEBIDAS DE AUTOR",
@@ -250,10 +250,10 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
       "BEBIDAS CALIENTES",
       "BEBIDAS FRÍAS",
       "BRUNCH ALL DAY",
+      "DESAYUNOS",
       "SALADOS",
       "REPOSTERÍA",
-      "COOKIE BAR",
-      "DESAYUNOS"
+      "COOKIE BAR"
     ];
 
     return unique.sort((a, b) => {
@@ -383,6 +383,14 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
             placeholder="Buscar..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="torta-del-mes-banner">
+          <img
+            src="/images/Tortas del Mes/torta del mes 2.jpeg"
+            alt="Torta del Mes"
+            className="torta-del-mes-img"
           />
         </div>
 
