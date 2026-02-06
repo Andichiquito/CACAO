@@ -49,7 +49,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(224, 122, 95, 0.9);
+  background: rgba(212, 175, 55, 0.9);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -64,9 +64,9 @@
 }
 
 .nav-button:hover {
-  background: rgba(224, 122, 95, 1);
+  background: rgba(212, 175, 55, 1);
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 4px 15px rgba(224, 122, 95, 0.4);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
 }
 
 .nav-left {
@@ -99,15 +99,15 @@
 }
 
 .indicator:hover {
-  border-color: rgba(224, 122, 95, 0.8);
-  background: rgba(224, 122, 95, 0.3);
+  border-color: rgba(212, 175, 55, 0.8);
+  background: rgba(212, 175, 55, 0.3);
   transform: scale(1.2);
 }
 
 .indicator.active {
   background: #B0B0B0;
   border-color: #B0B0B0;
-  box-shadow: 0 0 10px rgba(224, 122, 95, 0.5);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 }
 
 /* Responsive */

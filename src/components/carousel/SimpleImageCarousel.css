@@ -50,7 +50,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(224, 122, 95, 0.8);
+  background: rgba(212, 175, 55, 0.8);
   /* Semi-transparente */
   color: white;
   border: none;
@@ -151,7 +151,7 @@
     width: 32px;
     height: 32px;
     font-size: 18px;
-    background: rgba(224, 122, 95, 0.6);
+    background: rgba(212, 175, 55, 0.6);
   }
 
   .dot {
