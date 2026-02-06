@@ -24,6 +24,7 @@ interface OrderData {
   direccion: string;
   referencia: string;
   notas: string;
+  paymentMethod: 'qr' | 'efectivo';
 }
 
 const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
@@ -38,7 +39,8 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     razon_social: '',
     direccion: '',
     referencia: '',
-    notas: ''
+    notas: '',
+    paymentMethod: 'efectivo'
   });
   const [errors, setErrors] = useState<Partial<OrderData>>({});
   const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -404,6 +406,8 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         whatsappMessage += `\n*NOTAS:*\n${sanitizedNotas}\n`;
       }
 
+      whatsappMessage += `\n*Método de Pago:* ${orderData.paymentMethod === 'qr' ? 'Pago por QR' : 'Efectivo'}\n`;
+
 
       const encodedMessage = encodeURIComponent(whatsappMessage);
       const whatsappNumber = '59170716460';
@@ -421,7 +425,8 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         razon_social: '',
         direccion: '',
         referencia: '',
-        notas: ''
+        notas: '',
+        paymentMethod: 'efectivo'
       });
       setSelectedLocation(null);
       setShowOrderModal(false);
@@ -792,6 +797,36 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                     placeholder="Ej: Sin cebolla, extra queso, entregar después de las 6pm..."
                     rows={3}
                   />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">
+                    Método de Pago <span className="required">*</span>
+                  </label>
+                  <div className="payment-options" style={{ display: 'flex', gap: '2rem', marginTop: '0.5rem', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                    <label className="payment-option" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', color: 'white', fontSize: '0.95rem' }}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="qr"
+                        checked={orderData.paymentMethod === 'qr'}
+                        onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
+                        style={{ marginRight: '0.5rem', accentColor: '#d4af37', width: '18px', height: '18px' }}
+                      />
+                      Pago por QR
+                    </label>
+                    <label className="payment-option" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', color: 'white', fontSize: '0.95rem' }}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="efectivo"
+                        checked={orderData.paymentMethod === 'efectivo'}
+                        onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
+                        style={{ marginRight: '0.5rem', accentColor: '#d4af37', width: '18px', height: '18px' }}
+                      />
+                      Pago en Efectivo
+                    </label>
+                  </div>
                 </div>
 
                 <div className="order-summary">
