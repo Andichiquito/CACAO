@@ -1,0 +1,24 @@
+ID: 1
+Name: 'ESPRESSO'
+Description: 'Café concentrado, preparado en máquina espresso (40ml)'
+Price: 14
+Category ID: 3
+----------------
+ID: 70
+Name: 'TRES LECHES CLÁSICOS'
+Description: 'Sabor: Chocolate, Red velvet, Vainilla'
+Price: 14
+Category ID: 8
+----------------
+ID: 71
+Name: 'TRES LECHES PREMIUM'
+Description: 'Sabor: Chocomaracuya, Pie de limón, Café con dulce de leche'
+Price: 16
+Category ID: 8
+----------------
+ID: 105
+Name: 'VAINILLA'
+Description: 'Sabor de 3 leches clásico'
+Price: 14
+Category ID: null
+----------------

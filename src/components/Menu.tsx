@@ -48,6 +48,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
   const getBaseName = (productName: string): string => {
     if (!productName) return '';
     const name = productName.toUpperCase().trim();
+
     const firstWord = name.split(' ')[0];
     return firstWord || name;
   };

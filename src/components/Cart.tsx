@@ -7,7 +7,7 @@ import {
   cleanup as cleanupMap
 } from '../utils/leafletMap';
 import { sanitizeInput, sanitizeName, sanitizeAddress, sanitizeForWhatsApp, validateCoordinates, sanitizePhone } from '../utils/security';
-import { useSupabase } from '../contexts/SupabaseContext';
+// import { useSupabase } from '../contexts/SupabaseContext';
 import 'leaflet/dist/leaflet.css';
 
 interface CartProps {
@@ -28,7 +28,7 @@ interface OrderData {
 }
 
 const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
-  const { user, supabase } = useSupabase();
+  // const { user, supabase } = useSupabase();
   const { items, removeFromCart, updateQuantity, getTotalPrice, getTotalItems, clearCart } = useCart();
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [orderData, setOrderData] = useState<OrderData>({
@@ -73,6 +73,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   };
 
 
+  /*
   useEffect(() => {
     if (showOrderModal && user) {
       const fetchProfileData = async () => {
@@ -104,6 +105,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       fetchProfileData();
     }
   }, [showOrderModal, user, supabase]);
+  */
 
   useEffect(() => {
     if (!showOrderModal) return;
@@ -219,13 +221,17 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
 
-    // Limpiar gmail si se borran los datos de facturación
-    if ((field === 'nit_ci' || field === 'razon_social') && sanitizedValue.trim() === '') {
-      const otherField = field === 'nit_ci' ? 'razon_social' : 'nit_ci';
-      if (orderData[otherField].trim() === '') {
-        setOrderData(prev => ({ ...prev, gmail: '', [field]: sanitizedValue }));
-        return; // Retornamos aquí porque ya actualizamos el estado
-      }
+
+    // Limpiar gmail y razón social si se borra el NIT o CI
+    if (field === 'nit_ci' && sanitizedValue.trim() === '') {
+      setOrderData(prev => ({
+        ...prev,
+        [field]: sanitizedValue,
+        razon_social: '',
+        gmail: '' // prev.gmail && prev.gmail !== user?.email ? '' : (user?.email || '') // Mantener email si es del usuario, sino limpiar
+      }));
+      setErrors(prev => ({ ...prev, razon_social: undefined, gmail: undefined }));
+      return;
     }
 
 
@@ -306,10 +312,15 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       newErrors.direccion = 'Por favor, selecciona tu ubicación en el mapa arrastrando el pin';
     }
 
+
     // Validar facturación condicional
-    const hasBillingData = orderData.nit_ci.trim() !== '' || orderData.razon_social.trim() !== '';
-    if (hasBillingData && !orderData.gmail.trim()) {
-      newErrors.gmail = 'El correo es obligatorio para facturación';
+    if (orderData.nit_ci.trim() !== '') {
+      if (!orderData.razon_social.trim()) {
+        newErrors.razon_social = 'La razón social es requerida para facturación';
+      }
+      if (!orderData.gmail.trim()) {
+        newErrors.gmail = 'El correo es obligatorio para facturación';
+      }
     }
 
     setErrors(newErrors);
@@ -674,21 +685,26 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="razon_social" className="form-label">
-                    Razón Social
-                  </label>
-                  <input
-                    type="text"
-                    id="razon_social"
-                    className="form-input"
-                    value={orderData.razon_social}
-                    onChange={(e) => handleInputChange('razon_social', e.target.value)}
-                    placeholder=""
-                  />
-                </div>
 
-                {(orderData.nit_ci.trim() !== '' || orderData.razon_social.trim() !== '') && (
+                {orderData.nit_ci.trim() !== '' && (
+                  <div className="form-group slide-down">
+                    <label htmlFor="razon_social" className="form-label">
+                      Razón Social <span className="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="razon_social"
+                      className={`form-input ${errors.razon_social ? 'form-input-error' : ''}`}
+                      value={orderData.razon_social}
+                      onChange={(e) => handleInputChange('razon_social', e.target.value)}
+                      placeholder=""
+                    />
+                    {errors.razon_social && <span className="error-message">{errors.razon_social}</span>}
+                  </div>
+                )}
+
+
+                {orderData.nit_ci.trim() !== '' && (
                   <div className="form-group">
                     <label htmlFor="gmail" className="form-label">
                       Gmail <span className="required">*</span>
