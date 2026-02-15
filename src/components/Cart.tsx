@@ -429,14 +429,15 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         whatsappMessage += `*Dirección:* ${sanitizedAddress}\n`;
         if (selectedLocation && validateCoordinates(selectedLocation.lat, selectedLocation.lng)) {
           const mapsLink = `https://www.google.com/maps?q=${selectedLocation.lat},${selectedLocation.lng}`;
-          whatsappMessage += `${mapsLink}\n\n`;
+          whatsappMessage += `${mapsLink}\n`;
         } else {
-          whatsappMessage += `\n*Nota:* Por favor, confirma que la dirección es correcta\n\n`;
+          whatsappMessage += `*Nota:* Por favor, confirma que la dirección es correcta\n`;
         }
 
         if (sanitizedReferencia) {
-          whatsappMessage += `*Referencia:* ${sanitizedReferencia}\n\n`;
+          whatsappMessage += `*Referencia:* ${sanitizedReferencia}\n`;
         }
+        whatsappMessage += `\n`;
       } else {
         whatsappMessage += `\n`;
       }

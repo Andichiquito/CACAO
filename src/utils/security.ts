@@ -111,7 +111,7 @@ const hasSelectableOptions = (product: any): boolean => {
     }
 
     // Verificar patrón simple: "Sabor: opción1, opción2"
-    const [label, optionsStr] = trimmedPart.split(':').map((s: string) => s.trim());
+    const [, optionsStr] = trimmedPart.split(':').map((s: string) => s.trim());
     if (!optionsStr) {
       return false;
     }
