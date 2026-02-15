@@ -6,7 +6,7 @@ import {
   updateMapLocation,
   cleanup as cleanupMap
 } from '../utils/leafletMap';
-import { sanitizeInput, sanitizeName, sanitizeAddress, sanitizeForWhatsApp, validateCoordinates, sanitizePhone } from '../utils/security';
+import { sanitizeInput, sanitizeName, sanitizeAddress, sanitizeForWhatsApp, validateCoordinates, sanitizePhone, getProductDisplayName } from '../utils/security';
 // import { useSupabase } from '../contexts/SupabaseContext';
 import 'leaflet/dist/leaflet.css';
 
@@ -24,6 +24,7 @@ interface OrderData {
   direccion: string;
   referencia: string;
   notas: string;
+  deliveryType: 'entrega' | 'recojo';
   paymentMethod: 'qr' | 'efectivo';
 }
 
@@ -40,6 +41,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     direccion: '',
     referencia: '',
     notas: '',
+    deliveryType: 'entrega',
     paymentMethod: 'efectivo'
   });
   const [errors, setErrors] = useState<Partial<OrderData>>({});
@@ -108,7 +110,14 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   */
 
   useEffect(() => {
-    if (!showOrderModal) return;
+    // Solo inicializar el mapa si el modal está abierto y es entrega
+    if (!showOrderModal || orderData.deliveryType !== 'entrega') {
+      if (orderData.deliveryType !== 'entrega') {
+        cleanupMap();
+        setSelectedLocation(null);
+      }
+      return;
+    }
 
     const initMap = async () => {
 
@@ -161,7 +170,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showOrderModal]);
+  }, [showOrderModal, orderData.deliveryType]);
 
   const handleViewOrder = (): void => {
     const totalItems = getTotalItems();
@@ -205,6 +214,22 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       return;
     }
 
+    // Si cambia el tipo de entrega a "recojo", limpiar dirección y ubicación
+    if (field === 'deliveryType' && value === 'recojo') {
+      setOrderData(prev => ({ 
+        ...prev, 
+        [field]: value,
+        direccion: '',
+        referencia: ''
+      }));
+      setSelectedLocation(null);
+      setErrors(prev => ({ ...prev, direccion: undefined }));
+      // Limpiar el mapa
+      if (mapRef.current) {
+        cleanupMap();
+      }
+      return;
+    }
 
     let sanitizedValue = value;
     if (field === 'nombre') {
@@ -279,12 +304,19 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     const cleanPhone = orderData.telefono.replace(/[\s\-()]/g, '');
     const phoneValid = cleanPhone.length >= 7 && cleanPhone.length <= 8 && /^[67][0-9]{6,7}$/.test(cleanPhone);
 
-    return (
+    const baseValid = (
       orderData.nombre.trim() !== '' &&
       orderData.telefono.trim() !== '' &&
-      phoneValid &&
-      orderData.direccion.trim() !== ''
+      phoneValid
     );
+
+    // Si es entrega, la dirección es requerida
+    if (orderData.deliveryType === 'entrega') {
+      return baseValid && orderData.direccion.trim() !== '';
+    }
+
+    // Si es recojo, no se requiere dirección
+    return baseValid;
   };
 
   const validateForm = (): boolean => {
@@ -306,10 +338,13 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     }
 
 
-    if (!orderData.direccion.trim()) {
-      newErrors.direccion = 'La dirección es requerida';
-    } else if (!selectedLocation) {
-      newErrors.direccion = 'Por favor, selecciona tu ubicación en el mapa arrastrando el pin';
+    // Validar dirección solo si es entrega
+    if (orderData.deliveryType === 'entrega') {
+      if (!orderData.direccion.trim()) {
+        newErrors.direccion = 'La dirección es requerida';
+      } else if (!selectedLocation) {
+        newErrors.direccion = 'Por favor, selecciona tu ubicación en el mapa arrastrando el pin';
+      }
     }
 
 
@@ -350,7 +385,8 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       }
 
 
-      if (selectedLocation && !validateCoordinates(selectedLocation.lat, selectedLocation.lng)) {
+      // Validar ubicación solo si es entrega
+      if (orderData.deliveryType === 'entrega' && selectedLocation && !validateCoordinates(selectedLocation.lat, selectedLocation.lng)) {
         alert('La ubicación seleccionada no es válida. Por favor, selecciona una ubicación válida en el mapa.');
         return;
       }
@@ -385,25 +421,32 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       }
       whatsappMessage += `\n`;
 
+      // Tipo de entrega
+      whatsappMessage += `*Tipo de Entrega:* ${orderData.deliveryType === 'entrega' ? 'Entrega a Domicilio' : 'Recojo en CACAO'}\n`;
 
-      whatsappMessage += `*Dirección:* ${sanitizedAddress}\n`;
-      if (selectedLocation && validateCoordinates(selectedLocation.lat, selectedLocation.lng)) {
-        const mapsLink = `https://www.google.com/maps?q=${selectedLocation.lat},${selectedLocation.lng}`;
-        whatsappMessage += `${mapsLink}\n\n`;
+      // Dirección solo si es entrega
+      if (orderData.deliveryType === 'entrega') {
+        whatsappMessage += `*Dirección:* ${sanitizedAddress}\n`;
+        if (selectedLocation && validateCoordinates(selectedLocation.lat, selectedLocation.lng)) {
+          const mapsLink = `https://www.google.com/maps?q=${selectedLocation.lat},${selectedLocation.lng}`;
+          whatsappMessage += `${mapsLink}\n\n`;
+        } else {
+          whatsappMessage += `\n*Nota:* Por favor, confirma que la dirección es correcta\n\n`;
+        }
+
+        if (sanitizedReferencia) {
+          whatsappMessage += `*Referencia:* ${sanitizedReferencia}\n\n`;
+        }
       } else {
-        whatsappMessage += `\n*Nota:* Por favor, confirma que la dirección es correcta\n\n`;
-      }
-
-
-      if (sanitizedReferencia) {
-        whatsappMessage += `*Referencia:* ${sanitizedReferencia}\n\n`;
+        whatsappMessage += `\n`;
       }
 
 
       whatsappMessage += `*PEDIDO:*\n`;
       items.forEach((item) => {
         if (!item || !item.product) return;
-        const productName = sanitizeForWhatsApp(item.product.name || 'Producto sin nombre');
+        const displayName = getProductDisplayName(item.product);
+        const productName = sanitizeForWhatsApp(displayName);
         const quantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
         const price = typeof item.product.price === 'number' && item.product.price >= 0 ? item.product.price : 0;
         const subtotal = price * quantity;
@@ -437,6 +480,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         direccion: '',
         referencia: '',
         notas: '',
+        deliveryType: 'entrega',
         paymentMethod: 'efectivo'
       });
       setSelectedLocation(null);
@@ -515,7 +559,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   return (
                     <div key={product.id} className="cart-item">
                       <div className="cart-item-info">
-                        <h3 className="cart-item-name">{product.name || 'Producto sin nombre'}</h3>
+                        <h3 className="cart-item-name">{getProductDisplayName(product)}</h3>
                         <p className="cart-item-price">
                           Bs. {isValidSubtotal ? price.toFixed(2) : '0.00'}
                         </p>
@@ -667,8 +711,8 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Sección de Datos de Facturación */}
-                <div style={{ marginTop: '1.5rem', marginBottom: '1rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem', color: '#d4af37' }}>Datos de Facturación (Opcional)</h3>
+                <div className="form-section-separator">
+                  <h3 className="form-section-title">Datos de Facturación (Opcional)</h3>
                 </div>
 
                 <div className="form-group">
@@ -721,11 +765,41 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   </div>
                 )}
 
-
-                <div className="form-group">
-                  <label htmlFor="direccion" className="form-label">
-                    Dirección de Entrega <span className="required">*</span>
+                {/* Tipo de Entrega */}
+                <div className="form-group form-section-separator">
+                  <label className="form-label">
+                    Tipo de Entrega <span className="required">*</span>
                   </label>
+                  <div className="payment-options">
+                    <label className="payment-option">
+                      <input
+                        type="radio"
+                        name="deliveryType"
+                        value="entrega"
+                        checked={orderData.deliveryType === 'entrega'}
+                        onChange={(e) => handleInputChange('deliveryType', e.target.value)}
+                      />
+                      Entrega a Domicilio
+                    </label>
+                    <label className="payment-option">
+                      <input
+                        type="radio"
+                        name="deliveryType"
+                        value="recojo"
+                        checked={orderData.deliveryType === 'recojo'}
+                        onChange={(e) => handleInputChange('deliveryType', e.target.value)}
+                      />
+                      Recojo en CACAO
+                    </label>
+                  </div>
+                </div>
+
+                {/* Dirección y Mapa - Solo si es entrega */}
+                {orderData.deliveryType === 'entrega' && (
+                  <div className="form-group">
+                    <label htmlFor="direccion" className="form-label">
+                      Dirección de Entrega <span className="required">*</span>
+                    </label>
                   <input
                     ref={addressInputRef}
                     type="text"
@@ -746,19 +820,10 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   <div
                     ref={mapRef}
                     className="google-map-container"
-                    style={{ height: '300px', width: '100%', marginTop: '1rem', borderRadius: '8px', overflow: 'hidden', minHeight: '300px' }}
                   />
 
                   {/* Mensaje sobre ajustar ubicación */}
-                  <p className="form-hint" style={{
-                    marginTop: '0.75rem',
-                    padding: '0.75rem',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    fontSize: '0.9rem',
-                    color: '#d4af37'
-                  }}>
+                  <p className="form-hint form-hint-warning">
                     ⚠️ <strong>Si la ubicación no es correcta, por favor arrastra el pin a tu ubicación exacta en el mapa</strong>
                   </p>
 
@@ -769,37 +834,29 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="map-link"
-                      style={{
-                        display: 'inline-block',
-                        marginTop: '0.75rem',
-                        color: '#4285F4',
-                        textDecoration: 'none',
-                        fontSize: '0.9rem',
-                        fontWeight: 500,
-                        padding: '0.5rem 1rem',
-                        backgroundColor: 'rgba(66, 133, 244, 0.1)',
-                        borderRadius: '6px',
-                        border: '1px solid rgba(66, 133, 244, 0.3)'
-                      }}
                     >
                       📍 Ver ubicación en Google Maps
                     </a>
                   )}
-                </div>
+                  </div>
+                )}
 
-                <div className="form-group">
-                  <label htmlFor="referencia" className="form-label">
-                    Referencia de Dirección (Opcional)
-                  </label>
-                  <textarea
-                    id="referencia"
-                    className="form-input form-textarea"
-                    value={orderData.referencia}
-                    onChange={(e) => handleInputChange('referencia', e.target.value)}
-                    placeholder="Ej: Casa de color azul, portón negro, etc."
-                    rows={2}
-                  />
-                </div>
+                {/* Referencia de Dirección - Solo si es entrega */}
+                {orderData.deliveryType === 'entrega' && (
+                  <div className="form-group">
+                    <label htmlFor="referencia" className="form-label">
+                      Referencia de Dirección (Opcional)
+                    </label>
+                    <textarea
+                      id="referencia"
+                      className="form-input form-textarea"
+                      value={orderData.referencia}
+                      onChange={(e) => handleInputChange('referencia', e.target.value)}
+                      placeholder="Ej: Casa de color azul, portón negro, etc."
+                      rows={2}
+                    />
+                  </div>
+                )}
 
                 <div className="form-group">
                   <label htmlFor="notas" className="form-label">
@@ -819,31 +876,30 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   <label className="form-label">
                     Método de Pago <span className="required">*</span>
                   </label>
-                  <div className="payment-options" style={{ display: 'flex', gap: '2rem', marginTop: '0.5rem', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                    <label className="payment-option" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', color: 'white', fontSize: '0.95rem' }}>
+                  <div className="payment-options">
+                    <label className="payment-option">
                       <input
                         type="radio"
                         name="paymentMethod"
                         value="qr"
                         checked={orderData.paymentMethod === 'qr'}
                         onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                        style={{ marginRight: '0.5rem', accentColor: '#d4af37', width: '18px', height: '18px' }}
                       />
                       Pago por QR
                     </label>
-                    <label className="payment-option" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', color: 'white', fontSize: '0.95rem' }}>
+                    <label className="payment-option">
                       <input
                         type="radio"
                         name="paymentMethod"
                         value="efectivo"
                         checked={orderData.paymentMethod === 'efectivo'}
                         onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                        style={{ marginRight: '0.5rem', accentColor: '#d4af37', width: '18px', height: '18px' }}
                       />
                       Pago en Efectivo
                     </label>
                   </div>
                 </div>
+
 
                 <div className="order-summary">
                   <div className="order-summary-row">

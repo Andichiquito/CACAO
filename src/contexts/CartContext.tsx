@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Product, CartItem, CartHook } from '../types';
 import { useToast } from './ToastContext';
+import { getProductDisplayName } from '../utils/security';
 
 interface CartContextType extends CartHook { }
 
@@ -111,7 +112,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         }
       });
 
-      showToast('Producto agregado', `${product.name} se agregó al carrito`);
+      const displayName = getProductDisplayName(product);
+      showToast('Producto agregado', `${displayName} se agregó al carrito`);
     } catch (error) {
       console.error('Error adding to cart', error);
     }
