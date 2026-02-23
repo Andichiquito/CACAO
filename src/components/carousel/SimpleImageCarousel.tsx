@@ -5,11 +5,11 @@ const SimpleImageCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const images: string[] = [
-    "/assets/images/carrusel/IMG_6419.PNG",
-    "/assets/images/carrusel/IMG_6420.PNG",
-    "/assets/images/carrusel/IMG_6421.PNG",
-    "/assets/images/carrusel/IMG_6422.PNG",
-    "/assets/images/carrusel/IMG_6423.PNG"
+    `${process.env.PUBLIC_URL || ''}/assets/images/Carrusel/IMG_6419.webp`,
+    `${process.env.PUBLIC_URL || ''}/assets/images/Carrusel/IMG_6420.webp`,
+    `${process.env.PUBLIC_URL || ''}/assets/images/Carrusel/IMG_6421.webp`,
+    `${process.env.PUBLIC_URL || ''}/assets/images/Carrusel/IMG_6422.webp`,
+    `${process.env.PUBLIC_URL || ''}/assets/images/Carrusel/IMG_6423.webp`
   ];
 
   // Auto-play cada 4 segundos
@@ -37,7 +37,6 @@ const SimpleImageCarousel: React.FC = () => {
 
   return (
     <div className="simple-image-carousel">
-      {/* Imagen actual */}
       {/* Imagen actual */}
       <div className="image-container">
         {images.map((image, index) => (

@@ -271,7 +271,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
               aria-label="Ver menú completo"
             >
               <img
-                src="/assets/images/homepage/Menu.PNG"
+                src="/assets/images/HomePage/Menu.webp"
                 alt="Menú CACAO"
                 className="menu-highlight-image"
               />
@@ -295,7 +295,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
               aria-label="Ver catálogo de tortas en WhatsApp"
             >
               <img
-                src="/assets/images/homepage/Tortas.PNG"
+                src="/assets/images/HomePage/Tortas.webp"
                 alt="Catálogo de Tortas CACAO"
                 className="tortas-catalog-image"
               />
@@ -313,7 +313,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
             <p className="horarios-subtitle">Visítanos en nuestros horarios de atención</p>
             <div className="horarios-image-container">
               <img
-                src="/assets/images/homepage/Horarios.PNG"
+                src="/assets/images/HomePage/Horarios.webp"
                 alt="Horarios de atención CACAO"
                 className="horarios-image"
               />
