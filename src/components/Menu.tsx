@@ -391,7 +391,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
           <img
             src="/assets/images/Tortas del Mes/torta del mes 2.webp"
             alt="Torta del Mes"
-            className="torta-del-mes-webp"
+            className="torta-del-mes-img"
           />
         </div>
 
