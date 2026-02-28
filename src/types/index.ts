@@ -91,28 +91,6 @@ export interface NavigationProps {
   onOpenAuth?: () => void;
 }
 
-export interface CarouselItem {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  emoji?: string;
-}
-
-export interface CarouselHook {
-  currentSlide: number;
-  isPaused: boolean;
-  nextSlide: () => void;
-  prevSlide: () => void;
-  goToSlide: (index: number) => void;
-  pauseCarousel: () => void;
-  resumeCarousel: () => void;
-}
-
-export interface SmoothScrollHook {
-  scrollToSection: (sectionId: string) => void;
-}
-
 export interface MenuProps extends NavigationProps {
   onOpenAuth: () => void;
 }
@@ -123,30 +101,6 @@ export interface HomePageProps extends NavigationProps {
 
 export interface AboutUsProps extends NavigationProps {
   onOpenAuth: () => void;
-}
-
-export interface CarouselProps {
-  items: CarouselItem[];
-  autoPlayInterval?: number;
-}
-
-export interface ImageCarouselProps {
-  images: string[];
-  autoPlayInterval?: number;
-}
-
-export interface SimpleCarouselProps {
-  items: CarouselItem[];
-  autoPlayInterval?: number;
-}
-
-export interface SimpleImageCarouselProps {
-  images: string[];
-  autoPlayInterval?: number;
-}
-
-export interface BaseComponentsProps {
-  children: React.ReactNode;
 }
 
 export interface ButtonClickEvent {
