@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import HomePage from './components/HomePage';
-import Menu from './components/Menu';
-import Cart from './components/Cart';
-import AuthModal from './components/AuthModal';
-import AccountSettings from './components/AccountSettings';
 import { ThemeProvider, ThemeStyles } from './contexts/ThemeContext';
 import { CartProvider } from './contexts/CartContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { SupabaseProvider } from './contexts/SupabaseContext';
 import FloatingCartButton from './components/FloatingCartButton';
 import './App.css';
+
+const Menu = lazy(() => import('./components/Menu'));
+const Cart = lazy(() => import('./components/Cart'));
+const AuthModal = lazy(() => import('./components/AuthModal'));
+const AccountSettings = lazy(() => import('./components/AccountSettings'));
 
 type ViewType = 'home' | 'menu' | 'about' | 'settings';
 
@@ -66,12 +67,16 @@ const AppContent: React.FC = () => {
     }
   };
 
+  const fallback = <div className="app-loading" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d4af37' }}>Cargando...</div>;
+
   return (
     <div className="App">
-      {renderCurrentView()}
-      <FloatingCartButton onClick={openCart} />
-      <Cart isOpen={isCartOpen} onClose={closeCart} />
-      <AuthModal isOpen={isAuthOpen} onClose={closeAuth} />
+      <Suspense fallback={fallback}>
+        {renderCurrentView()}
+        <FloatingCartButton onClick={openCart} />
+        <Cart isOpen={isCartOpen} onClose={closeCart} />
+        <AuthModal isOpen={isAuthOpen} onClose={closeAuth} />
+      </Suspense>
     </div>
   );
 };
