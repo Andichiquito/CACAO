@@ -44,7 +44,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
           return;
         }
 
-        const validItems = parsedCart.filter(isValidCartItem);
+        const validItems = parsedCart.filter(isValidCartItem).map((item: CartItem) => ({
+          ...item,
+          cartKey: item.cartKey || `${item.product.id}_${item.product.name}`
+        }));
         setItems(validItems);
       }
     } catch (error) {
@@ -73,6 +76,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     }
   }, [items]);
 
+  const getCartKey = (product: Product): string => {
+    return `${product.id}_${product.name}`;
+  };
+
   const addToCart = (product: Product, quantity: number): void => {
     if (!product || typeof product.id !== 'number' || product.id <= 0 ||
       typeof product.price !== 'number' || product.price < 0 || !product.name) {
@@ -90,17 +97,19 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     }
 
     try {
+      const cartKey = getCartKey(product);
+
       setItems(prevItems => {
         if (!Array.isArray(prevItems)) {
-          return [{ product, quantity }];
+          return [{ product, quantity, cartKey }];
         }
 
-        const existingItem = prevItems.find(item => item?.product?.id === product.id);
+        const existingItem = prevItems.find(item => item.cartKey === cartKey);
 
         if (existingItem) {
           const newQuantity = Math.min(existingItem.quantity + quantity, 1000);
           return prevItems.map(item =>
-            item.product.id === product.id
+            item.cartKey === cartKey
               ? { ...item, quantity: newQuantity }
               : item
           );
@@ -108,7 +117,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
           if (prevItems.length >= 100) {
             return prevItems;
           }
-          return [...prevItems, { product, quantity }];
+          return [...prevItems, { product, quantity, cartKey }];
         }
       });
 
@@ -119,8 +128,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     }
   };
 
-  const removeFromCart = (productId: number): void => {
-    if (typeof productId !== 'number' || productId <= 0) {
+  const removeFromCart = (cartKey: string): void => {
+    if (!cartKey) {
       return;
     }
 
@@ -129,20 +138,20 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         if (!Array.isArray(prevItems)) {
           return [];
         }
-        return prevItems.filter(item => item?.product?.id !== productId);
+        return prevItems.filter(item => item.cartKey !== cartKey);
       });
     } catch (error) {
       console.error('Error removing from cart', error);
     }
   };
 
-  const updateQuantity = (productId: number, quantity: number): void => {
-    if (typeof productId !== 'number' || productId <= 0 || typeof quantity !== 'number') {
+  const updateQuantity = (cartKey: string, quantity: number): void => {
+    if (!cartKey || typeof quantity !== 'number') {
       return;
     }
 
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(cartKey);
       return;
     }
 
@@ -156,7 +165,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
         return prevItems.map(item => {
           if (!item?.product) return item;
-          return item.product.id === productId
+          return item.cartKey === cartKey
             ? { ...item, quantity: cappedQuantity }
             : item;
         });

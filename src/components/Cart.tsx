@@ -51,10 +51,10 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleQuantityChange = (productId: number, newQuantity: number): void => {
+  const handleQuantityChange = (cartKey: string, newQuantity: number): void => {
 
-    if (typeof productId !== 'number' || productId <= 0) {
-      console.error('Cart: Invalid productId in handleQuantityChange', productId);
+    if (!cartKey) {
+      console.error('Cart: Invalid cartKey in handleQuantityChange', cartKey);
       return;
     }
 
@@ -65,9 +65,9 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
 
     try {
       if (newQuantity < 1) {
-        removeFromCart(productId);
+        removeFromCart(cartKey);
       } else {
-        updateQuantity(productId, newQuantity);
+        updateQuantity(cartKey, newQuantity);
       }
     } catch (error) {
       console.error('Cart: Error changing quantity', error);
@@ -552,13 +552,14 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   }
 
                   const product = item.product;
+                  const itemKey = item.cartKey || `${product.id}_${product.name}`;
                   const quantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
                   const price = typeof product.price === 'number' && product.price >= 0 ? product.price : 0;
                   const subtotal = price * quantity;
                   const isValidSubtotal = isFinite(subtotal) && subtotal >= 0;
 
                   return (
-                    <div key={product.id} className="cart-item">
+                    <div key={itemKey} className="cart-item">
                       <div className="cart-item-info">
                         <h3 className="cart-item-name">{getProductDisplayName(product)}</h3>
                         <p className="cart-item-price">
@@ -570,7 +571,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                         <div className="quantity-controls">
                           <button
                             className="quantity-button"
-                            onClick={() => handleQuantityChange(product.id, quantity - 1)}
+                            onClick={() => handleQuantityChange(itemKey, quantity - 1)}
                             aria-label="Disminuir cantidad"
                             disabled={quantity <= 1}
                           >
@@ -581,7 +582,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                           <span className="quantity-value">{quantity}</span>
                           <button
                             className="quantity-button"
-                            onClick={() => handleQuantityChange(product.id, quantity + 1)}
+                            onClick={() => handleQuantityChange(itemKey, quantity + 1)}
                             aria-label="Aumentar cantidad"
                           >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -599,7 +600,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
 
                         <button
                           className="cart-item-remove"
-                          onClick={() => removeFromCart(product.id)}
+                          onClick={() => removeFromCart(itemKey)}
                           aria-label="Eliminar producto"
                         >
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

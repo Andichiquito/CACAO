@@ -30,6 +30,7 @@ export interface Product {
 export interface CartItem {
   product: Product;
   quantity: number;
+  cartKey?: string;
 }
 
 export interface Profile {
@@ -58,8 +59,8 @@ export interface MenuDataHook {
 export interface CartHook {
   items: CartItem[];
   addToCart: (product: Product, quantity: number) => void;
-  removeFromCart: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
+  removeFromCart: (cartKey: string) => void;
+  updateQuantity: (cartKey: string, quantity: number) => void;
   clearCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;
