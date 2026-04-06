@@ -4,6 +4,8 @@ import { useCart } from '../hooks/useCart';
 import { MenuProps, Product, Category } from '../types';
 import './Menu.css';
 
+const TORTA_DEL_MES_SRC = `${process.env.PUBLIC_URL || ''}${encodeURI('/assets/images/Tortas del Mes/TortaDelMesAbril.jpeg')}`;
+
 const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, number>>({});
@@ -389,7 +391,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
 
         <div className="torta-del-mes-banner">
           <img
-            src="/assets/images/Tortas del Mes/Torta del mes 2 chochito.webp"
+            src={TORTA_DEL_MES_SRC}
             alt="Torta del Mes"
             className="torta-del-mes-img"
           />
