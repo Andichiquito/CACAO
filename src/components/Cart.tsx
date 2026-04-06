@@ -307,17 +307,18 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
     const baseValid = (
       orderData.nombre.trim() !== '' &&
       orderData.telefono.trim() !== '' &&
-      phoneValid &&
-      orderData.nit_ci.trim() !== ''
+      phoneValid
     );
+
+    const billingValid = orderData.nit_ci.trim() === '' || orderData.razon_social.trim() !== '';
 
     // Si es entrega, la dirección es requerida
     if (orderData.deliveryType === 'entrega') {
-      return baseValid && orderData.direccion.trim() !== '';
+      return baseValid && billingValid && orderData.direccion.trim() !== '';
     }
 
     // Si es recojo, no se requiere dirección
-    return baseValid;
+    return baseValid && billingValid;
   };
 
   const validateForm = (): boolean => {
@@ -338,8 +339,8 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
       }
     }
 
-    if (!orderData.nit_ci.trim()) {
-      newErrors.nit_ci = 'El NIT o CI es requerido';
+    if (orderData.nit_ci.trim() && !orderData.razon_social.trim()) {
+      newErrors.razon_social = 'La razón social es requerida cuando ingresas NIT o CI';
     }
 
     // Validar dirección solo si es entrega
@@ -707,12 +708,12 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
 
                 {/* Sección de Datos de Facturación */}
                 <div className="form-section-separator">
-                  <h3 className="form-section-title">Identificación y facturación</h3>
+                  <h3 className="form-section-title">facturación</h3>
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="nit_ci" className="form-label">
-                    NIT o CI <span className="required">*</span>
+                    NIT o CI (opcional)
                   </label>
                   <input
                     type="text"
@@ -729,16 +730,17 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                 {orderData.nit_ci.trim() !== '' && (
                   <div className="form-group slide-down">
                     <label htmlFor="razon_social" className="form-label">
-                      Razón Social (opcional)
+                      Razón Social <span className="required">*</span>
                     </label>
                     <input
                       type="text"
                       id="razon_social"
-                      className="form-input"
+                      className={`form-input ${errors.razon_social ? 'form-input-error' : ''}`}
                       value={orderData.razon_social}
                       onChange={(e) => handleInputChange('razon_social', e.target.value)}
                       placeholder=""
                     />
+                    {errors.razon_social && <span className="error-message">{errors.razon_social}</span>}
                   </div>
                 )}
 
