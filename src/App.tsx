@@ -15,6 +15,7 @@ const AdminProducts = lazy(() => import('./components/AdminProducts'));
 const AdminTorta = lazy(() => import('./components/AdminTorta'));
 
 // Vercel trigger
+// Segundo trigger para probar el correo
 type ViewType = 'home' | 'menu' | 'about' | 'settings' | 'admin-products' | 'admin-torta';
 
 const STORAGE_KEY = 'cacao_current_view';
