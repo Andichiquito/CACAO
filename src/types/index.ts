@@ -87,7 +87,7 @@ export interface ThemeContextType {
 }
 
 export interface NavigationProps {
-  onNavigate: (page: 'home' | 'menu' | 'about' | 'settings') => void;
+  onNavigate: (page: 'home' | 'menu' | 'about' | 'settings' | 'admin-products' | 'admin-torta') => void;
   onOpenCart?: () => void;
   onOpenAuth?: () => void;
 }

@@ -4,13 +4,11 @@ import { useCart } from '../hooks/useCart';
 import { MenuProps, Product, Category } from '../types';
 import './Menu.css';
 
-const TORTA_DEL_MES_SRC = `${process.env.PUBLIC_URL || ''}${encodeURI('/assets/images/Tortas del Mes/TortaDelMesAbril.jpeg')}`;
-
 const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, number>>({});
   const [searchTerm, setSearchTerm] = useState('');
-  const { categories, loading, error, getProductsByCategory } = useMenuData();
+  const { categories, products, loading, error, getProductsByCategory } = useMenuData();
   const { addToCart, getTotalItems } = useCart();
   const totalItems = getTotalItems();
 
@@ -389,13 +387,21 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
           />
         </div>
 
-        <div className="torta-del-mes-banner">
-          <img
-            src={TORTA_DEL_MES_SRC}
-            alt="Torta del Mes"
-            className="torta-del-mes-img"
-          />
-        </div>
+        {(() => {
+          const tortaDelMesProduct = products?.find(p => p.name.toLowerCase() === 'torta del mes');
+          if (tortaDelMesProduct && tortaDelMesProduct.image_url) {
+            return (
+              <div className="torta-del-mes-banner">
+                <img
+                  src={tortaDelMesProduct.image_url}
+                  alt="Torta del Mes"
+                  className="torta-del-mes-img"
+                />
+              </div>
+            );
+          }
+          return null;
+        })()}
 
         <div className="categories-list">
           {uniqueCategories.map(category => {

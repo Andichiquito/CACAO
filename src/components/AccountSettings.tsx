@@ -20,7 +20,10 @@ const AccountSettings: React.FC<NavigationProps> = ({ onNavigate }) => {
          * Carga los datos del perfil del usuario desde la tabla 'profiles'.
          */
         const fetchProfile = async () => {
-            if (!user) return;
+            if (!user) {
+                setIsLoading(false);
+                return;
+            }
 
             try {
                 const { data, error } = await supabase

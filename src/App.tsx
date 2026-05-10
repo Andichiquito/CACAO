@@ -11,8 +11,10 @@ const Menu = lazy(() => import('./components/Menu'));
 const Cart = lazy(() => import('./components/Cart'));
 const AuthModal = lazy(() => import('./components/AuthModal'));
 const AccountSettings = lazy(() => import('./components/AccountSettings'));
+const AdminProducts = lazy(() => import('./components/AdminProducts'));
+const AdminTorta = lazy(() => import('./components/AdminTorta'));
 
-type ViewType = 'home' | 'menu' | 'about' | 'settings';
+type ViewType = 'home' | 'menu' | 'about' | 'settings' | 'admin-products' | 'admin-torta';
 
 const STORAGE_KEY = 'cacao_current_view';
 
@@ -20,7 +22,7 @@ const AppContent: React.FC = () => {
   const getInitialView = (): ViewType => {
     try {
       const savedView = localStorage.getItem(STORAGE_KEY);
-      if (savedView && ['home', 'menu', 'about', 'settings'].includes(savedView)) {
+      if (savedView && ['home', 'menu', 'about', 'settings', 'admin-products', 'admin-torta'].includes(savedView)) {
         return savedView as ViewType;
       }
     } catch (error) {
@@ -47,7 +49,7 @@ const AppContent: React.FC = () => {
   const closeAuth = (): void => setIsAuthOpen(false);
 
   const handleNavigate = (view: ViewType): void => {
-    if (!view || !['home', 'menu', 'about', 'settings'].includes(view)) {
+    if (!view || !['home', 'menu', 'about', 'settings', 'admin-products', 'admin-torta'].includes(view)) {
       console.error('Invalid view provided to handleNavigate', view);
       return;
     }
@@ -60,6 +62,10 @@ const AppContent: React.FC = () => {
         return <Menu onNavigate={handleNavigate} onOpenCart={openCart} onOpenAuth={openAuth} />;
       case 'settings':
         return <AccountSettings onNavigate={handleNavigate} onOpenCart={openCart} onOpenAuth={openAuth} />;
+      case 'admin-products':
+        return <AdminProducts onNavigate={handleNavigate} onOpenCart={openCart} onOpenAuth={openAuth} />;
+      case 'admin-torta':
+        return <AdminTorta onNavigate={handleNavigate} />;
       case 'about':
       case 'home':
       default:

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import SimpleImageCarousel from './carousel/SimpleImageCarousel';
 import AboutUs from './AboutUs';
+import UserMenu from './UserMenu';
 import { useCart } from '../hooks/useCart';
+import { useSupabase } from '../contexts/SupabaseContext';
 import { HomePageProps } from '../types';
 import './HomePage.css';
 
@@ -18,10 +20,32 @@ declare global {
 
 const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth }) => {
 
-  // const { user } = useSupabase(); // 'user' is currently unused because the related JSX block is commented out.
+  const { user, supabase } = useSupabase();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const { getTotalItems } = useCart();
   const totalItems = getTotalItems();
+  const [tortaDelMes, setTortaDelMes] = useState<any>(null);
+
+  // Fetch Torta del Mes
+  useEffect(() => {
+    const fetchTorta = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .ilike('name', 'Torta del mes')
+          .limit(1)
+          .single();
+        
+        if (data && data.image_url) {
+          setTortaDelMes(data);
+        }
+      } catch (err) {
+        // Ignorar si no existe
+      }
+    };
+    fetchTorta();
+  }, [supabase]);
 
 
   useEffect(() => {
@@ -108,9 +132,9 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
     );
   }
 
-  const handleNavigate = (page: 'home' | 'menu' | 'about'): void => {
+  const handleNavigate = (page: 'home' | 'menu' | 'about' | 'admin-products'): void => {
     try {
-      if (!page || !['home', 'menu', 'about'].includes(page)) {
+      if (!page || !['home', 'menu', 'about', 'admin-products'].includes(page)) {
         console.error('HomePage: Invalid page provided to handleNavigate', page);
         return;
       }
@@ -156,7 +180,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
               )}
             </div>
 
-            {/* 
             <div className="user-auth-section">
               {user ? (
                 <UserMenu onNavigate={onNavigate} />
@@ -166,7 +189,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
                 </button>
               )}
             </div>
-            */}
 
             <button
               className="hamburger-menu"
@@ -281,6 +303,23 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
             </div>
           </div>
         </div>
+
+        {/* Sección Torta del Mes (Dinámica) */}
+        {tortaDelMes && tortaDelMes.image_url && (
+          <div className="torta-del-mes-section" style={{ margin: '4rem 0', padding: '2rem', position: 'relative', zIndex: 5 }}>
+            <div className="torta-del-mes-content" style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
+              <h2 className="menu-highlight-title">TORTA DEL MES</h2>
+              <p className="menu-highlight-subtitle">{tortaDelMes.description || '¡Descubre nuestra especialidad de este mes!'}</p>
+              <div className="menu-image-container">
+                <img
+                  src={tortaDelMes.image_url}
+                  alt="Torta del Mes"
+                  className="menu-highlight-image"
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Sección de Catálogo de Tortas */}
         <div className="tortas-catalog-section">

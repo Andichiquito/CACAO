@@ -5,28 +5,32 @@ import { useToast } from '../contexts/ToastContext';
 import './UserMenu.css';
 
 interface UserMenuProps {
-    onNavigate: (page: 'home' | 'menu' | 'about' | 'settings') => void;
+    onNavigate: (page: 'home' | 'menu' | 'about' | 'settings' | 'admin-products' | 'admin-torta') => void;
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ onNavigate }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const [userRole, setUserRole] = useState<string | null>(null);
     const { user, supabase, signOut } = useSupabase();
     const { showToast } = useToast();
     const menuRef = useRef<HTMLDivElement>(null);
 
-    // Obtiene los datos del perfil (incluyendo el avatar) al cargar el componente
+    // Obtiene los datos del perfil (incluyendo el avatar y rol) al cargar el componente
     useEffect(() => {
         const fetchProfile = async () => {
             if (!user) return;
             const { data } = await supabase
                 .from('profiles')
-                .select('avatar_url')
+                .select('avatar_url, role')
                 .eq('id', user.id)
                 .single();
 
             if (data?.avatar_url) {
                 setAvatarUrl(data.avatar_url);
+            }
+            if (data?.role) {
+                setUserRole(data.role);
             }
         };
         fetchProfile();
@@ -96,6 +100,34 @@ const UserMenu: React.FC<UserMenuProps> = ({ onNavigate }) => {
                         </svg>
                         Ajustes de Cuenta
                     </button>
+
+                    {userRole === 'admin' && (
+                        <>
+                            <button className="dropdown-item-btn" onClick={() => {
+                                onNavigate('admin-products');
+                                setIsOpen(false);
+                            }}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M20 7h-9"></path>
+                                    <path d="M14 17H5"></path>
+                                    <circle cx="17" cy="17" r="3"></circle>
+                                    <circle cx="7" cy="7" r="3"></circle>
+                                </svg>
+                                Productos
+                            </button>
+                            <button className="dropdown-item-btn" onClick={() => {
+                                onNavigate('admin-torta');
+                                setIsOpen(false);
+                            }}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5"></path>
+                                    <path d="M2 12l10 5 10-5"></path>
+                                </svg>
+                                Torta del Mes
+                            </button>
+                        </>
+                    )}
 
                     <div className="dropdown-divider"></div>
 
