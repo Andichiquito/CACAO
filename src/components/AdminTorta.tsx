@@ -5,7 +5,7 @@ import { NavigationProps } from '../types';
 import './AdminProducts.css';
 
 const AdminTorta: React.FC<NavigationProps> = ({ onNavigate }) => {
-    const { supabase, user } = useSupabase();
+    const { supabase } = useSupabase();
     const { showToast } = useToast();
     const [isUploading, setIsUploading] = useState(false);
     const [currentImage, setCurrentImage] = useState<string | null>(null);

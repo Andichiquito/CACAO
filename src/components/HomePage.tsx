@@ -30,7 +30,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenCart, onOpenAuth 
   useEffect(() => {
     const fetchTorta = async () => {
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('products')
           .select('*')
           .ilike('name', 'Torta del mes')

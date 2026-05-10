@@ -143,67 +143,6 @@ const AdminProducts: React.FC<NavigationProps> = ({ onNavigate }) => {
         setFormData(emptyForm);
     };
 
-    const [isUploadingImage, setIsUploadingImage] = useState(false);
-
-    const handleTortaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        try {
-            const file = e.target.files?.[0];
-            if (!file) return;
-
-            setIsUploadingImage(true);
-
-            // Generar un nombre único para el archivo
-            const fileExt = file.name.split('.').pop();
-            const fileName = `torta_del_mes_${Date.now()}.${fileExt}`;
-            const filePath = `${fileName}`;
-
-            // Subir al bucket 'products'
-            const { error: uploadError } = await supabase.storage
-                .from('products')
-                .upload(filePath, file);
-
-            if (uploadError) {
-                console.error('Upload error:', uploadError);
-                throw new Error('Asegúrate de tener un bucket público llamado "products" en Supabase Storage.');
-            }
-
-            // Obtener la URL pública
-            const { data: { publicUrl } } = supabase.storage
-                .from('products')
-                .getPublicUrl(filePath);
-
-            // Buscar si ya existe la "Torta del mes"
-            const existingTorta = products.find(p => p.name.toLowerCase() === 'torta del mes');
-
-            if (existingTorta) {
-                // Actualizar
-                await supabase.from('products').update({ image_url: publicUrl, updated_at: new Date().toISOString() }).eq('id', existingTorta.id);
-            } else {
-                // Crear
-                await supabase.from('products').insert([{
-                    name: 'Torta del mes',
-                    description: 'Torta destacada del mes',
-                    price: 0,
-                    category_id: categories.length > 0 ? categories[0].id : 1,
-                    image_url: publicUrl,
-                    is_available: true,
-                    stock_quantity: 0,
-                    sort_order: 0,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                }]);
-            }
-            
-            showToast('Éxito', 'Torta del mes actualizada correctamente.');
-            fetchData();
-        } catch (error: any) {
-            console.error('Error uploading torta:', error);
-            showToast('Error', error.message || 'Error al subir la imagen');
-        } finally {
-            setIsUploadingImage(false);
-        }
-    };
-
     const handleFormChange = (field: keyof ProductFormData, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
