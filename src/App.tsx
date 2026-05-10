@@ -13,9 +13,8 @@ const AuthModal = lazy(() => import('./components/AuthModal'));
 const AccountSettings = lazy(() => import('./components/AccountSettings'));
 const AdminProducts = lazy(() => import('./components/AdminProducts'));
 const AdminTorta = lazy(() => import('./components/AdminTorta'));
+//cchpcho
 
-// Vercel trigger
-// Segundo trigger para probar el correo
 type ViewType = 'home' | 'menu' | 'about' | 'settings' | 'admin-products' | 'admin-torta';
 
 const STORAGE_KEY = 'cacao_current_view';
