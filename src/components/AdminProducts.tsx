@@ -601,18 +601,15 @@ const AdminProducts: React.FC<NavigationProps> = ({ onNavigate }) => {
                                         </div>
                                         <div className="form-group">
                                             <label>Subcategoría</label>
-                                            <input
-                                                type="text"
+                                            <select
                                                 value={formData.subcategory}
                                                 onChange={(e) => handleFormChange('subcategory', e.target.value)}
-                                                placeholder="Ej: Fríos, Calientes"
-                                                list="subcategory-suggestions"
-                                            />
-                                            <datalist id="subcategory-suggestions">
+                                            >
+                                                <option value="">Sin subcategoría</option>
                                                 {allSubcategories.map(sub => (
-                                                    <option key={sub} value={sub} />
+                                                    <option key={sub} value={sub}>{sub}</option>
                                                 ))}
-                                            </datalist>
+                                            </select>
                                         </div>
                                     </div>
 
