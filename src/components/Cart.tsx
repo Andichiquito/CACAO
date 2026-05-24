@@ -7,6 +7,7 @@ import {
   cleanup as cleanupMap
 } from '../utils/leafletMap';
 import { sanitizeInput, sanitizeName, sanitizeAddress, sanitizeForWhatsApp, validateCoordinates, sanitizePhone, getProductDisplayName } from '../utils/security';
+import { getBusinessHoursState, BusinessHoursState } from '../utils/businessHours';
 // import { useSupabase } from '../contexts/SupabaseContext';
 import 'leaflet/dist/leaflet.css';
 
@@ -32,6 +33,16 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
   // const { user, supabase } = useSupabase();
   const { items, removeFromCart, updateQuantity, getTotalPrice, getTotalItems, clearCart } = useCart();
   const [showOrderModal, setShowOrderModal] = useState(false);
+  const [hoursState, setHoursState] = useState<BusinessHoursState>(getBusinessHoursState());
+
+  // Actualizar estado de horario cada minuto (hora Bolivia)
+  useEffect(() => {
+    setHoursState(getBusinessHoursState());
+    const interval = setInterval(() => {
+      setHoursState(getBusinessHoursState());
+    }, 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
   const [orderData, setOrderData] = useState<OrderData>({
     nombre: '',
     telefono: '',
@@ -911,19 +922,31 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
             </div>
 
             <div className="order-modal-footer">
-              <button
-                className="cart-button cart-button-secondary"
-                onClick={handleCloseOrderModal}
-              >
-                Cancelar
-              </button>
-              <button
-                className="cart-button cart-button-primary"
-                onClick={handleConfirmOrder}
-                disabled={!isFormValid()}
-              >
-                Confirmar Pedido
-              </button>
+              {/* Banner de horario cerrado */}
+              {!hoursState.isAcceptingOrders && (
+                <div className="closed-hours-banner">
+                  <span className="closed-hours-title">{hoursState.message}</span>
+                  {hoursState.subMessage && (
+                    <span className="closed-hours-sub">{hoursState.subMessage}</span>
+                  )}
+                </div>
+              )}
+              <div className="order-modal-footer-actions">
+                <button
+                  className="cart-button cart-button-secondary"
+                  onClick={handleCloseOrderModal}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="cart-button cart-button-primary"
+                  onClick={handleConfirmOrder}
+                  disabled={!isFormValid() || !hoursState.isAcceptingOrders}
+                  title={!hoursState.isAcceptingOrders ? hoursState.message : undefined}
+                >
+                  Confirmar Pedido
+                </button>
+              </div>
             </div>
           </div>
         </div>
