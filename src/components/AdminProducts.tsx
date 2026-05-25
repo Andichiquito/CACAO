@@ -51,6 +51,7 @@ const AdminProducts: React.FC<NavigationProps> = ({ onNavigate }) => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isDeactivatingStock, setIsDeactivatingStock] = useState(false);
 
     // Verificar rol del usuario
     useEffect(() => {
@@ -247,6 +248,58 @@ const AdminProducts: React.FC<NavigationProps> = ({ onNavigate }) => {
         }
     };
 
+    const handleSetAvailability = async (product: Product, isAvailable: boolean) => {
+        try {
+            const { error } = await supabase
+                .from('products')
+                .update({ 
+                    is_available: isAvailable, 
+                    updated_at: new Date().toISOString() 
+                })
+                .eq('id', product.id);
+
+            if (error) throw error;
+            showToast('Éxito', `"${product.name}" ahora está ${isAvailable ? 'visible' : 'oculto'}.`);
+            await fetchData();
+        } catch (err: any) {
+            console.error('Error updating availability:', err.message);
+            showToast('Error', err.message || 'No se pudo actualizar la disponibilidad.');
+        }
+    };
+
+    const handleDeactivateNoStock = async () => {
+        const outOfStockProducts = products.filter(p => p.stock_quantity <= 0 && p.is_available);
+        if (outOfStockProducts.length === 0) {
+            showToast('Información', 'No hay productos disponibles sin stock para desactivar.');
+            return;
+        }
+
+        const confirmAction = window.confirm(
+            `¿Estás seguro de que deseas desactivar (ocultar) los ${outOfStockProducts.length} productos que no tienen stock actualmente?`
+        );
+        if (!confirmAction) return;
+
+        setIsDeactivatingStock(true);
+        try {
+            const { error } = await supabase
+                .from('products')
+                .update({ 
+                    is_available: false, 
+                    updated_at: new Date().toISOString() 
+                })
+                .in('id', outOfStockProducts.map(p => p.id));
+
+            if (error) throw error;
+            showToast('Éxito', `${outOfStockProducts.length} productos sin stock fueron desactivados.`);
+            await fetchData();
+        } catch (err: any) {
+            console.error('Error deactivating stock:', err.message);
+            showToast('Error', err.message || 'No se pudieron desactivar los productos.');
+        } finally {
+            setIsDeactivatingStock(false);
+        }
+    };
+
     // ─── Access control ───
 
     if (!user && !roleLoading) {
@@ -349,13 +402,28 @@ const AdminProducts: React.FC<NavigationProps> = ({ onNavigate }) => {
                     </svg>
                 </button>
                 <h1 className="admin-products-title">PRODUCTOS</h1>
-                <button className="add-product-btn" onClick={openCreateModal}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    Nuevo Producto
-                </button>
+                <div className="header-actions">
+                    <button 
+                        className="deactivate-stock-btn" 
+                        onClick={handleDeactivateNoStock}
+                        disabled={isDeactivatingStock}
+                        title="Desactivar todos los productos sin stock"
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        {isDeactivatingStock ? 'Desactivando...' : 'Ocultar sin Stock'}
+                    </button>
+                    <button className="add-product-btn" onClick={openCreateModal}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Nuevo Producto
+                    </button>
+                </div>
             </header>
 
             {/* Stats */}
@@ -474,6 +542,15 @@ const AdminProducts: React.FC<NavigationProps> = ({ onNavigate }) => {
                                                     </td>
                                                     <td>
                                                         <div className="product-actions">
+                                                            <select
+                                                                className={`action-select-status ${product.is_available ? 'status-visible' : 'status-hidden'}`}
+                                                                value={product.is_available ? 'visible' : 'hidden'}
+                                                                onChange={(e) => handleSetAvailability(product, e.target.value === 'visible')}
+                                                                title="Cambiar visibilidad"
+                                                            >
+                                                                <option value="visible">No ocultar</option>
+                                                                <option value="hidden">Ocultar</option>
+                                                            </select>
                                                             <button
                                                                 className="action-btn edit"
                                                                 onClick={() => openEditModal(product)}
