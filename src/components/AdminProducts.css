@@ -287,6 +287,14 @@
     border-left: 2px solid var(--primary-color, #d4a373);
 }
 
+/* Product table container */
+.products-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+}
+
 /* Product table */
 .products-table {
     width: 100%;
@@ -1091,14 +1099,26 @@
     }
 
     .products-table-container {
+        width: 100%;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         border-radius: 12px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(212, 163, 115, 0.4) transparent;
+    }
+
+    .products-table-container::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .products-table-container::-webkit-scrollbar-thumb {
+        background: rgba(212, 163, 115, 0.4);
+        border-radius: 3px;
     }
 
     .products-table {
         font-size: 0.8rem;
-        min-width: 500px;
+        min-width: 580px;
     }
 
     .form-row {

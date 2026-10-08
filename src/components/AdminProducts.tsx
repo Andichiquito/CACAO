@@ -233,7 +233,12 @@ const AdminProducts: React.FC<NavigationProps> = ({ onNavigate }) => {
                         is_active: categoryForm.is_active,
                     })
                     .eq('id', editingCategory.id);
-                if (error) throw error;
+                if (error) {
+                    if (error.message?.includes('row-level security') || error.message?.includes('violates')) {
+                        throw new Error('Supabase bloqueó la operación por RLS. Ejecuta el script SQL en Supabase para permitir actualizar categorías inactivas (WITH CHECK (true)).');
+                    }
+                    throw error;
+                }
                 showToast('Éxito', `Categoría "${categoryForm.name}" actualizada.`);
             } else {
                 const { error } = await supabase
@@ -246,7 +251,12 @@ const AdminProducts: React.FC<NavigationProps> = ({ onNavigate }) => {
                         is_active: categoryForm.is_active,
                         created_at: new Date().toISOString(),
                     }]);
-                if (error) throw error;
+                if (error) {
+                    if (error.message?.includes('row-level security') || error.message?.includes('violates')) {
+                        throw new Error('Supabase bloqueó la operación por RLS. Ejecuta el script SQL en Supabase para permitir guardar categorías.');
+                    }
+                    throw error;
+                }
                 showToast('Éxito', `Categoría "${categoryForm.name}" creada.`);
             }
             closeCategoryModal();
@@ -769,71 +779,73 @@ const AdminProducts: React.FC<NavigationProps> = ({ onNavigate }) => {
                                     {subcategory && (
                                         <p className="subcategory-label">{subcategory}</p>
                                     )}
-                                    <table className="products-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Producto</th>
-                                                <th>Precio</th>
-                                                <th>Estado</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {subProducts.map(product => (
-                                                <tr key={product.id}>
-                                                    <td>
-                                                        <div className="product-name-cell">
-                                                            {product.image_url ? (
-                                                                <img src={product.image_url} alt={product.name} className="product-thumb" />
-                                                            ) : (
-                                                                <div className="product-thumb-placeholder">📷</div>
-                                                            )}
-                                                            {product.name}
-                                                        </div>
-                                                    </td>
-                                                    <td className="product-price">Bs. {product.price.toFixed(2)}</td>
-                                                    <td>
-                                                        <span className={`product-status ${product.is_available ? 'status-available' : 'status-unavailable'}`}>
-                                                            {product.is_available ? 'Disponible' : 'No disponible'}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div className="product-actions">
-                                                            <select
-                                                                className={`action-select-status ${product.is_available ? 'status-visible' : 'status-hidden'}`}
-                                                                value={product.is_available ? 'visible' : 'hidden'}
-                                                                onChange={(e) => handleSetAvailability(product, e.target.value === 'visible')}
-                                                                title="Cambiar visibilidad"
-                                                            >
-                                                                <option value="visible">No ocultar</option>
-                                                                <option value="hidden">Ocultar</option>
-                                                            </select>
-                                                            <button
-                                                                className="action-btn edit"
-                                                                onClick={() => openEditModal(product)}
-                                                                title="Editar"
-                                                            >
-                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                                                </svg>
-                                                            </button>
-                                                            <button
-                                                                className="action-btn delete"
-                                                                onClick={() => openDeleteConfirm(product)}
-                                                                title="Eliminar"
-                                                            >
-                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                                                </svg>
-                                                            </button>
-                                                        </div>
-                                                    </td>
+                                    <div className="products-table-container">
+                                        <table className="products-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Producto</th>
+                                                    <th>Precio</th>
+                                                    <th>Estado</th>
+                                                    <th>Acciones</th>
                                                 </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                {subProducts.map(product => (
+                                                    <tr key={product.id}>
+                                                        <td>
+                                                            <div className="product-name-cell">
+                                                                {product.image_url ? (
+                                                                    <img src={product.image_url} alt={product.name} className="product-thumb" />
+                                                                ) : (
+                                                                    <div className="product-thumb-placeholder">📷</div>
+                                                                )}
+                                                                {product.name}
+                                                            </div>
+                                                        </td>
+                                                        <td className="product-price">Bs. {product.price.toFixed(2)}</td>
+                                                        <td>
+                                                            <span className={`product-status ${product.is_available ? 'status-available' : 'status-unavailable'}`}>
+                                                                {product.is_available ? 'Disponible' : 'No disponible'}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div className="product-actions">
+                                                                <select
+                                                                    className={`action-select-status ${product.is_available ? 'status-visible' : 'status-hidden'}`}
+                                                                    value={product.is_available ? 'visible' : 'hidden'}
+                                                                    onChange={(e) => handleSetAvailability(product, e.target.value === 'visible')}
+                                                                    title="Cambiar visibilidad"
+                                                                >
+                                                                    <option value="visible">No ocultar</option>
+                                                                    <option value="hidden">Ocultar</option>
+                                                                </select>
+                                                                <button
+                                                                    className="action-btn edit"
+                                                                    onClick={() => openEditModal(product)}
+                                                                    title="Editar"
+                                                                >
+                                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                                    </svg>
+                                                                </button>
+                                                                <button
+                                                                    className="action-btn delete"
+                                                                    onClick={() => openDeleteConfirm(product)}
+                                                                    title="Eliminar"
+                                                                >
+                                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             ))}
                         </div>
