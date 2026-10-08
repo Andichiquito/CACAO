@@ -49,27 +49,6 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
     );
   };
 
-  const getBaseName = (productName: string): string => {
-    if (!productName) return '';
-    const name = productName.toUpperCase().trim();
-
-    const firstWord = name.split(' ')[0];
-    return firstWord || name;
-  };
-
-  const groupProductsByBaseName = (products: Product[]): Map<string, Product[]> => {
-    const grouped = new Map<string, Product[]>();
-    products.forEach(product => {
-      if (!product.name) return;
-      const baseName = getBaseName(product.name);
-      if (!grouped.has(baseName)) {
-        grouped.set(baseName, []);
-      }
-      grouped.get(baseName)?.push(product);
-    });
-    return grouped;
-  };
-
   const getProductSelectors = (product: Product): Array<{ label: string; options: string[]; showForIndices?: number[] }> => {
     if (!product.description) return [];
 
@@ -170,37 +149,6 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
         >
           {product.is_available ? 'Agregar al carrito' : 'No disponible'}
         </button>
-      </div>
-    );
-  };
-
-  const renderGroupedProducts = (products: Product[], groupKey: string): React.ReactElement => {
-    const groupId = `group-${groupKey}`;
-    const baseName = getBaseName(products[0].name);
-    const selectedIndex = selectedVariants[groupId] || 0;
-    const selectedProduct = products[selectedIndex] || products[0];
-
-    return (
-      <div key={groupId} className="dropdown-item grouped-product-card">
-        <div className="item-header">
-          <h3 className="item-name">{baseName}</h3>
-          <span className="item-price">Bs. {selectedProduct.price.toFixed(2)}</span>
-        </div>
-        <div className="variant-selector main-variant-selector">
-          <label className="variant-label">Variante:</label>
-          <select
-            className="variant-select"
-            value={selectedIndex}
-            onChange={(e) => setSelectedVariants(prev => ({ ...prev, [groupId]: Number(e.target.value) }))}
-          >
-            {products.map((p, i) => (
-              <option key={p.id} value={i}>
-                {p.name.replace(new RegExp(`^${baseName}\\s*`, 'i'), '').trim() || p.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        {renderProductItem(selectedProduct, true, groupKey)}
       </div>
     );
   };

@@ -309,17 +309,22 @@ const AdminProducts: React.FC<NavigationProps> = ({ onNavigate }) => {
             showToast('Error', 'El nombre de la subcategoría es obligatorio.');
             return;
         }
-        // Verificar si ya existe (en productos o pendientes)
-        const existingFromProducts = products.map(p => p.subcategory).filter(Boolean);
-        const allExisting = Array.from(new Set([...existingFromProducts, ...pendingSubcategories]));
-        if (allExisting.includes(trimmed)) {
-            showToast('Error', 'Esa subcategoría ya existe.');
-            return;
+        setIsSavingSubcategory(true);
+        try {
+            // Verificar si ya existe (en productos o pendientes)
+            const existingFromProducts = products.map(p => p.subcategory).filter(Boolean);
+            const allExisting = Array.from(new Set([...existingFromProducts, ...pendingSubcategories]));
+            if (allExisting.includes(trimmed)) {
+                showToast('Error', 'Esa subcategoría ya existe.');
+                return;
+            }
+            // Guardar en estado para que aparezca en el selector del formulario de producto
+            setPendingSubcategories(prev => [...prev, trimmed].sort());
+            showToast('Éxito', `Subcategoría "${trimmed}" agregada. Ya puedes asignarla a productos.`);
+            setNewSubcategoryName('');
+        } finally {
+            setIsSavingSubcategory(false);
         }
-        // Guardar en estado para que aparezca en el selector del formulario de producto
-        setPendingSubcategories(prev => [...prev, trimmed].sort());
-        showToast('Éxito', `Subcategoría "${trimmed}" agregada. Ya puedes asignarla a productos.`);
-        setNewSubcategoryName('');
     };
 
     const handleDeleteSubcategory = async (sub: string) => {
