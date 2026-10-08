@@ -43,6 +43,7 @@ const AppContent: React.FC = () => {
     } catch (error) {
       console.error('Error saving to localStorage', error);
     }
+    window.scrollTo(0, 0);
   }, [currentView]);
 
   const openCart = (): void => setIsCartOpen(true);
@@ -56,6 +57,7 @@ const AppContent: React.FC = () => {
       return;
     }
     setCurrentView(view);
+    window.scrollTo(0, 0);
   };
 
   const renderCurrentView = (): React.ReactElement => {

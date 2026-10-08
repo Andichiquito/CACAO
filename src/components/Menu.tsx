@@ -12,6 +12,10 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
   const { addToCart, getTotalItems } = useCart();
   const totalItems = getTotalItems();
 
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (!onNavigate || typeof onNavigate !== 'function') {
     return (
       <div className="menu-container">
@@ -202,13 +206,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
   };
 
   const renderProductsWithGrouping = (products: Product[]): React.ReactElement[] => {
-    const grouped = groupProductsByBaseName(products);
-    const items: React.ReactElement[] = [];
-    grouped.forEach((group, name) => {
-      if (group.length > 1) items.push(renderGroupedProducts(group, name));
-      else items.push(renderProductItem(group[0]));
-    });
-    return items;
+    return products.map(product => renderProductItem(product));
   };
 
   const getCategoryIcon = (category: Category): React.ReactNode => {
@@ -243,41 +241,7 @@ const Menu: React.FC<MenuProps> = ({ onNavigate, onOpenCart }) => {
       return true;
     });
 
-    const customOrder = [
-      "TORTAS ENTERAS",
-      "BEBIDAS DE AUTOR",
-      "CAFETERÍA",
-      "CAFETERÍA FRÍA",
-      "BEBIDAS CALIENTES",
-      "BEBIDAS FRÍAS",
-      "BRUNCH ALL DAY",
-      "DESAYUNOS",
-      "SALADOS",
-      "REPOSTERÍA",
-      "COOKIE BAR"
-    ];
-
-    return unique.sort((a, b) => {
-      const nameA = a.name.toUpperCase().trim();
-      const nameB = b.name.toUpperCase().trim();
-
-      const indexA = customOrder.findIndex(order => nameA.includes(order));
-      const indexB = customOrder.findIndex(order => nameB.includes(order));
-
-      // Si ambos están en la lista personalizada, ordenar por índice
-      if (indexA !== -1 && indexB !== -1) {
-        return indexA - indexB;
-      }
-
-      // Si solo A está en la lista, va antes
-      if (indexA !== -1) return -1;
-
-      // Si solo B está en la lista, va antes
-      if (indexB !== -1) return 1;
-
-      // Si ninguno está en la lista, ordenar alfabéticamente
-      return nameA.localeCompare(nameB, 'es');
-    });
+    return unique.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
   };
 
   const renderProductsInOrder = (category: Category, products: Product[]) => {
